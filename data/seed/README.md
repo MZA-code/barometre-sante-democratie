@@ -52,7 +52,8 @@ Journées nationales de mobilisation, avec côte à côte le décompte du minist
 l'Intérieur et celui des organisateurs (CGT pour l'intersyndicale), France entière. Donnée
 de contexte, hors grille (`contexte.mobilisations`). Mouvements couverts : loi Travail de
 2016 (12 journées), projet de réforme des retraites de 2019-2020 (10 journées), réforme des
-retraites de 2023 (14 journées), mobilisations de septembre-octobre 2025 (3 journées : 10 et
+retraites de 2023 (14 journées), journées de 2024 (3 journées : 15 juin, 1er octobre,
+5 décembre), mobilisations de septembre-octobre 2025 (3 journées : 10 et
 18 septembre, 2 octobre) et mouvement social de l'automne 2026 (4 journées : 17, 24 et
 31 octobre, 5 novembre).
 
@@ -61,9 +62,15 @@ retraites de 2023 (14 journées), mobilisations de septembre-octobre 2025 (3 jou
   chaque chiffre retrouvé avec son attribution dans un article en accès libre, téléchargé et
   relu phrase par phrase. Les bilans du ministère publiés sur interieur.gouv.fr refusent les
   requêtes automatiques (HTTP 403) et n'ont pas pu être contrôlés par script. Pas de décompte
-  national des organisateurs retrouvé pour le 10 septembre 2025. Aucune journée nationale
-  relevée pour 2024 (aucun mouvement national suivi n'a été recherché pour cette année :
-  à compléter).
+  national des organisateurs retrouvé pour le 10 septembre 2025.
+- **Critère de sélection** (2026-11-06, appliqué à 2024) : journée nationale de manifestations
+  appelée ou rejointe par au moins une confédération syndicale nationale, avec un décompte
+  national du ministère de l'Intérieur (ou des « autorités »). Journées de 2024 retenues :
+  15 juin (intersyndicale et associations, contre l'extrême droite), 1er octobre
+  (interprofessionnelle CGT, FSU, Solidaires), 5 décembre (fonction publique, intersyndicale).
+  Sources en accès libre (ICI, CNews), chiffres et attributions relus phrase par phrase. Réserve
+  sur le 15 juin : un document de la FSU présente les 640 000 de la CGT comme le total des 15 et
+  16 juin.
 
 - **Relevé** : tableau « Toute la France » des articles Wikipédia « Mouvement social contre
   la réforme des retraites en France de 2023 » (révision 240431610 du 16 octobre 2026) et

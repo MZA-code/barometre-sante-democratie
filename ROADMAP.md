@@ -79,7 +79,7 @@ les saisies manuelles aient été relues.
   éventuelle du temps de parole par parti à un critère de représentativité.
 - [ ] **Vérification humaine** des saisies manuelles, ligne par ligne : régimes d'exception
   (13 périodes sur 20), seed 49.3 historique, journalistes inquiétés (18 lignes), seed CNCTR,
-  déclarations de l'ONU (10), mobilisations 2025-2026 (13 chiffres).
+  déclarations de l'ONU (10), mobilisations 2024-2026 (19 chiffres).
 - [ ] **Vérification humaine** des chiffres de manifestants plus anciens : 12 non confirmés, dont
   2 à supprimer faute de confirmation (05/07/2016, 10/12/2019) ; attribution 2016 à confirmer.
 - [ ] **Vérification humaine** des cas limites repérés automatiquement : 12 rapprochements CNIL
@@ -103,7 +103,10 @@ les saisies manuelles aient été relues.
 
 ### Priorité 3 — extensions
 
-- [ ] **Mobilisations** : journées de 2024 ; décompte des organisateurs du 10 septembre 2025.
+- [x] **Mobilisations 2024** (6 novembre) : 15 juin, 1er octobre, 5 décembre (critère : appel ou
+  soutien d'une confédération syndicale nationale, décompte national du ministère).
+- [ ] **Mobilisations** : décompte des organisateurs du 10 septembre 2025 ; périmètre du chiffre
+  CGT du 15 juin 2024 (un jour ou deux) à confirmer.
 - [ ] **ONU** : observations finales du comité des droits de l'homme (2024), Examen périodique
   universel (2023), réponses de la France (base des communications interdite aux robots : à
   consulter à la main).
