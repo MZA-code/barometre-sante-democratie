@@ -9,7 +9,8 @@ chiffre affiché remonte jusqu'aux documents officiels qui le justifient.
 > jamais de note officielle. L'indice affiché en tête de page est **illustratif** (moyenne
 > simple, poids égaux).
 
-Point de départ et règles : [BRIEF.md](BRIEF.md) · Choix et constats : [DECISIONS.md](DECISIONS.md) ·
+Point de départ et règles : [BRIEF.md](BRIEF.md) · Feuille de route : [ROADMAP.md](ROADMAP.md) ·
+Choix et constats : [DECISIONS.md](DECISIONS.md) ·
 Grille : [config/grid.v0.yaml](config/grid.v0.yaml) et [CHANGELOG-GRILLE.md](CHANGELOG-GRILLE.md) ·
 Seeds manuels : [data/seed/README.md](data/seed/README.md)
 
