@@ -10,7 +10,7 @@ AN_LEGISLATURES ?= 17 16 15 14
 RUN  := uv run --frozen
 
 .PHONY: help install init collect collect-seed collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-an collect-datagouv collect-gdelt verify-raw extract metrics score \
-	rebuild reproducible controle echantillon prototype prototype-data publication nouveautes quotidien planifier deplanifier etat lint test
+	rebuild reproducible controle echantillon prototype prototype-data publication publication-web deployer nouveautes quotidien planifier deplanifier etat lint test
 
 help:
 	@echo "Cibles : install init collect collect-seed collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-an collect-datagouv collect-gdelt"
@@ -114,6 +114,13 @@ nouveautes:
 # Version publiable du prototype (page claude.ai) dans front/publication/dist/.
 publication: prototype-data
 	$(RUN) python front/publication/build.py
+
+# Version pour un hébergement public, puis envoi (config/deploiement.local, hors git).
+publication-web: prototype-data
+	$(RUN) python front/publication/build.py --web
+
+deployer: publication-web
+	$(RUN) python -m ops.deployer
 
 # --- Exécution quotidienne (ops/quotidien.py, timer systemd utilisateur) -----------------
 SYSTEMD_USER := $(HOME)/.config/systemd/user

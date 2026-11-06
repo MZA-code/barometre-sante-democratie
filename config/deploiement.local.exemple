@@ -1,0 +1,20 @@
+# Copier ce fichier en config/deploiement.local (hors git) puis remplir UNE des deux méthodes.
+# Sans config/deploiement.local, `make deployer` n'envoie rien.
+
+# --- Méthode 1 : SSH (rsync) -------------------------------------------------------------
+# Clé SSH de cette machine autorisée sur l'hébergement (sur un mutualisé cPanel :
+# « Accès SSH » / « Gérer les clés SSH » ; si l'accès SSH y est restreint par adresse IP,
+# autoriser celle de cette machine).
+MODE=rsync
+DESTINATION=utilisateur@serveur.exemple:public_html/barometre/
+
+# --- Méthode 2 : FTP chiffré (FTPS) ------------------------------------------------------
+# Mot de passe dans ~/.netrc (droits 600) :  machine ftp.exemple.fr login utilisateur password ...
+# MODE=ftps
+# HOTE=ftp.exemple.fr
+# UTILISATEUR=utilisateur
+# DOSSIER=public_html/barometre
+
+# --- Adresse publique du site (une fois le domaine choisi) -------------------------------
+# Active l'URL canonique, og:url, sitemap.xml et les liens absolus de llms.txt.
+# SITE_URL=https://exemple.fr/

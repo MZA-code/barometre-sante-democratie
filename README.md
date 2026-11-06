@@ -115,16 +115,39 @@ Journaux dans `data/logs/` ; une source en panne n'empêche pas les autres (voir
 `data/exports/nouveautes.md`. L'historique GDELT est rattrapé progressivement (5 jours par
 passage, `GDELT_JOURS`).
 
-## Déploiement sur un serveur
+## Mise en ligne
 
-- **Archive brute** : `data/raw/` n'est pas versionnée (≈ 11 Go). La copier depuis une machine
-  existante (`rsync -a data/raw/ serveur:barometre/data/raw/`) ou tout recollecter avec
-  `make collect`. Prévoir au moins 20 Go de disque.
-- **Collecte** : `make planifier` sur le serveur (timer systemd utilisateur ; activer
-  `loginctl enable-linger` pour qu'il tourne sans session ouverte).
-- **Page** : `make publication` produit une page statique dans `front/publication/dist/`
-  (`index.html` + `data.js`), à servir par n'importe quel serveur web. La publication
-  automatique après la collecte quotidienne reste à brancher.
+La collecte et les calculs restent sur la machine qui a l'archive brute (≈ 11 Go, non
+versionnée) ; l'hébergement web, même mutualisé, ne reçoit que des fichiers statiques.
+
+```sh
+cp config/deploiement.local.exemple config/deploiement.local   # puis le remplir (hors git)
+make deployer       # construit la version web et l'envoie (rsync en SSH, ou FTPS)
+```
+
+- `make publication-web` écrit la version publique dans `front/publication/web/` : la page
+  (`index.html` + `data.js`) et les fichiers de référencement.
+- `make quotidien` (et donc le timer de 6 h 30) se termine par `deployer` : le site est mis à jour
+  chaque matin. Sans `config/deploiement.local`, l'étape ne fait rien.
+- Envoi sans page à moitié publiée : les données partent avant la page ; en FTPS, chaque
+  fichier est envoyé sous un nom temporaire puis renommé.
+
+### Référencement (SEO et assistants d'IA)
+
+La page construit ses chiffres en JavaScript ; la version web les écrit aussi dans le HTML
+(`front/publication/seo.py`) pour les moteurs et les lecteurs sans JavaScript :
+
+| Fichier / balise | Rôle |
+| --- | --- |
+| titre, `description`, Open Graph | résultats de recherche et aperçus de partage |
+| JSON-LD schema.org `Dataset` | description structurée : 13 indicateurs, valeurs, sources |
+| indice et vue d'ensemble dans le HTML | contenu lisible sans JavaScript |
+| `barometre.md` | résumé en texte simple, chaque chiffre avec sa source |
+| `indicateurs.csv` | valeurs et positions des 13 indicateurs |
+| `llms.txt` | point d'entrée pour les assistants d'IA ([llmstxt.org](https://llmstxt.org)) |
+| `robots.txt`, `sitemap.xml` | exploration ; le sitemap et l'URL canonique exigent `SITE_URL` |
+
+Une fois le domaine choisi : `SITE_URL=` dans `config/deploiement.local`, puis `make deployer`.
 
 ## Organisation
 
@@ -135,8 +158,8 @@ passage, `GDELT_JOURS`).
 | `extract/` | documents bruts -> faits (un module par source ou indicateur) |
 | `scoring/` | grille (`grid.py`), métriques (`metrics.py`), notes (`score.py`), rapports (`report.py`) |
 | `front/prototype/` | page du baromètre (`index.html`) et export des données (`export_data.py`) |
-| `front/publication/` | construction de la page autonome (`build.py`) |
-| `ops/` | exécution quotidienne (`quotidien.py`), alerte des faits nouveaux (`nouveautes.py`), unités systemd |
+| `front/publication/` | construction de la page autonome (`build.py`) et référencement de la version web (`seo.py`) |
+| `ops/` | exécution quotidienne (`quotidien.py`), alerte des faits nouveaux (`nouveautes.py`), mise en ligne (`deployer.py`), unités systemd |
 | `config/` | grille, sources, paramètres des collectes |
 | `data/seed/` | seeds manuels versionnés, voir leur [README](data/seed/README.md) |
 | `data/raw/` | archive brute (non versionnée) |

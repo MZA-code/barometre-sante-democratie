@@ -84,11 +84,50 @@ def build(dossier: str, verification: str, dist: Path = DIST) -> Path:
     return dist
 
 
+WEB = Path(__file__).resolve().parent / "web"
+
+
+def build_web(dist: Path = WEB, site_url: str | None = None) -> Path:
+    """Version pour un hébergement web public : la page du prototype telle quelle.
+
+    Document HTML complet (Font Awesome compris) ; aucun lien vers les documents de travail
+    privés de claude.ai. Référencement (contenu sans JavaScript, métadonnées, `barometre.md`,
+    `indicateurs.csv`, `llms.txt`, `robots.txt`, `sitemap.xml`) : voir `seo.py`.
+    """
+    html = (SOURCE / "index.html").read_text(encoding="utf-8")
+    if not html.lstrip().lower().startswith("<!doctype html>"):
+        raise ValueError("la page du prototype n'est plus un document HTML complet")
+    if "claude.ai/artifact" in html:
+        raise ValueError("lien vers un document claude.ai privé dans la page publique")
+    import seo  # module voisin (référencement)
+
+    dist.mkdir(parents=True, exist_ok=True)
+    data_js = (SOURCE / "data.js").read_text(encoding="utf-8")
+    html = seo.ecrire(dist, html, data_js, site_url)
+    (dist / "index.html").write_text(html, encoding="utf-8")
+    shutil.copyfile(SOURCE / "data.js", dist / "data.js")
+    return dist
+
+
+def site_url_configure(path: Path = ROOT / "config" / "deploiement.local") -> str | None:
+    """Adresse publique du site (`SITE_URL=` dans la configuration locale), si connue."""
+    if path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if line.strip().upper().startswith("SITE_URL="):
+                return line.split("=", 1)[1].strip() or None
+    return None
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python front/publication/build.py")
     parser.add_argument("--dossier-seuils", default=DOSSIER_SEUILS)
     parser.add_argument("--verification", default=VERIFICATION)
+    parser.add_argument("--web", action="store_true", help="version pour un hébergement public")
     args = parser.parse_args(argv)
+    if args.web:
+        dist = build_web(site_url=site_url_configure())
+        print(f"[publication] {dist / 'index.html'} et data.js écrits (version web)")
+        return 0
     dist = build(args.dossier_seuils, args.verification)
     print(f"[publication] {dist / 'index.html'} et data.js écrits")
     return 0

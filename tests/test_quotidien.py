@@ -11,7 +11,7 @@ def targets(day):
 
 def test_every_source_is_collected_before_rebuild():
     plan = targets(dt.date(2026, 11, 5))  # jeudi
-    assert plan[-2:] == ["rebuild", "prototype-data"]
+    assert plan[-3:] == ["rebuild", "prototype-data", "deployer"]
     assert {
         "collect-an",
         "collect-legi",

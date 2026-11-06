@@ -865,3 +865,23 @@ métriques de contexte (aucune ne change la métrique notée de la grille v0) :
   « Indice illustratif » et absence de pondérations et de seuils du comité rappelées à côté.
 - **Hors calcul** : données de contexte (ONU, presse étrangère, temps de parole par parti,
   mobilisations, participation).
+
+## 2026-11-06 — Mise en ligne sur un hébergement mutualisé, référencement (SEO et GEO)
+
+- **Hébergement** : mutualisé (O2Switch), sans domaine pour l'instant. La collecte (archive de
+  ≈ 11 Go, traitements de plusieurs minutes, timer systemd) reste sur la machine qui a
+  l'archive ; l'hébergement ne reçoit que des fichiers statiques. Claude ne travaille pas sur
+  le serveur (décision du porteur de projet).
+- **Envoi** (`ops/deployer.py`, `make deployer`, dernière étape de `make quotidien`) : rsync en
+  SSH ou FTPS (bibliothèque standard, mot de passe dans `~/.netrc`), configuration hors git dans
+  `config/deploiement.local` (exemple versionné). Données avant la page ; en FTPS, nom
+  temporaire puis renommage. Sans configuration : aucun envoi, étape réussie.
+- **Version web** (`build.py --web`) : document HTML complet (Font Awesome compris), sans lien
+  vers les documents de travail privés de claude.ai (la construction échoue s'il en reste un).
+- **Référencement** (`front/publication/seo.py`) : la page construisant ses chiffres en
+  JavaScript, l'indice, son explication et la vue d'ensemble sont aussi écrits dans le HTML ;
+  titre, description, Open Graph, JSON-LD `Dataset` ; fichiers `barometre.md` (résumé sourcé),
+  `indicateurs.csv`, `llms.txt` (assistants d'IA ; consigne de ne pas présenter l'indice
+  illustratif comme une note officielle), `robots.txt`, `favicon.svg`. URL canonique et
+  `sitemap.xml` seulement avec `SITE_URL` (domaine). Positions et indice calculés comme dans la
+  page (rang moyen), testés.

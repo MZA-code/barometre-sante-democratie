@@ -67,7 +67,8 @@ COLLECTES = (
 )
 # Sources interrogées pour savoir si le réseau répond (une seule suffit).
 HOTES_TEST = ("echanges.dila.gouv.fr", "www.data.gouv.fr")
-RECONSTRUCTION = (("rebuild", ()), ("prototype-data", ()))
+# `deployer` reconstruit la page publique et l'envoie (sans effet sans config/deploiement.local).
+RECONSTRUCTION = (("rebuild", ()), ("prototype-data", ()), ("deployer", ()))
 CONTROLE_HEBDO = ("verify-raw", ())
 COLLECTE_HEBDO = ("collect-senat", ())
 

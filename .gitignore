@@ -20,3 +20,5 @@ front/prototype/data.js
 data/logs/
 data/.quotidien.lock
 front/publication/dist/
+front/publication/web/
+config/deploiement.local
