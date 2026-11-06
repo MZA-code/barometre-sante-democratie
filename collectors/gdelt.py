@@ -31,6 +31,7 @@ import argparse
 import csv
 import datetime as dt
 import gzip
+import http.client
 import io
 import json
 import sqlite3
@@ -94,13 +95,14 @@ def fetch_rows(url: str, opener: Opener, sleep=time.sleep) -> list[list[str]] | 
         try:
             with opener(url) as response:
                 data = response.read()
+            zipfile.ZipFile(io.BytesIO(data)).testzip()  # zip tronqué -> BadZipFile
             break
         except urllib.error.HTTPError as e:
             if e.code == 404:
                 return None
             if e.code < 500 or essai == ESSAIS - 1:
                 raise
-        except (urllib.error.URLError, TimeoutError, ConnectionError, OSError):
+        except (urllib.error.URLError, http.client.HTTPException, zipfile.BadZipFile, OSError):
             if essai == ESSAIS - 1:
                 raise
         sleep(ATTENTE_S * 2**essai)

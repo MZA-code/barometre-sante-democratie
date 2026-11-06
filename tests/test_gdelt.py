@@ -185,3 +185,22 @@ def test_erreur_reseau_persistante_remonte():
 
     with pytest.raises(urllib.error.URLError):
         collector.fetch_rows("u", down, sleep=lambda s: None)
+
+
+def test_telechargement_tronque_retente():
+    import http.client
+
+    calls = []
+
+    @contextmanager
+    def coupe(url):
+        calls.append(url)
+        if len(calls) == 1:
+            raise http.client.IncompleteRead(b"x" * 10, 20)
+        if len(calls) == 2:
+            yield io.BytesIO(zipped(event("1", "14"))[:30])  # zip tronqué
+            return
+        yield io.BytesIO(zipped(event("1", "14") + "\n"))
+
+    rows = collector.fetch_rows("u", coupe, sleep=lambda s: None)
+    assert len(calls) == 3 and rows[0][0] == "1"
