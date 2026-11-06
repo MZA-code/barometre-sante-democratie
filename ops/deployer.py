@@ -30,6 +30,7 @@ from __future__ import annotations
 import argparse
 import ftplib
 import netrc
+import ssl
 import subprocess
 import sys
 from pathlib import Path
@@ -85,7 +86,13 @@ def envoi_ftps(
         if not auth:
             raise SystemExit(f"[deployer] pas de mot de passe pour {hote} dans ~/.netrc")
         password = auth[2]
-    ftp = (ftp_factory or ftplib.FTP_TLS)(hote, timeout=60)
+    if ftp_factory is None:
+        # Certificat et nom d'hôte vérifiés avant l'envoi du mot de passe (le contexte par
+        # défaut de FTP_TLS ne vérifie rien). HOTE doit être le nom inscrit dans le certificat.
+        contexte = ssl.create_default_context()
+        ftp = ftplib.FTP_TLS(hote, timeout=60, context=contexte)
+    else:
+        ftp = ftp_factory(hote, timeout=60)
     try:
         ftp.login(utilisateur, password)
         if hasattr(ftp, "prot_p"):

@@ -10,6 +10,7 @@ DESTINATION=utilisateur@serveur.exemple:public_html/barometre/
 
 # --- Méthode 2 : FTP chiffré (FTPS) ------------------------------------------------------
 # Mot de passe dans ~/.netrc (droits 600) :  machine ftp.exemple.fr login utilisateur password ...
+# HOTE doit être le nom inscrit dans le certificat du serveur (le certificat est vérifié).
 # MODE=ftps
 # HOTE=ftp.exemple.fr
 # UTILISATEUR=utilisateur
