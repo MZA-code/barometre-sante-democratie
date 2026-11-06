@@ -1,0 +1,84 @@
+# Jeux de données data.gouv.fr archivés par collectors/datagouv.py.
+#
+# Pour chaque jeu :
+#   id            identifiant data.gouv.fr (stable, contrairement au slug)
+#   nom           nom court, utilisé dans les messages
+#   objet         pourquoi on le collecte (piste d'indicateur, à valider par le comité)
+#   inclure       expression régulière sur le titre de la ressource (obligatoire)
+#   exclure       expression régulière sur le titre (facultatif)
+#   formats       formats acceptés (champ `format` de data.gouv.fr)
+#   taille_max_mo une ressource annoncée plus grosse est ignorée (avec un message)
+#   licence_derogation  facultatif : justification écrite si la licence déclarée
+#                       n'est pas dans `licences_acceptees`
+#   scrutin       facultatif : résultats électoraux lus par extract/elections.py
+#                 (type, tour, date du scrutin en métropole)
+#
+# Ajouter un jeu ici suffit : aucun code à modifier.
+
+licences_acceptees: [fr-lo, lov2, odc-odbl, cc-by, cc-zero, odc-pddl]
+
+jeux:
+  - id: 53698f37a3a729239d2036a0
+    nom: cada_avis
+    objet: >-
+      Avis et conseils de la Commission d'accès aux documents administratifs.
+      Piste : transparence administrative (volume des saisines, part des avis
+      favorables). Le fichier consolidé couvre tout l'historique ; il est republié
+      sous une nouvelle URL à chaque mise à jour (≈ 200 Mo par version).
+    inclure: "^Ensemble consolidé des avis et conseils"
+    formats: [csv]
+    taille_max_mo: 300
+
+  - id: 593e3fd588ee38328ca16cc0
+    nom: legislatives_2017_t1
+    scrutin: {type: legislatives, tour: 1, date: 2017-06-11}
+    objet: Participation aux élections législatives (contexte, 1er tour 2017).
+    inclure: "Résultats du 1er tour"
+    formats: [xlsx]
+    taille_max_mo: 10
+
+  - id: 59477748c751df22962982cc
+    nom: legislatives_2017_t2
+    scrutin: {type: legislatives, tour: 2, date: 2017-06-18}
+    objet: Participation aux élections législatives (contexte, 2nd tour 2017).
+    inclure: "Résultats du 2nd tour"
+    formats: [xlsx]
+    taille_max_mo: 10
+
+  - id: 62a6eb8598f12fafcba7ba7c
+    nom: legislatives_2022_t1
+    scrutin: {type: legislatives, tour: 1, date: 2022-06-12}
+    objet: Participation aux élections législatives (contexte, 1er tour 2022).
+    inclure: "-fe-t1-france-entiere"
+    formats: [txt]
+    taille_max_mo: 1
+
+  - id: 62b021db638472d78ae1c33b
+    nom: legislatives_2022_t2
+    scrutin: {type: legislatives, tour: 2, date: 2022-06-19}
+    objet: Participation aux élections législatives (contexte, 2nd tour 2022).
+    inclure: "-fe-t2-france-entiere"
+    formats: [txt]
+    taille_max_mo: 1
+    licence_derogation: >-
+      Licence déclarée « notspecified » alors que le 1er tour du même scrutin, publié
+      par le même producteur (ministère de l'Intérieur), est sous Licence Ouverte.
+      À confirmer auprès du producteur.
+
+  - id: 6682d0c255dcda5df20b1d90
+    nom: legislatives_2024_t1
+    scrutin: {type: legislatives, tour: 1, date: 2024-06-30}
+    objet: >-
+      Participation aux élections législatives (contexte, 1er tour 2024). Le niveau
+      France entière n'y est publié qu'en xlsx (deux ressources de même titre).
+    inclure: "france-entiere"
+    formats: [xlsx]
+    taille_max_mo: 1
+
+  - id: 668b4092826ddcf70e9e62cd
+    nom: legislatives_2024_t2
+    scrutin: {type: legislatives, tour: 2, date: 2024-07-07}
+    objet: Participation aux élections législatives (contexte, 2nd tour 2024).
+    inclure: "france-entiere"
+    formats: [csv]
+    taille_max_mo: 1

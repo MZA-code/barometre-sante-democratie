@@ -1,0 +1,69 @@
+# Sources de données référencées dans la table `sources`.
+# Chaque document brut pointe vers l'une d'elles ; la licence est conservée
+# pour pouvoir citer la source de chaque document.
+
+sources:
+  - id: an_opendata
+    name: Open data de l'Assemblée nationale
+    url: https://data.assemblee-nationale.fr
+    licence: Licence Ouverte Etalab 2.0
+
+  - id: dila_legi
+    name: Open data DILA — fonds LEGI
+    url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/
+    licence: Licence Ouverte Etalab 2.0
+
+  - id: dila_jorf
+    name: Open data DILA — fonds JORF
+    url: https://echanges.dila.gouv.fr/OPENDATA/JORF/
+    licence: Licence Ouverte Etalab 2.0
+
+  - id: dila_constit
+    name: Open data DILA — fonds CONSTIT (décisions du Conseil constitutionnel)
+    url: https://echanges.dila.gouv.fr/OPENDATA/CONSTIT/
+    licence: Licence Ouverte Etalab 2.0
+
+  - id: dila_cnil
+    name: Open data DILA — fonds CNIL (délibérations de la CNIL)
+    url: https://echanges.dila.gouv.fr/OPENDATA/CNIL/
+    licence: Licence Ouverte Etalab 2.0
+
+  - id: senat_dosleg
+    name: Open data du Sénat — base des dossiers législatifs (Dosleg)
+    url: https://data.senat.fr/dosleg/
+    licence: Licence de data.senat.fr (reprend la Licence Ouverte)
+
+  - id: justice_admin
+    name: Open data de la justice administrative — décisions du Conseil d'État et des tribunaux administratifs
+    url: https://opendata.justice-administrative.fr/
+    licence: Licence Ouverte Etalab 2.0 (décisions pseudonymisées)
+
+  - id: arcom_temps_parole
+    name: Arcom — relevés mensuels des temps de parole hors période électorale
+    url: https://www.arcom.fr/temps-parole/hors-elections
+    licence: Informations publiques de l'Arcom ; mentions légales du site (réutilisation libre, sans laisser entendre que l'Arcom garantit ou endosse la reproduction)
+
+  - id: gdelt
+    name: GDELT Project — base mondiale des événements et de la couverture médiatique (GDELT 2.0)
+    url: https://www.gdeltproject.org/data.html
+    licence: Données ouvertes du GDELT Project, réutilisation avec citation de la source (conditions d'utilisation à confirmer)
+
+  - id: rsf_classement
+    name: Reporters sans frontières — classement mondial de la liberté de la presse
+    url: https://rsf.org/fr/classement
+    licence: Données publiées par RSF (source externe, citée comme telle)
+
+  - id: cnctr_rapports
+    name: CNCTR — rapports d'activité (PDF)
+    url: https://www.cnctr.fr/rapports-activit%C3%A9
+    licence: Documents administratifs publiés par la CNCTR (informations publiques)
+
+  - id: datagouv
+    name: data.gouv.fr — jeux listés dans config/datagouv.yaml
+    url: https://www.data.gouv.fr
+    licence: Selon le jeu (licence déclarée archivée dans sa fiche ; voir config/datagouv.yaml)
+
+  - id: seed_manuel
+    name: Fichiers de seed construits à la main depuis des listes officielles (data/seed/)
+    url: data/seed/
+    licence: Selon la source officielle citée sur chaque ligne

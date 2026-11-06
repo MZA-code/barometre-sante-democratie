@@ -1,0 +1,2044 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Baromètre de la santé démocratique — prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com/3.4.5"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Source Serif 4"', 'Georgia', 'serif'],
+            sans: ['system-ui', '-apple-system', '"Segoe UI"', 'sans-serif'],
+          },
+          colors: {
+            page: 'var(--page)', surface: 'var(--surface)', ink: 'var(--ink)',
+            ink2: 'var(--ink-2)', muted: 'var(--muted)', rule: 'var(--rule)',
+            accent: 'var(--series-1)', accentsoft: 'var(--accent-soft)',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+      --rule: #e1e0d9; --axis: #c3c2b7; --band: #f1f0ec;
+      --series-1: #2a78d6; --series-1-wash: rgba(42, 120, 214, 0.10); --hist: #b7d3f6;
+      --accent-soft: #e8f0fb;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:where(:not([data-theme="light"])) {
+        color-scheme: dark;
+        --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
+        --rule: #2c2c2a; --axis: #383835; --band: #222220;
+        --series-1: #3987e5; --series-1-wash: rgba(57, 135, 229, 0.14); --hist: #184f95;
+        --accent-soft: #16263b;
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
+      --rule: #2c2c2a; --axis: #383835; --band: #222220;
+      --series-1: #3987e5; --series-1-wash: rgba(57, 135, 229, 0.14); --hist: #184f95;
+      --accent-soft: #16263b;
+    }
+    body { background: var(--page); color: var(--ink); }
+    .tabnum { font-variant-numeric: tabular-nums; }
+    .viz { min-width: 0; }
+    .viz > svg { display: block; max-width: 100%; height: auto; }
+    .viz text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .tooltip {
+      position: absolute; pointer-events: none; z-index: 20; min-width: 12rem; max-width: 20rem;
+      background: var(--surface); color: var(--ink); border: 1px solid var(--rule);
+      border-radius: 6px; padding: .6rem .75rem; font-size: .8125rem; line-height: 1.35;
+      box-shadow: 0 4px 16px rgba(0,0,0,.08); opacity: 0; transition: opacity .1s;
+    }
+    .tooltip.on { opacity: 1; }
+    .tooltip .v { font-weight: 600; }
+    .tooltip .k { display: inline-block; width: 12px; height: 2px; background: var(--series-1);
+      vertical-align: middle; margin-right: 6px; }
+    details > summary { cursor: pointer; list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+    details[open] .chev { transform: rotate(90deg); }
+    a { text-underline-offset: 3px; }
+    main h2[id] { scroll-margin-top: 4.5rem; }
+    @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+    .toc-link { display: block; border-left: 2px solid transparent; padding: .15rem 0 .15rem .75rem; color: var(--ink-2); line-height: 1.3; }
+    #toc-panel .toc-link { padding-top: .4rem; padding-bottom: .4rem; }
+    .toc-link:hover { color: var(--ink); }
+    .toc-link[aria-current] { border-left-color: var(--series-1); color: var(--ink); font-weight: 600; }
+    .toc-group { margin-top: .7rem; padding-left: .75rem; font-size: .6875rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    :focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
+  </style>
+</head>
+<body class="font-sans antialiased">
+
+  <header class="border-b border-rule">
+    <div class="mx-auto max-w-[82rem] px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <i class="fa-solid fa-scale-balanced text-accent" aria-hidden="true"></i>
+        <h1 class="font-serif font-semibold tracking-tight">Baromètre de la santé démocratique</h1>
+      </div>
+      <div class="flex items-center gap-3 text-xs text-ink2">
+        <span class="hidden sm:inline rounded-full border border-rule px-2.5 py-1">Prototype</span>
+        <button id="theme" class="rounded-full border border-rule px-2.5 py-1" type="button"
+                aria-label="Basculer le thème clair / sombre">
+          <i class="fa-solid fa-circle-half-stroke" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div id="toc-bar" class="lg:hidden sticky top-0 z-30 border-b border-rule bg-page">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6">
+      <button id="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-panel"
+              class="w-full py-2.5 flex items-center gap-2 text-sm text-left">
+        <i class="fa-solid fa-list-ul text-muted" aria-hidden="true"></i>
+        <span class="text-ink2">Sommaire</span><span class="text-muted" aria-hidden="true">·</span>
+        <span id="toc-current" class="truncate font-medium"></span>
+        <i class="fa-solid fa-chevron-down ml-auto text-xs text-muted" aria-hidden="true"></i>
+      </button>
+      <nav id="toc-panel" aria-label="Sommaire" hidden class="max-h-[65vh] overflow-y-auto pb-3 text-sm"></nav>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-[82rem] px-4 sm:px-6 lg:grid lg:grid-cols-[14rem,minmax(0,1fr)] lg:gap-10">
+  <nav aria-label="Sommaire" class="hidden lg:block">
+    <div id="toc-side" class="sticky top-0 max-h-screen overflow-y-auto py-6 pr-2 text-sm" style="scrollbar-width: thin"></div>
+  </nav>
+  <main class="min-w-0 max-w-5xl">
+
+    <!-- 0. Vue d'ensemble : chaque indicateur sur sa propre histoire -->
+    <section class="pt-8 sm:pt-10 pb-8 border-b border-rule" aria-labelledby="t-cadran">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Le baromètre aujourd'hui</p>
+      <div class="mt-4 grid gap-6 md:grid-cols-[minmax(0,1fr),minmax(0,1.1fr)] md:items-center">
+        <figure class="relative">
+          <div id="dial" class="viz relative mx-auto max-w-[460px]"></div>
+        </figure>
+        <div>
+          <h2 id="t-indice" class="font-serif text-2xl sm:text-3xl font-semibold leading-snug"></h2>
+          <p id="indice-text" class="mt-3 text-ink2 leading-relaxed"></p>
+          <p class="mt-4 flex gap-2 text-xs text-ink2 leading-relaxed">
+            <i class="fa-solid fa-flask mt-0.5 text-muted" aria-hidden="true"></i>
+            <span><strong class="text-ink">Indice illustratif.</strong> Moyenne simple, chaque indicateur
+            comptant pour autant que les autres. Le comité de méthode n'a encore fixé ni les
+            pondérations ni les seuils&nbsp;: ce chiffre aide à lire l'ensemble, il ne qualifie pas le
+            régime.</span>
+          </p>
+        </div>
+      </div>
+      <h3 id="t-cadran" class="mt-10 font-semibold"></h3>
+      <p id="dial-text" class="mt-1 max-w-3xl text-sm text-ink2 leading-relaxed"></p>
+      <div class="mt-5 hidden sm:grid grid-cols-[17rem,minmax(0,1fr),9rem] gap-x-4 text-xs text-muted" aria-hidden="true">
+        <span></span>
+        <span class="flex justify-between"><span>plus bas de son historique</span><span>plus haut de son historique</span></span>
+        <span class="text-right">position · valeur</span>
+      </div>
+      <ol id="overview" class="mt-2 space-y-1"></ol>
+      <p class="mt-5 flex gap-2 text-xs text-ink2 leading-relaxed max-w-3xl">
+        <i class="fa-solid fa-scale-balanced mt-0.5 text-muted" aria-hidden="true"></i>
+        <span><strong class="text-ink">Ce n'est pas une note.</strong> Chaque repère situe la valeur des
+        douze derniers mois parmi tous les mois observés depuis le début de la série de cet
+        indicateur&nbsp;; pour les 13 indicateurs de la grille, une valeur plus haute correspond à une
+        situation que la grille tient pour plus défavorable (pour le classement RSF, un rang plus
+        élevé). Aucune pondération, aucun seuil&nbsp;: le comité de méthode ne les a pas encore fixés.
+        Les déclarations de l'ONU, la presse étrangère et le temps de parole par parti sont des
+        données de contexte et n'entrent pas ici.</span>
+      </p>
+    </section>
+
+    <!-- 0 bis. Les dimensions suivies -->
+    <section class="py-8 border-b border-rule" aria-labelledby="t-dims">
+      <h2 id="t-dims" class="font-serif text-2xl font-semibold">Indicateurs suivis</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Douze derniers mois, et place de cette valeur parmi tous les mois observés depuis le
+        début de chaque série. Cette position décrit, elle ne note pas&nbsp;: aucun seuil n'est encore fixé.
+      </p>
+      <div id="dims" class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3"></div>
+    </section>
+
+    <!-- 1. L'essentiel -->
+    <section class="pt-10 sm:pt-14 pb-10 border-b border-rule" aria-labelledby="titre">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">
+        Indicateur D2 · Contournement du Parlement
+      </p>
+      <h2 id="titre" class="mt-3 font-serif text-[1.75rem] sm:text-4xl leading-tight font-semibold max-w-3xl"></h2>
+      <p id="sous-titre" class="mt-4 max-w-3xl text-ink2 leading-relaxed"></p>
+
+      <div class="mt-8 grid gap-8 md:grid-cols-[auto,1fr] md:items-end">
+        <div>
+          <div class="text-sm text-ink2">Douze derniers mois</div>
+          <div id="hero" class="text-6xl font-semibold tracking-tight leading-none mt-1"></div>
+          <div id="hero-date" class="mt-2 text-xs text-muted"></div>
+        </div>
+        <figure class="relative">
+          <figcaption class="text-sm text-ink2 mb-2">
+            Où se situe ce chiffre dans l'histoire&nbsp;: répartition des valeurs mensuelles depuis 1959
+          </figcaption>
+          <div id="gauge" class="viz relative"></div>
+          <p id="gauge-note" class="mt-2 text-sm text-ink2"></p>
+        </figure>
+      </div>
+
+      <p class="mt-8 flex gap-2 text-sm text-ink2 max-w-3xl">
+        <i class="fa-solid fa-circle-info mt-0.5 text-muted" aria-hidden="true"></i>
+        <span>Aucun seuil n'a encore été fixé par le comité de méthode&nbsp;: la jauge situe la
+        valeur actuelle parmi celles observées depuis 1959, elle ne la qualifie pas.</span>
+      </p>
+    </section>
+
+    <!-- 2. Évolution -->
+    <section class="py-10 border-b border-rule" aria-labelledby="t-evolution">
+      <h2 id="t-evolution" class="font-serif text-2xl font-semibold">Depuis 1959</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Part des textes adoptés sans vote final ou par ordonnance, calculée chaque jour sur les
+        365 jours précédents. Les bandes grises marquent les législatures.
+      </p>
+      <div id="timeline" class="viz relative mt-6" tabindex="0"
+           aria-label="Courbe de la part des textes adoptés sans vote final, depuis 1959. Utiliser les flèches pour parcourir les mois."></div>
+    </section>
+
+    <!-- 3. Composantes -->
+    <section class="py-10 border-b border-rule" aria-labelledby="t-composantes">
+      <h2 id="t-composantes" class="font-serif text-2xl font-semibold">De quoi est fait le chiffre</h2>
+      <p id="formule" class="mt-3 max-w-3xl text-ink2"></p>
+      <div id="tiles" class="mt-6 grid gap-4 sm:grid-cols-3"></div>
+      <details class="mt-6 rounded-lg border border-rule bg-surface">
+        <summary class="px-4 py-3 text-sm font-medium flex items-center gap-2">
+          <i class="chev fa-solid fa-chevron-right text-xs text-muted transition-transform" aria-hidden="true"></i>
+          <span id="ord-summary"></span>
+        </summary>
+        <ul id="ord-list" class="px-4 pb-4 text-sm divide-y divide-rule"></ul>
+      </details>
+    </section>
+
+    <!-- 4. Législatures -->
+    <section class="py-10 border-b border-rule" aria-labelledby="t-leg">
+      <h2 id="t-leg" class="font-serif text-2xl font-semibold">Législature par législature</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Même calcul, sur toute la durée de chaque législature de la Ve République.
+      </p>
+      <div id="legislatures" class="viz relative mt-6"></div>
+      <details class="mt-4 text-sm">
+        <summary class="text-ink2 flex items-center gap-2">
+          <i class="chev fa-solid fa-chevron-right text-xs text-muted transition-transform" aria-hidden="true"></i>
+          Voir le tableau
+        </summary>
+        <div class="mt-3 overflow-x-auto">
+          <table class="w-full text-left tabnum" id="leg-table"></table>
+        </div>
+      </details>
+    </section>
+
+    <!-- 5. Les 49.3 -->
+    <section class="py-10 border-b border-rule" aria-labelledby="t-493">
+      <h2 id="t-493" class="font-serif text-2xl font-semibold"></h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Chaque point est un engagement de la responsabilité du Gouvernement sur un texte
+        (article 49, alinéa 3). Un même texte peut en faire l'objet à plusieurs lectures.
+        Survoler pour le détail, cliquer pour ouvrir la source.
+      </p>
+      <div id="dots" class="viz relative mt-6"></div>
+      <div class="mt-3 flex flex-wrap gap-5 text-xs text-ink2">
+        <span class="flex items-center gap-2"><svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="4.5" fill="var(--series-1)"/></svg>Texte considéré comme adopté</span>
+        <span class="flex items-center gap-2"><svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="4" fill="var(--surface)" stroke="var(--series-1)" stroke-width="1.5"/></svg>Suivi d'une motion de censure adoptée</span>
+      </div>
+      <details class="mt-4 text-sm">
+        <summary class="text-ink2 flex items-center gap-2">
+          <i class="chev fa-solid fa-chevron-right text-xs text-muted transition-transform" aria-hidden="true"></i>
+          Voir la liste complète
+        </summary>
+        <div class="mt-3 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+          <table class="w-full text-left" id="e-table"></table>
+        </div>
+      </details>
+    </section>
+
+    <!-- 4 bis. D1 Élections : règles modifiées avant un scrutin, scrutins reportés -->
+    <section id="d1" class="py-10 border-b border-rule" aria-labelledby="t-d1">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateurs D1.1 et D1.2 · Élections et alternance</p>
+      <h2 id="t-d1" class="mt-2 font-serif text-2xl font-semibold">Les règles électorales et le calendrier des scrutins</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Lois, lois organiques et ordonnances qui modifient le mode de scrutin, le découpage ou le
+        calendrier d'un scrutin national, placées face aux scrutins du même type. Le calendrier
+        est tiré des décrets de convocation publiés au Journal officiel (complet depuis 1993).
+      </p>
+      <div id="d1-chart" class="viz relative mt-6"></div>
+      <div class="mt-3 flex flex-wrap gap-5 text-xs text-ink2">
+        <span class="flex items-center gap-2"><svg width="12" height="12" aria-hidden="true"><rect x="2" y="2" width="8" height="8" transform="rotate(45 6 6)" fill="var(--ink-2)"/></svg>Scrutin (premier tour)</span>
+        <span class="flex items-center gap-2"><svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="4.5" fill="var(--series-1)"/></svg>Loi publiée moins d'un an avant un scrutin du même type</span>
+        <span class="flex items-center gap-2"><svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="4" fill="var(--surface)" stroke="var(--series-1)" stroke-width="1.5"/></svg>Autre loi électorale</span>
+      </div>
+      <h3 class="mt-8 font-semibold">Scrutins reportés (D1.2)</h3>
+      <p class="mt-1 max-w-3xl text-sm text-ink2">Textes reportant une élection politique ou prorogeant des mandats électifs, tous scrutins confondus. Un report inscrit dans le corps d'une loi au titre plus général est repéré par sa formulation (« … est reporté », mandat « prorogé ») ; une formulation inhabituelle peut échapper au relevé.</p>
+      <div class="mt-3 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+        <table class="w-full text-left text-sm" id="d1-table"></table>
+      </div>
+    </section>
+
+    <!-- 5. D2.2 Procédure accélérée -->
+    <section id="d2-2" class="py-10 border-b border-rule" aria-labelledby="t-d2-2">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D2 · Place du Parlement</p>
+      <h2 id="t-d2-2" class="mt-2 font-serif text-2xl font-semibold">Les lois adoptées en procédure accélérée depuis 1978</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        La procédure accélérée («&nbsp;déclaration d'urgence&nbsp;» avant la révision constitutionnelle
+        de 2008) permet au Gouvernement de limiter l'examen d'un texte à une seule lecture dans
+        chaque assemblée avant la recherche d'un accord entre les deux. Part des lois promulguées
+        qui l'ont suivie, par législature, d'après les dossiers de l'Assemblée et du Sénat. Hors
+        ratifications de traités, lois constitutionnelles et lois de finances, dont le calendrier
+        est fixé par la Constitution.
+      </p>
+      <div id="pa-chart" class="viz relative mt-6"></div>
+      <div class="mt-3 flex flex-wrap gap-5 text-xs text-ink2">
+        <span class="flex items-center gap-2"><svg width="18" height="10" aria-hidden="true"><rect x="1" y="1" width="16" height="8" rx="2" fill="var(--series-1)"/></svg>Part des lois adoptées en procédure accélérée</span>
+        <span class="flex items-center gap-2"><svg width="18" height="10" aria-hidden="true"><rect x="1" y="1" width="16" height="8" rx="2" fill="var(--surface)" stroke="var(--series-1)" stroke-width="1.5"/></svg>Procédure inconnue pour plus de 10 % des lois : proportion moins sûre</span>
+      </div>
+      <p id="pa-couverture" class="mt-4 max-w-3xl text-sm text-ink2"></p>
+      <details class="mt-4 text-sm">
+        <summary class="text-ink2 flex items-center gap-2">
+          <i class="chev fa-solid fa-chevron-right text-xs text-muted transition-transform" aria-hidden="true"></i>
+          Voir les lois des douze derniers mois
+        </summary>
+        <div class="mt-3 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+          <table class="w-full text-left" id="pa-table"></table>
+        </div>
+      </details>
+    </section>
+
+    <!-- 5 bis. Régimes d'exception -->
+    <section id="d3" class="py-10 border-b border-rule" aria-labelledby="t-d3">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D3 · Contre-pouvoirs et État de droit</p>
+      <h2 id="t-d3" class="mt-2 font-serif text-2xl font-semibold">Les régimes d'exception depuis 1958</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        État d'urgence, état d'urgence sanitaire et article 16 de la Constitution. Chaque barre
+        couvre une période, de sa déclaration à sa levée, établie à partir des textes officiels.
+      </p>
+      <div id="periodes" class="viz relative mt-6"></div>
+      <div class="mt-3 flex flex-wrap gap-5 text-xs text-ink2">
+        <span class="flex items-center gap-2"><svg width="18" height="10" aria-hidden="true"><rect x="1" y="1" width="16" height="8" rx="2" fill="var(--series-1)"/></svg>Dates établies par les textes</span>
+        <span class="flex items-center gap-2"><svg width="18" height="10" aria-hidden="true"><rect x="1" y="1" width="16" height="8" rx="2" fill="var(--surface)" stroke="var(--series-1)" stroke-width="1.5"/></svg>Une date au moins reste à vérifier</span>
+      </div>
+      <details class="mt-4 text-sm">
+        <summary class="text-ink2 flex items-center gap-2">
+          <i class="chev fa-solid fa-chevron-right text-xs text-muted transition-transform" aria-hidden="true"></i>
+          Voir les périodes et leurs preuves
+        </summary>
+        <div class="mt-3 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+          <table class="w-full text-left" id="p-table"></table>
+        </div>
+      </details>
+    </section>
+
+    <!-- 5 bis bis. Lois censurées -->
+    <section id="d3-2" class="py-10 border-b border-rule" aria-labelledby="t-d3-2">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D3 · Contre-pouvoirs et État de droit</p>
+      <h2 id="t-d3-2" class="mt-2 font-serif text-2xl font-semibold">Les lois censurées par le Conseil constitutionnel</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Part des lois soumises au Conseil constitutionnel avant leur promulgation qu'il a jugées
+        contraires à la Constitution, en tout ou partie, par législature. Une hausse peut
+        traduire des lois plus contestables comme un contrôle plus exigeant&nbsp;: l'indicateur
+        se lit avec le contexte. Avant la réforme de 1974, qui a ouvert la saisine à soixante
+        députés ou sénateurs, peu de lois étaient déférées.
+      </p>
+      <div id="censures" class="viz relative mt-6"></div>
+      <div class="mt-3 flex flex-wrap gap-5 text-xs text-ink2">
+        <span class="flex items-center gap-2"><svg width="18" height="10" aria-hidden="true"><rect x="1" y="1" width="16" height="8" rx="2" fill="var(--series-1)"/></svg>Part des lois censurées en tout ou partie</span>
+        <span class="flex items-center gap-2"><svg width="18" height="10" aria-hidden="true"><rect x="1" y="1" width="16" height="8" rx="2" fill="var(--surface)" stroke="var(--series-1)" stroke-width="1.5"/></svg>Moins de 10 lois jugées : proportion peu significative</span>
+      </div>
+      <p id="censures-qpc" class="mt-4 max-w-3xl text-sm text-ink2"></p>
+      <details class="mt-4 text-sm">
+        <summary class="text-ink2 flex items-center gap-2">
+          <i class="chev fa-solid fa-chevron-right text-xs text-muted transition-transform" aria-hidden="true"></i>
+          Voir les décisions
+        </summary>
+        <div class="mt-3 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+          <table class="w-full text-left" id="c-table"></table>
+        </div>
+      </details>
+    </section>
+
+    <!-- 5 ter. Interdictions de manifester contestées -->
+    <section id="d4-2" class="py-10 border-b border-rule" aria-labelledby="t-d4-2">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D4 · Libertés publiques</p>
+      <h2 id="t-d4-2" class="mt-2 font-serif text-2xl font-semibold">Les interdictions de manifester contestées devant le juge</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Décisions de la justice administrative portant sur une interdiction de manifester, d'après
+        les décisions publiées en données ouvertes (tribunaux administratifs depuis juin 2022,
+        Conseil d'État depuis juin 2021). On ne voit ici que les interdictions contestées en
+        justice, pas toutes les interdictions&nbsp;; une même interdiction peut donner lieu à
+        plusieurs décisions. Le graphique commence au troisième trimestre 2022, premier trimestre
+        couvert par les deux sources&nbsp;; un mois n'est intégré qu'une fois terminé.
+      </p>
+      <div id="manif-chart" class="viz relative mt-6"></div>
+      <div class="mt-3 flex flex-wrap gap-5 text-xs text-ink2">
+        <span class="flex items-center gap-2"><svg width="18" height="10" aria-hidden="true"><rect x="1" y="1" width="16" height="8" rx="2" fill="var(--series-1)"/></svg>Interdiction suspendue ou annulée par le juge</span>
+        <span class="flex items-center gap-2"><svg width="18" height="10" aria-hidden="true"><rect x="1" y="1" width="16" height="8" rx="2" fill="var(--hist)"/></svg>Recours rejeté</span>
+        <span class="flex items-center gap-2"><svg width="18" height="10" aria-hidden="true"><rect x="1" y="1" width="16" height="8" rx="2" fill="var(--muted)"/></svg>Désistement, non-lieu ou autre issue</span>
+      </div>
+      <p id="manif-resume" class="mt-4 max-w-3xl text-sm text-ink2"></p>
+      <details class="mt-4 text-sm">
+        <summary class="text-ink2 flex items-center gap-2">
+          <i class="chev fa-solid fa-chevron-right text-xs text-muted transition-transform" aria-hidden="true"></i>
+          Voir les décisions
+        </summary>
+        <div class="mt-3 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+          <table class="w-full text-left" id="m-table"></table>
+        </div>
+      </details>
+    </section>
+
+    <!-- 5 ter. Dissolutions -->
+    <section id="d4" class="py-10 border-b border-rule" aria-labelledby="t-d4">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D4 · Libertés publiques</p>
+      <h2 id="t-d4" class="mt-2 font-serif text-2xl font-semibold">Les dissolutions administratives depuis 1990</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Décrets dissolvant une association ou un groupement de fait pour un motif d'ordre public
+        (code de la sécurité intérieure, code du sport, loi de 1936). Avant 1990, le Journal
+        officiel archivé ne permet pas de les repérer de façon fiable.
+      </p>
+      <div id="dissolutions" class="viz relative mt-6"></div>
+      <details class="mt-4 text-sm">
+        <summary class="text-ink2 flex items-center gap-2">
+          <i class="chev fa-solid fa-chevron-right text-xs text-muted transition-transform" aria-hidden="true"></i>
+          Voir les décrets
+        </summary>
+        <div class="mt-3 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+          <table class="w-full text-left" id="d-table"></table>
+        </div>
+      </details>
+    </section>
+
+    <!-- Regards extérieurs : déclarations de l'ONU -->
+    <section id="onu" class="py-10 border-b border-rule" aria-labelledby="t-onu">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Regards extérieurs · non noté</p>
+      <h2 id="t-onu" class="mt-2 font-serif text-2xl font-semibold">Ce que disent les organes de l'ONU</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Déclarations publiques d'organes des Nations unies visant la France&nbsp;: experts
+        indépendants du Conseil des droits de l'homme, Haut-Commissariat, comités des traités.
+        Chaque extrait est cité mot pour mot depuis la page officielle, dans sa version française
+        quand elle existe, sinon en anglais&nbsp;; aucune qualification n'est ajoutée.
+        Relevé pilote, non exhaustif&nbsp;; les réponses de la France ne sont pas encore relevées.
+      </p>
+      <div class="mt-5 flex flex-wrap gap-2 text-xs" id="onu-filtres" role="group" aria-label="Filtrer par thème"></div>
+      <ol id="onu-liste" class="mt-5 space-y-4"></ol>
+    </section>
+
+    <!-- Regards extérieurs : presse étrangère (GDELT) -->
+    <section id="presse" class="py-10 border-b border-rule" aria-labelledby="t-presse">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Regards extérieurs · non noté</p>
+      <h2 id="t-presse" class="mt-2 font-serif text-2xl font-semibold">La France dans la presse étrangère</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Articles publiés par des sites d'information étrangers sur des événements situés en France,
+        d'après la base ouverte GDELT, qui recense la presse en ligne mondiale et code
+        automatiquement les événements dont elle parle. Seuls l'adresse et le site de chaque article
+        sont relevés&nbsp;; aucun texte n'est archivé. Les thèmes «&nbsp;manifestations&nbsp;» et
+        «&nbsp;usage de la force par la police&nbsp;» sont ceux du codage automatique de GDELT&nbsp;: ils
+        décrivent comment la base a classé les événements, pas un jugement sur ces événements.
+      </p>
+      <div class="mt-5 text-sm">
+        <label class="flex min-w-0 max-w-full flex-col gap-1 sm:w-80"><span class="text-ink2">Mois</span>
+          <select id="presse-mois" class="w-full rounded border border-rule bg-surface px-2 py-1.5"></select></label>
+      </div>
+      <div id="presse-chiffres" class="mt-5 grid gap-4 sm:grid-cols-3"></div>
+      <p id="presse-note" class="mt-3 max-w-3xl text-sm text-ink2"></p>
+      <div id="presse-chart" class="viz relative mt-6"></div>
+      <div class="mt-6 grid gap-8 md:grid-cols-2">
+        <div>
+          <h3 class="font-semibold">Pays des sites étrangers</h3>
+          <ol id="presse-pays" class="mt-3 space-y-2"></ol>
+        </div>
+        <div>
+          <h3 class="font-semibold">Articles récents codés «&nbsp;manifestations&nbsp;»</h3>
+          <p class="mt-1 text-xs text-ink2">Les 30 plus récents du mois, par date de publication&nbsp;; titre non relevé.</p>
+          <ul id="presse-exemples" class="mt-3 space-y-1.5 text-sm max-h-80 overflow-y-auto"></ul>
+        </div>
+      </div>
+      <p class="mt-6 flex gap-2 text-sm text-ink2 max-w-3xl">
+        <i class="fa-solid fa-circle-info mt-0.5 text-muted" aria-hidden="true"></i>
+        <span>Limites&nbsp;: GDELT couvre surtout la presse anglophone (États-Unis, Royaume-Uni)&nbsp;; un
+        même article d'agence repris par plusieurs sites compte une fois par site, d'où le nombre de
+        sites distincts donné à côté&nbsp;; le pays d'un site vient d'une table GDELT de 2018 (noms traduits en français), les sites
+        absents de cette table sont écartés et comptés à part. L'historique est reconstitué
+        progressivement depuis janvier 2025.</span>
+      </p>
+    </section>
+
+    <!-- 5 sexies. D5.1 Temps de parole de l'exécutif -->
+    <section id="d5-1" class="py-10 border-b border-rule" aria-labelledby="t-d5-1">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D5 · Pluralisme et information</p>
+      <h2 id="t-d5-1" class="mt-2 font-serif text-2xl font-semibold">Le temps de parole de l'exécutif à la télévision et à la radio</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Part du Gouvernement et du Président de la République (pour ses propos relevant du débat
+        politique national, selon les règles de l'Arcom) dans le temps de parole politique total,
+        mois par mois, hors période électorale. Relevés publiés par l'Arcom depuis janvier 2025,
+        environ trois mois après la diffusion.
+      </p>
+      <div id="tp-chart" class="viz relative mt-6"></div>
+      <p id="tp-resume" class="mt-4 max-w-3xl text-sm text-ink2"></p>
+    </section>
+
+    <!-- 5 sexies bis. Contexte de D5.1 : temps de parole par parti -->
+    <section id="partis" class="py-10 border-b border-rule" aria-labelledby="t-partis">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Contexte de D5.1 · non noté</p>
+      <h2 id="t-partis" class="mt-2 font-serif text-2xl font-semibold">Le temps de parole des partis politiques à la télévision et à la radio</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Temps de parole cumulé de chaque parti, tel que relevé et publié chaque mois par l'Arcom,
+        hors période électorale. Les libellés et les rattachements sont ceux de l'Arcom
+        (« Divers Droite », « Divers Gauche », « Divers », « Sans étiquette » sont des catégories de l'Arcom). Le temps
+        du Président de la République et du Gouvernement est décompté à part&nbsp;: voir l'indicateur
+        D5.1 ci-dessus.
+      </p>
+      <div class="mt-6 flex flex-wrap gap-x-6 gap-y-3 text-sm">
+        <label class="flex min-w-0 max-w-full flex-col gap-1"><span class="text-ink2">Période</span>
+          <select id="partis-periode" class="w-full max-w-full rounded border border-rule bg-surface px-2 py-1.5"></select></label>
+        <label class="flex min-w-0 max-w-full flex-col gap-1"><span class="text-ink2">Médias</span>
+          <select id="partis-media" class="w-full max-w-full rounded border border-rule bg-surface px-2 py-1.5"></select></label>
+      </div>
+      <p id="partis-resume" class="mt-5 max-w-3xl text-sm text-ink2" aria-live="polite"></p>
+      <ol id="partis-chart" class="mt-4 space-y-2.5"></ol>
+      <p class="mt-5 flex gap-2 text-sm text-ink2 max-w-3xl">
+        <i class="fa-solid fa-circle-info mt-0.5 text-muted" aria-hidden="true"></i>
+        <span>Cette répartition est donnée telle quelle&nbsp;: elle n'est comparée à aucun critère de
+        représentativité (résultats électoraux, groupes parlementaires) et n'entre dans aucune note.
+        Contrôle&nbsp;: pour chaque mois et chaque colonne du relevé, la somme des partis est égale
+        au total publié par l'Arcom, à la seconde près.</span>
+      </p>
+      <details class="mt-4">
+        <summary class="text-sm text-ink2 flex items-center gap-2"><i class="fa-solid fa-chevron-right chev text-xs transition-transform" aria-hidden="true"></i>Voir les relevés mensuels de l'Arcom</summary>
+        <ul id="partis-sources" class="mt-3 grid gap-1 text-sm sm:grid-cols-3"></ul>
+      </details>
+    </section>
+
+    <!-- 5 octies. D5.2 Journalistes inquiétés -->
+    <section id="d5-2" class="py-10 border-b border-rule" aria-labelledby="t-d5-2">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D5 · Pluralisme et information</p>
+      <h2 id="t-d5-2" class="mt-2 font-serif text-2xl font-semibold">Les journalistes inquiétés dans l'exercice de leur métier</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Gardes à vue, interpellations, poursuites et condamnations de journalistes documentées par
+        Reporters sans frontières, les syndicats de journalistes et la presse, chaque cas vérifié
+        dans sa source. <strong class="font-semibold">Relevé pilote 2023-2025, non exhaustif</strong>&nbsp;:
+        il ne contient que les cas rendus publics et retrouvés. Les convocations et auditions sont
+        indiquées à part ; les noms des journalistes ne sont pas relevés.
+      </p>
+      <div class="mt-4 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+        <table class="w-full text-left text-sm" id="j-table"></table>
+      </div>
+    </section>
+
+    <!-- 5 septies. D5.3 RSF et D6.1 CNCTR : séries annuelles -->
+    <section id="annuels" class="py-10 border-b border-rule" aria-labelledby="t-annuels">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateurs D5.3 et D6.1 · séries annuelles</p>
+      <h2 id="t-annuels" class="mt-2 font-serif text-2xl font-semibold">Liberté de la presse et surveillance, année par année</h2>
+      <div class="mt-6 grid gap-8 md:grid-cols-2">
+        <div id="d5-3">
+          <h3 class="font-semibold">Rang de la France au classement RSF</h3>
+          <p class="mt-1 text-sm text-ink2">Classement mondial de la liberté de la presse de Reporters sans frontières (1 = meilleur). Le nombre de pays classés varie de 139 à 180 ; la méthodologie a changé en 2013 et en 2022.</p>
+          <div id="rsf-chart" class="viz relative mt-4"></div>
+        </div>
+        <div id="d6-1">
+          <h3 class="font-semibold">Personnes surveillées par des techniques de renseignement</h3>
+          <p class="mt-1 text-sm text-ink2">Personnes ayant fait l'objet d'au moins une technique de renseignement dans l'année, selon les rapports de la CNCTR. Chaque chiffre est vérifié dans le rapport archivé.</p>
+          <div id="cnctr-chart" class="viz relative mt-4"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 quinquies. D6.2 Fichiers créés malgré les réserves de la CNIL -->
+    <section id="d6-2" class="py-10 border-b border-rule" aria-labelledby="t-d6-2">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D6 · Surveillance et données</p>
+      <h2 id="t-d6-2" class="mt-2 font-serif text-2xl font-semibold">Les fichiers créés malgré les réserves de la CNIL</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Décrets créant ou modifiant un traitement de données, publiés après un avis de la CNIL sur
+        leur projet. Sont distingués ceux dont l'avis contenait des réserves formelles (avis
+        défavorable, avis favorable sous réserves, réserves exprimées). Depuis 2018, la CNIL
+        qualifie rarement ses avis&nbsp;: une baisse peut traduire un changement de rédaction
+        plutôt que moins de réserves.
+      </p>
+      <div id="cnil-chart" class="viz relative mt-6"></div>
+      <div class="mt-3 flex flex-wrap gap-5 text-xs text-ink2">
+        <span class="flex items-center gap-2"><svg width="18" height="10" aria-hidden="true"><rect x="1" y="1" width="16" height="8" rx="2" fill="var(--series-1)"/></svg>Publié après un avis avec réserves</span>
+        <span class="flex items-center gap-2"><svg width="18" height="10" aria-hidden="true"><rect x="1" y="1" width="16" height="8" rx="2" fill="var(--hist)"/></svg>Publié après un avis sans réserve formelle</span>
+      </div>
+      <p id="cnil-resume" class="mt-4 max-w-3xl text-sm text-ink2"></p>
+      <details class="mt-4 text-sm">
+        <summary class="text-ink2 flex items-center gap-2">
+          <i class="chev fa-solid fa-chevron-right text-xs text-muted transition-transform" aria-hidden="true"></i>
+          Voir les décrets publiés malgré des réserves
+        </summary>
+        <div class="mt-3 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+          <table class="w-full text-left" id="cnil-table"></table>
+        </div>
+      </details>
+    </section>
+
+    <!-- 5 quater. Contexte : journées de mobilisation -->
+    <section id="mobilisations" class="py-10 border-b border-rule" aria-labelledby="t-mobil">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Contexte · non noté</p>
+      <h2 id="t-mobil" class="mt-2 font-serif text-2xl font-semibold">Les journées de mobilisation nationale</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Nombre de manifestants en France lors de chaque journée nationale, selon le ministère de
+        l'Intérieur et selon les organisateurs, affichés côte à côte&nbsp;: les deux décomptes
+        reposent sur des méthodes différentes et aucun n'est retenu comme vrai. Chiffres relevés
+        à la main dans la presse, chacun avec sa source. <span id="mobil-mouvements"></span>
+      </p>
+      <div id="mobil-chart" class="viz relative mt-6"></div>
+      <div class="mt-3 flex flex-wrap gap-5 text-xs text-ink2">
+        <span class="flex items-center gap-2"><svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="4.5" fill="var(--series-1)"/></svg>Ministère de l'Intérieur</span>
+        <span class="flex items-center gap-2"><svg width="12" height="12" aria-hidden="true"><circle cx="6" cy="6" r="4" fill="var(--surface)" stroke="var(--series-1)" stroke-width="1.5"/></svg>Organisateurs (CGT, intersyndicale ou autre syndicat, selon la journée)</span>
+        <span class="flex items-center gap-2"><svg width="14" height="12" aria-hidden="true"><text x="2" y="10" font-size="11" fill="var(--ink-2)">?</text></svg>Chiffre non retrouvé dans sa source, à vérifier</span>
+      </div>
+      <p id="mobil-resume" class="mt-4 max-w-3xl text-sm text-ink2"></p>
+    </section>
+
+    <!-- 5 quater. Contexte : participation -->
+    <section id="contexte" class="py-10 border-b border-rule" aria-labelledby="t-participation">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Contexte · non noté</p>
+      <h2 id="t-participation" class="mt-2 font-serif text-2xl font-semibold">La participation aux élections législatives</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Part des inscrits qui ont voté, France entière, d'après les résultats officiels du ministère
+        de l'Intérieur. Donnée de contexte : elle n'entre dans aucun calcul du baromètre. Au second
+        tour, seules votent les circonscriptions où un second tour a lieu&nbsp;: le premier tour sert de référence.
+      </p>
+      <div id="participation" class="mt-6 grid gap-4 sm:grid-cols-3"></div>
+    </section>
+
+    <!-- 6. Méthode -->
+    <section class="py-10" aria-labelledby="t-methode">
+      <h2 id="t-methode" class="font-serif text-2xl font-semibold">Méthode et limites</h2>
+      <div class="mt-4 grid gap-8 md:grid-cols-2 text-sm leading-relaxed text-ink2">
+        <div class="space-y-3">
+          <h3 class="font-semibold text-ink">Ce qui est mesuré</h3>
+          <p>La part des textes adoptés <strong class="text-ink">sans vote final du Parlement</strong>
+            (article 49.3, quand aucune motion de censure n'a été adoptée) ou <strong class="text-ink">par
+            délégation au Gouvernement</strong> (ordonnances prises sur habilitation, article 38).</p>
+          <p>Le baromètre note des actes, jamais des partis ni des personnes. Chaque chiffre renvoie aux
+            documents officiels qui le justifient.</p>
+          <p id="grille"></p>
+        </div>
+        <div class="space-y-3">
+          <h3 class="font-semibold text-ink">Ce que ce chiffre ne dit pas</h3>
+          <ul class="space-y-2 list-disc pl-5">
+            <li>Il compte des textes, pas leur importance&nbsp;: une loi de finances et une loi technique pèsent autant.</li>
+            <li>Les lois autorisant la ratification de traités sont exclues&nbsp;; elles sont repérées par leur titre.</li>
+            <li>Avant 1990, les visas de certaines ordonnances sont absents des données&nbsp;: leur fondement reste inconnu et elles ne sont pas comptées, ce qui peut sous-estimer ces périodes.</li>
+            <li>Les engagements antérieurs à 2012 proviennent d'une transcription de la liste officielle de l'Assemblée, en cours de vérification.</li>
+          </ul>
+        </div>
+      </div>
+      <h3 class="mt-8 font-semibold text-sm">Sources</h3>
+      <ul id="sources" class="mt-2 text-sm text-ink2 space-y-1"></ul>
+    </section>
+  </main>
+  </div>
+
+  <footer class="border-t border-rule">
+    <div id="footer" class="mx-auto max-w-[82rem] px-4 sm:px-6 py-6 text-xs text-muted lg:pl-[calc(14rem+2.5rem+1.5rem)]"></div>
+  </footer>
+
+  <div id="tip" class="tooltip" role="status" aria-live="polite"></div>
+
+  <script src="data.js"></script>
+  <script>
+  (() => {
+    const D = window.BAROMETRE;
+    const NS = 'http://www.w3.org/2000/svg';
+    const pct = (v, d = 0) => new Intl.NumberFormat('fr-FR', { style: 'percent', maximumFractionDigits: d, minimumFractionDigits: d }).format(v);
+    const num = v => new Intl.NumberFormat('fr-FR').format(v);
+    const dateLong = s => new Date(s + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const monthLong = s => new Date(s + 'T12:00:00').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+    const roman = n => [['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((acc, [r, v]) => { while (n >= v) { acc += r; n -= v; } return acc; }, '');
+    const ordinalLeg = n => n === 1 ? 'Iʳᵉ' : roman(n) + 'ᵉ';
+    const el = (tag, attrs = {}, parent) => {
+      const node = document.createElementNS(NS, tag);
+      for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+      if (parent) parent.appendChild(node);
+      return node;
+    };
+    const text = (parent, x, y, str, attrs = {}) => {
+      const t = el('text', { x, y, 'font-size': 11, fill: 'var(--muted)', ...attrs }, parent);
+      t.textContent = str;
+      return t;
+    };
+    const ordinal = v => v === 1 ? '1er' : `${v}e`;
+    const svgIn = (container, width, height, label) => {
+      container.querySelector('svg')?.remove();
+      const svg = el('svg', { viewBox: `0 0 ${width} ${height}`, width, height, role: 'img', 'aria-label': label });
+      container.prepend(svg);
+      return svg;
+    };
+
+    // ---- Tooltip -----------------------------------------------------------
+    const tip = document.getElementById('tip');
+    function showTip(rows, pageX, pageY) {
+      tip.replaceChildren();
+      for (const row of rows) {
+        const line = document.createElement('div');
+        if (row.key) { const k = document.createElement('span'); k.className = 'k'; line.appendChild(k); }
+        if (row.value !== undefined) {
+          const v = document.createElement('span'); v.className = 'v'; v.textContent = row.value; line.appendChild(v);
+          if (row.label) line.appendChild(document.createTextNode(' ' + row.label));
+        } else {
+          line.textContent = row.label;
+          if (row.muted) line.style.color = 'var(--ink-2)';
+          if (row.strong) line.style.fontWeight = '600';
+        }
+        tip.appendChild(line);
+      }
+      tip.classList.add('on');
+      const w = tip.offsetWidth, h = tip.offsetHeight;
+      let x = pageX + 14, y = pageY - h - 10;
+      if (x + w > window.scrollX + document.documentElement.clientWidth - 8) x = pageX - w - 14;
+      if (y < window.scrollY + 8) y = pageY + 16;
+      tip.style.left = x + 'px'; tip.style.top = y + 'px';
+    }
+    const hideTip = () => tip.classList.remove('on');
+
+    // ---- Textes de tête ------------------------------------------------------
+    const cur = D.actuel, H = D.historique;
+    const ratio = cur.ratio_contournement;
+    document.getElementById('titre').textContent =
+      `Sur les douze derniers mois, ${pct(ratio)} des textes ont été adoptés sans vote final du Parlement ou par ordonnance.`;
+    document.getElementById('sous-titre').textContent =
+      `Entre le ${dateLong(D.debut_fenetre)} et le ${dateLong(D.fin_donnees)} : ` +
+      `${num(cur.nb_textes_adoptes_49_3)} texte${cur.nb_textes_adoptes_49_3 > 1 ? 's' : ''} adopté${cur.nb_textes_adoptes_49_3 > 1 ? 's' : ''} par l'article 49.3 ` +
+      `et ${num(cur.nb_ordonnances_art38)} ordonnances prises sur habilitation, ` +
+      `rapportés aux ${num(cur.nb_lois_hors_conventions)} lois votées (hors traités) et à ces ordonnances.`;
+    document.getElementById('hero').textContent = pct(ratio);
+    document.getElementById('hero-date').textContent = `Au ${dateLong(D.fin_donnees)}`;
+
+    // ---- Vue d'ensemble : chaque indicateur situé dans sa propre histoire ---------
+    const SERIE_COURTE = 36;  // mois : en deçà, la position historique pèse peu
+    const TIERS_HAUT = 2 / 3;
+    // Position dans l'historique : part des mois plus bas, plus la moitié des mois égaux (rang moyen).
+    // Sans cette correction, un indicateur sans aucun cas (valeur nulle, comme la plupart des mois)
+    // serait classé au plus bas jamais observé alors qu'il est à son niveau habituel.
+    const position = d => d.mensuel.filter(m => m.v < d.actuel).length / d.mensuel.length + 0.5 * d.mensuel.filter(m => m.v === d.actuel).length / d.mensuel.length;
+    function drawIndice(rows) {
+      const v = rows.reduce((a, d) => a + position(d), 0) / rows.length, score = Math.round(v * 100);
+      const box = document.getElementById('dial');
+      const W = Math.max(260, Math.min(460, box.clientWidth)), Hh = Math.round(W * 0.68);
+      const cx = W / 2, cy = Hh - 44, R = W * 0.4, thick = Math.max(16, W * 0.06);
+      const pt = (t, r) => { const a = Math.PI * (1 - t); return [cx + r * Math.cos(a), cy - r * Math.sin(a)]; };
+      const arc = (t0, t1, r) => { const [x0, y0] = pt(t0, r), [x1, y1] = pt(t1, r); return `M${x0},${y0} A${r},${r} 0 0 1 ${x1},${y1}`; };  // demi-cercle : jamais de grand arc
+      const svg = svgIn(box, W, Hh, `Indice illustratif : ${score} sur 100`);
+      el('path', { d: arc(0, 1, R), fill: 'none', stroke: 'var(--band)', 'stroke-width': thick }, svg);
+      el('path', { d: arc(0, Math.max(0.002, v), R), fill: 'none', stroke: 'var(--series-1)', 'stroke-width': thick }, svg);
+      const [m1x, m1y] = pt(0.5, R - thick / 2 - 4), [m2x, m2y] = pt(0.5, R + thick / 2 + 4);
+      el('line', { x1: m1x, y1: m1y, x2: m2x, y2: m2y, stroke: 'var(--ink-2)', 'stroke-width': 1.5 }, svg);
+      const [lx, ly] = pt(0.5, R + thick / 2 + 24);
+      text(svg, lx, ly, 'habituel (50)', { 'text-anchor': 'middle', 'font-size': 11 });
+      const [ax, ay] = pt(0, R), [bx, by] = pt(1, R);
+      text(svg, ax, ay + 20, '0', { 'text-anchor': 'middle' });
+      text(svg, bx, by + 20, '100', { 'text-anchor': 'middle' });
+      text(svg, ax, ay + 34, 'plus bas', { 'text-anchor': 'middle', 'font-size': 10 });
+      text(svg, bx, by + 34, 'plus haut', { 'text-anchor': 'middle', 'font-size': 10 });
+      const [n1x, n1y] = pt(v, R - thick / 2 - 10), [n2x, n2y] = pt(v, R + thick / 2 + 4);
+      el('line', { x1: n1x, y1: n1y, x2: n2x, y2: n2y, stroke: 'var(--ink)', 'stroke-width': 3, 'stroke-linecap': 'round' }, svg);
+      text(svg, cx, cy - 14, String(score), { 'text-anchor': 'middle', fill: 'var(--ink)', 'font-size': Math.round(W * 0.16), 'font-weight': 600 });
+      text(svg, cx, cy + 8, 'sur 100', { 'text-anchor': 'middle' });
+      const ecart = score - 50;
+      document.getElementById('t-indice').textContent = Math.abs(ecart) <= 5
+        ? `${score} sur 100 : dans l'ensemble, une situation proche de l'habitude`
+        : ecart > 0 ? `${score} sur 100 : dans l'ensemble, plus haut que d'habitude` : `${score} sur 100 : dans l'ensemble, plus bas que d'habitude`;
+      document.getElementById('indice-text').textContent =
+        `Pour chacun des ${rows.length} indicateurs, on regarde où se situent les douze derniers mois par rapport à toute son histoire : ` +
+        `0 si c'est le niveau le plus bas jamais observé, 100 si c'est le plus haut, 50 si c'est un niveau habituel (une valeur partagée par beaucoup de mois, zéro compris, est placée au milieu de ces mois). ` +
+        `L'indice est la moyenne de ces ${rows.length} positions. Un niveau plus haut correspond à ce que la grille tient pour plus défavorable ` +
+        `(plus de recours au 49.3, de dissolutions, de surveillance, un moins bon rang RSF…). Au ${dateLong(D.fin_donnees)}.`;
+    }
+    function drawDial() {
+      const host = document.getElementById('overview');
+      drawIndice(D.dimensions);
+      const rows = [...D.dimensions].sort((a, b) => position(b) - position(a) || (CODE[a.id] || a.code).localeCompare(CODE[b.id] || b.code));
+      const haut = rows.filter(d => position(d) >= TIERS_HAUT).length;
+      const bas = rows.filter(d => position(d) < 1 / 3).length;
+      document.getElementById('t-cadran').textContent =
+        `Détail : ${haut} indicateur${haut > 1 ? 's' : ''} sur ${rows.length} dans le tiers le plus haut de ${haut > 1 ? 'leur' : 'son'} propre historique`;
+      document.getElementById('dial-text').textContent =
+        `Position de la valeur des douze derniers mois parmi tous les mois observés depuis le début de chaque série ; ` +
+        `${bas} indicateur${bas > 1 ? 's sont' : ' est'} dans le tiers le plus bas.`;
+      host.replaceChildren();
+      for (const d of rows) {
+        const p = position(d), courte = d.mensuel.length < SERIE_COURTE;
+        const li = document.createElement('li');
+        const a = document.createElement('a'); a.href = ANCHOR[d.id];
+        a.className = 'grid grid-cols-[minmax(0,1fr),auto] sm:grid-cols-[17rem,minmax(0,1fr),9rem] items-center gap-x-4 gap-y-1 rounded px-1 py-1.5 hover:bg-[var(--band)]';
+        a.setAttribute('aria-label', `${CODE[d.id] || d.code}, ${d.label} : valeur actuelle ${UNIT[d.metrique](d.actuel)}, position ${Math.round(p * 100)} sur 100 dans son historique${courte ? ', série courte' : ''}`);
+        const lab = document.createElement('span'); lab.className = 'text-sm truncate';
+        lab.innerHTML = '<span class="font-semibold text-ink2"></span> <span></span>';
+        lab.children[0].textContent = CODE[d.id] || d.code; lab.children[1].textContent = d.label;
+        const val = document.createElement('span'); val.className = 'text-sm tabular-nums text-right sm:order-3';
+        val.textContent = `${Math.round(p * 100)}${courte ? '*' : ''}`;
+        const sub = document.createElement('span'); sub.className = 'block text-xs text-muted'; sub.textContent = UNIT[d.metrique](d.actuel);
+        val.appendChild(sub);
+        const track = document.createElement('span'); track.className = 'relative col-span-2 sm:col-span-1 sm:order-2 block h-3';
+        track.innerHTML = '<span class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-1.5 rounded-full" style="background:var(--band)"></span>' +
+          '<span class="absolute top-1/2 -translate-y-1/2 h-1.5 rounded-r-full" style="background:var(--hist);left:66.67%;right:0"></span>' +
+          '<span class="absolute top-0 h-3 w-3 -ml-1.5 rounded-full border-2" style="border-color:var(--surface)"></span>';
+        const dot = track.lastChild; dot.style.left = `${p * 100}%`; dot.style.background = courte ? 'var(--muted)' : 'var(--series-1)';
+        a.append(lab, val, track); li.appendChild(a); host.appendChild(li);
+      }
+      const n = rows.filter(d => d.mensuel.length < SERIE_COURTE);
+      if (n.length) {
+        const li = document.createElement('li'); li.className = 'pt-2 text-xs text-ink2';
+        li.textContent = `* Série de moins de ${SERIE_COURTE} mois (${n.map(d => CODE[d.id] || d.code).join(', ')}) : position peu significative, repère en gris. La bande bleue marque le tiers le plus haut de chaque historique.`;
+        host.appendChild(li);
+      }
+    }
+
+    // ---- Jauge historique ------------------------------------------------------
+    function drawGauge() {
+      const box = document.getElementById('gauge');
+      const W = Math.max(280, box.clientWidth), Hh = 132;
+      const m = { l: 8, r: 8, t: 30, b: 22 };
+      const xmax = Math.ceil(H.max * 10) / 10;
+      const x = v => m.l + (v / xmax) * (W - m.l - m.r);
+      const svg = svgIn(box, W, Hh, `Répartition des valeurs mensuelles depuis 1959 ; valeur actuelle ${pct(ratio)}, médiane ${pct(H.mediane_mensuelle)}.`);
+      const step = 0.025, bins = Math.round(xmax / step);
+      const counts = new Array(bins).fill(0);
+      for (const r of D.mensuel) if (r.ratio_contournement != null)
+        counts[Math.min(bins - 1, Math.floor(r.ratio_contournement / step))]++;
+      const cmax = Math.max(...counts), base = Hh - m.b, top = m.t;
+      for (let i = 0; i < bins; i++) {
+        if (!counts[i]) continue;
+        const h = (counts[i] / cmax) * (base - top);
+        const x0 = x(i * step) + 1, w = Math.max(1, x((i + 1) * step) - x(i * step) - 2);
+        const r = Math.min(3, w / 2, h);
+        el('path', { d: `M${x0},${base} V${base - h + r} Q${x0},${base - h} ${x0 + r},${base - h} H${x0 + w - r} Q${x0 + w},${base - h} ${x0 + w},${base - h + r} V${base} Z`, fill: 'var(--hist)' }, svg);
+      }
+      el('line', { x1: m.l, x2: W - m.r, y1: base, y2: base, stroke: 'var(--axis)' }, svg);
+      for (let v = 0; v <= xmax + 1e-9; v += 0.2) {
+        const anchor = v === 0 ? 'start' : Math.abs(v - xmax) < 1e-9 ? 'end' : 'middle';
+        text(svg, x(v), Hh - 6, pct(v), { 'text-anchor': anchor });
+      }
+      // médiane
+      const xm = x(H.mediane_mensuelle);
+      el('line', { x1: xm, x2: xm, y1: top - 4, y2: base, stroke: 'var(--ink-2)', 'stroke-width': 1 }, svg);
+      text(svg, xm, top - 8, `médiane ${pct(H.mediane_mensuelle)}`, { 'text-anchor': 'middle', fill: 'var(--ink-2)' });
+      // valeur actuelle
+      const xc = x(ratio);
+      el('line', { x1: xc, x2: xc, y1: 8, y2: base, stroke: 'var(--series-1)', 'stroke-width': 2 }, svg);
+      el('circle', { cx: xc, cy: base, r: 6, fill: 'var(--series-1)', stroke: 'var(--surface)', 'stroke-width': 2 }, svg);
+      const lab = text(svg, xc + 6, 14, `aujourd'hui ${pct(ratio)}`, { fill: 'var(--ink)', 'font-weight': 600, 'font-size': 12 });
+      if (xc + 6 + lab.getComputedTextLength() > W - m.r) { lab.setAttribute('x', xc - 6); lab.setAttribute('text-anchor', 'end'); }
+      if (Math.abs(xc - xm) < 70) lab.setAttribute('y', 14); // la médiane est sous l'étiquette courante
+      // maximum
+      const xx = x(H.max);
+      text(svg, xx, base - 6, `max. ${pct(H.max)}`, { 'text-anchor': 'end' });
+      document.getElementById('gauge-note').textContent =
+        `Le niveau actuel est supérieur à celui de ${pct(H.part_mois_inferieurs)} des ${num(H.nb_mois)} mois observés depuis 1959. ` +
+        `Le plus haut a été atteint en ${monthLong(H.date_max)} (${pct(H.max)}).`;
+    }
+
+    // ---- Courbe depuis 1959 ------------------------------------------------------
+    const series = D.mensuel.map(r => ({ ...r, t: new Date(r.date + 'T12:00:00').getTime() }));
+    let tlState = null;
+    function drawTimeline() {
+      const box = document.getElementById('timeline');
+      const W = Math.max(300, box.clientWidth), Hh = W < 560 ? 260 : 340;
+      const m = { l: 40, r: 44, t: 26, b: 28 };
+      const t0 = new Date('1958-12-09T12:00:00').getTime(), t1 = series[series.length - 1].t;
+      const ymax = Math.ceil(H.max * 10) / 10;
+      const x = t => m.l + ((t - t0) / (t1 - t0)) * (W - m.l - m.r);
+      const y = v => m.t + (1 - v / ymax) * (Hh - m.t - m.b);
+      const svg = svgIn(box, W, Hh, 'Évolution mensuelle depuis 1959');
+      // bandes de législatures
+      D.legislatures.forEach((leg, i) => {
+        const a = new Date(leg.debut + 'T12:00:00').getTime();
+        const b = i + 1 < D.legislatures.length ? new Date(D.legislatures[i + 1].debut + 'T12:00:00').getTime() : t1;
+        if (i % 2 === 0) el('rect', { x: x(Math.max(a, t0)), y: m.t, width: x(b) - x(Math.max(a, t0)), height: Hh - m.t - m.b, fill: 'var(--band)' }, svg);
+        if (x(b) - x(Math.max(a, t0)) > 18) text(svg, (x(Math.max(a, t0)) + x(b)) / 2, m.t - 8, roman(leg.numero), { 'text-anchor': 'middle', 'font-size': 10 });
+      });
+      for (let v = 0; v <= ymax + 1e-9; v += 0.2) {
+        el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: v === 0 ? 'var(--axis)' : 'var(--rule)' }, svg);
+        text(svg, m.l - 6, y(v) + 4, pct(v), { 'text-anchor': 'end' });
+      }
+      const yearStep = W < 560 ? 20 : 10;
+      for (let yr = 1960; yr <= 2020; yr += yearStep) {
+        const tx = x(new Date(`${yr}-01-01T12:00:00`).getTime());
+        text(svg, tx, Hh - 8, yr, { 'text-anchor': 'middle' });
+      }
+      // aire et courbe (coupée là où le ratio n'est pas calculé)
+      let line = '', area = '', open = false, first = null, last = null;
+      for (const p of series) {
+        if (p.ratio_contournement == null) { if (open) { area += `L${x(last.t)},${y(0)}L${x(first.t)},${y(0)}Z`; open = false; } continue; }
+        const px = x(p.t), py = y(p.ratio_contournement);
+        if (!open) { line += `M${px},${py}`; area += `M${px},${py}`; first = p; open = true; } else { line += `L${px},${py}`; area += `L${px},${py}`; }
+        last = p;
+      }
+      if (open) area += `L${x(last.t)},${y(0)}L${x(first.t)},${y(0)}Z`;
+      el('path', { d: area, fill: 'var(--series-1-wash)' }, svg);
+      el('path', { d: line, fill: 'none', stroke: 'var(--series-1)', 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, svg);
+      // maximum et dernière valeur, étiquetés
+      const peak = series.reduce((a, b) => (b.ratio_contournement ?? -1) > (a.ratio_contournement ?? -1) ? b : a);
+      el('circle', { cx: x(peak.t), cy: y(peak.ratio_contournement), r: 4, fill: 'var(--series-1)', stroke: 'var(--surface)', 'stroke-width': 2 }, svg);
+      text(svg, x(peak.t) - 8, y(peak.ratio_contournement) + 4, `${pct(peak.ratio_contournement)} · ${monthLong(peak.date)}`, { 'text-anchor': 'end', fill: 'var(--ink-2)' });
+      const end = series[series.length - 1];
+      el('circle', { cx: x(end.t), cy: y(end.ratio_contournement), r: 4, fill: 'var(--series-1)', stroke: 'var(--surface)', 'stroke-width': 2 }, svg);
+      text(svg, x(end.t) + 7, y(end.ratio_contournement) + 4, pct(end.ratio_contournement), { fill: 'var(--ink)', 'font-weight': 600 });
+      // couche de survol
+      const cross = el('line', { y1: m.t, y2: Hh - m.b, stroke: 'var(--ink-2)', 'stroke-width': 1, visibility: 'hidden' }, svg);
+      const dot = el('circle', { r: 4, fill: 'var(--series-1)', stroke: 'var(--surface)', 'stroke-width': 2, visibility: 'hidden' }, svg);
+      const hit = el('rect', { x: m.l, y: m.t, width: W - m.l - m.r, height: Hh - m.t - m.b, fill: 'transparent' }, svg);
+      tlState = { x, y, svg, cross, dot, box, index: series.length - 1, m, W };
+      const pick = clientX => {
+        const r = svg.getBoundingClientRect();
+        const t = t0 + ((clientX - r.left - m.l) / (W - m.l - m.r)) * (t1 - t0);
+        let lo = 0, hi = series.length - 1;
+        while (lo < hi) { const mid = (lo + hi) >> 1; if (series[mid].t < t) lo = mid + 1; else hi = mid; }
+        if (lo > 0 && Math.abs(series[lo - 1].t - t) < Math.abs(series[lo].t - t)) lo--;
+        return lo;
+      };
+      hit.addEventListener('pointermove', e => focusPoint(pick(e.clientX), e.pageX, e.pageY));
+      hit.addEventListener('pointerleave', () => { cross.setAttribute('visibility', 'hidden'); dot.setAttribute('visibility', 'hidden'); hideTip(); });
+    }
+    function focusPoint(i, pageX, pageY) {
+      const s = tlState, p = series[i];
+      s.index = i;
+      const px = s.x(p.t);
+      s.cross.setAttribute('x1', px); s.cross.setAttribute('x2', px); s.cross.setAttribute('visibility', 'visible');
+      if (p.ratio_contournement != null) {
+        s.dot.setAttribute('cx', px); s.dot.setAttribute('cy', s.y(p.ratio_contournement)); s.dot.setAttribute('visibility', 'visible');
+      }
+      if (pageX === undefined) {
+        const r = s.svg.getBoundingClientRect();
+        pageX = r.left + window.scrollX + px; pageY = r.top + window.scrollY + s.y(p.ratio_contournement ?? 0);
+      }
+      showTip([
+        { label: `12 mois au ${dateLong(p.date)}`, muted: true },
+        { key: true, value: p.ratio_contournement == null ? '—' : pct(p.ratio_contournement, 1), label: 'des textes' },
+        { value: num(p.nb_textes_adoptes_49_3), label: `texte(s) via 49.3 (${num(p.nb_49_3)} engagement(s))` },
+        { value: num(p.nb_ordonnances_art38), label: 'ordonnance(s), art. 38' },
+        { value: num(p.nb_lois_hors_conventions), label: 'loi(s) votée(s), hors traités' },
+      ], pageX, pageY);
+    }
+    document.getElementById('timeline').addEventListener('keydown', e => {
+      if (!tlState) return;
+      const delta = { ArrowLeft: -1, ArrowRight: 1, PageDown: -12, PageUp: 12, Home: -1e6, End: 1e6 }[e.key];
+      if (delta === undefined) return;
+      e.preventDefault();
+      focusPoint(Math.max(0, Math.min(series.length - 1, tlState.index + delta)));
+    });
+    document.getElementById('timeline').addEventListener('blur', hideTip);
+
+    // ---- Composantes ------------------------------------------------------
+    function drawComponents() {
+      document.getElementById('formule').textContent =
+        `Le chiffre rapporte ce qui a échappé à un vote final du Parlement (textes adoptés par le 49.3, ordonnances) ` +
+        `à l'ensemble de la production normative comparable (lois votées hors traités, ordonnances). ` +
+        `Sur les douze derniers mois : (${num(cur.nb_textes_adoptes_49_3)} + ${num(cur.nb_ordonnances_art38)}) ÷ ` +
+        `(${num(cur.nb_lois_hors_conventions)} + ${num(cur.nb_ordonnances_art38)}) = ${pct(ratio, 1)}.`;
+      const tiles = [
+        { icon: 'fa-landmark', label: 'Textes adoptés par le 49.3', key: 'nb_textes_adoptes_49_3',
+          note: `${num(cur.nb_49_3)} engagement${cur.nb_49_3 > 1 ? 's' : ''} de responsabilité sur la période ; un texte peut en faire l'objet à chaque lecture.` },
+        { icon: 'fa-file-signature', label: 'Ordonnances (article 38)', key: 'nb_ordonnances_art38',
+          note: 'Mesures prises par le Gouvernement sur habilitation du Parlement.' },
+        { icon: 'fa-scroll', label: 'Lois votées par le Parlement', key: 'nb_lois_hors_conventions',
+          note: `Hors lois de ratification de traités (${num(cur.nb_lois - cur.nb_lois_hors_conventions)} sur la période).` },
+      ];
+      const host = document.getElementById('tiles');
+      host.replaceChildren();
+      const last10 = series.filter(r => r.t >= series[series.length - 1].t - 10 * 365.25 * 864e5);
+      for (const t of tiles) {
+        const card = document.createElement('div');
+        card.className = 'rounded-lg border border-rule bg-surface p-4 flex flex-col gap-2';
+        card.innerHTML = `<div class="flex items-center gap-2 text-sm text-ink2"><i class="fa-solid ${t.icon} text-muted" aria-hidden="true"></i><span></span></div>
+          <div class="text-4xl font-semibold tracking-tight"></div><div class="spark"></div><p class="text-xs text-ink2 leading-snug"></p>`;
+        card.querySelector('span').textContent = t.label;
+        card.querySelector('.text-4xl').textContent = num(cur[t.key]);
+        card.querySelector('p').textContent = t.note;
+        host.appendChild(card);
+        // tendance sur 10 ans
+        const sw = 220, sh = 36, vals = last10.map(r => r[t.key]), vmax = Math.max(1, ...vals);
+        const svg = el('svg', { viewBox: `0 0 ${sw} ${sh}`, width: '100%', height: sh, preserveAspectRatio: 'none', 'aria-label': `Tendance sur dix ans : de ${num(vals[0])} à ${num(vals[vals.length - 1])}` }, card.querySelector('.spark'));
+        const pts = vals.map((v, i) => `${(i / (vals.length - 1)) * sw},${sh - 3 - (v / vmax) * (sh - 6)}`).join(' ');
+        el('polyline', { points: pts, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 1.5, 'vector-effect': 'non-scaling-stroke' }, svg);
+        const lastY = sh - 3 - (vals[vals.length - 1] / vmax) * (sh - 6);
+        el('circle', { cx: sw - 2, cy: lastY, r: 2.5, fill: 'var(--series-1)' }, svg);
+      }
+      const span = document.createElement('div');
+      span.className = 'text-xs text-muted';
+      span.textContent = 'Courbes grises : évolution sur dix ans (fenêtres de douze mois).';
+      host.appendChild(span);
+      document.getElementById('ord-summary').textContent = `Les ${D.ordonnances_fenetre.length} ordonnances de l'article 38 des douze derniers mois`;
+      const list = document.getElementById('ord-list');
+      list.replaceChildren();
+      for (const o of D.ordonnances_fenetre) {
+        const li = document.createElement('li');
+        li.className = 'py-2 flex gap-3';
+        const d = document.createElement('span'); d.className = 'text-muted tabnum shrink-0 w-24'; d.textContent = new Date(o.date + 'T12:00:00').toLocaleDateString('fr-FR');
+        const a = document.createElement('a'); a.href = o.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'hover:underline'; a.textContent = o.titre;
+        li.append(d, a); list.appendChild(li);
+      }
+    }
+
+    // ---- Législatures ------------------------------------------------------
+    function legYears(leg, i) {
+      const a = leg.debut.slice(0, 4);
+      const ongoing = i === D.legislatures.length - 1;
+      return ongoing ? `depuis ${a}, en cours` : `${a}–${leg.fin.slice(0, 4)}`;
+    }
+    function drawLegislatures() {
+      const box = document.getElementById('legislatures');
+      const W = Math.max(300, box.clientWidth), row = 26, m = { l: W < 560 ? 92 : 150, r: 52, t: 4, b: 22 };
+      const Hh = m.t + row * D.legislatures.length + m.b;
+      const xmax = 0.7;
+      const x = v => m.l + (v / xmax) * (W - m.l - m.r);
+      const svg = svgIn(box, W, Hh, 'Part des textes adoptés sans vote final, par législature');
+      for (let v = 0; v <= xmax + 1e-9; v += 0.1) {
+        el('line', { x1: x(v), x2: x(v), y1: m.t, y2: Hh - m.b, stroke: v === 0 ? 'var(--axis)' : 'var(--rule)' }, svg);
+        if (Math.round(v * 10) % 2 === 0) text(svg, x(v), Hh - 6, pct(v), { 'text-anchor': 'middle' });
+      }
+      D.legislatures.forEach((leg, i) => {
+        const cy = m.t + i * row + row / 2;
+        const ongoing = i === D.legislatures.length - 1;
+        text(svg, m.l - 10, cy + 4, W < 560 ? ordinalLeg(leg.numero) : `${ordinalLeg(leg.numero)} · ${legYears(leg, i)}`, { 'text-anchor': 'end', fill: 'var(--ink-2)' });
+        const v = leg.ratio_contournement ?? 0, x0 = x(0), x1 = x(v), h = 12, r = Math.min(4, (x1 - x0) / 2);
+        if (x1 - x0 > 0.5) el('path', { d: `M${x0},${cy - h / 2} H${x1 - r} Q${x1},${cy - h / 2} ${x1},${cy - h / 2 + r} V${cy + h / 2 - r} Q${x1},${cy + h / 2} ${x1 - r},${cy + h / 2} H${x0} Z`, fill: 'var(--series-1)', 'fill-opacity': ongoing ? 0.55 : 1 }, svg);
+        text(svg, x1 + 6, cy + 4, pct(v), { fill: 'var(--ink)' });
+        const hit = el('rect', { x: 0, y: cy - row / 2, width: W, height: row, fill: 'transparent', tabindex: 0 }, svg);
+        const rows = () => [
+          { label: `${ordinalLeg(leg.numero)} législature (${legYears(leg, i)})`, strong: true },
+          { key: true, value: pct(v, 1), label: 'des textes' },
+          { value: num(leg.nb_textes_adoptes_49_3), label: `texte(s) via 49.3 (${num(leg.nb_49_3)} engagements)` },
+          { value: num(leg.nb_ordonnances_art38), label: 'ordonnance(s), art. 38' },
+          { value: num(leg.nb_lois_hors_conventions), label: 'loi(s) votée(s), hors traités' },
+        ];
+        hit.addEventListener('pointermove', e => showTip(rows(), e.pageX, e.pageY));
+        hit.addEventListener('pointerleave', hideTip);
+        hit.addEventListener('focus', () => { const r = hit.getBoundingClientRect(); showTip(rows(), r.left + window.scrollX + x1, r.top + window.scrollY); });
+        hit.addEventListener('blur', hideTip);
+      });
+      const tbl = document.getElementById('leg-table');
+      tbl.replaceChildren();
+      const head = tbl.createTHead().insertRow();
+      for (const h of ['Législature', 'Période', 'Part', '49.3 (engagements)', 'Textes via 49.3', 'Ordonnances art. 38', 'Lois hors traités']) {
+        const th = document.createElement('th'); th.className = 'py-2 pr-4 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th);
+      }
+      const body = tbl.createTBody();
+      D.legislatures.forEach((leg, i) => {
+        const tr = body.insertRow();
+        for (const c of [ordinalLeg(leg.numero), legYears(leg, i), pct(leg.ratio_contournement ?? 0, 1), num(leg.nb_49_3), num(leg.nb_textes_adoptes_49_3), num(leg.nb_ordonnances_art38), num(leg.nb_lois_hors_conventions)]) {
+          const td = tr.insertCell(); td.className = 'py-1.5 pr-4 border-b border-rule'; td.textContent = c;
+        }
+      });
+    }
+
+    // ---- Les 49.3, point par point ------------------------------------------------
+    function drawDots() {
+      document.getElementById('t-493').textContent = `${D.engagements.length} recours au 49.3 depuis 1958`;
+      const box = document.getElementById('dots');
+      const y0 = 1958, y1 = Number(D.fin_donnees.slice(0, 4));
+      const byYear = new Map();
+      for (const e of D.engagements) { const yr = Number(e.date.slice(0, 4)); if (!byYear.has(yr)) byYear.set(yr, []); byYear.get(yr).push(e); }
+      const maxStack = Math.max(...[...byYear.values()].map(v => v.length));
+      const W = Math.max(300, box.clientWidth), m = { l: 8, r: 8, t: 8, b: 24 };
+      const colW = (W - m.l - m.r) / (y1 - y0 + 1);
+      const d = Math.max(5, Math.min(11, colW - 1)), rad = Math.max(2.5, d / 2 - 1);
+      const Hh = m.t + maxStack * d + m.b;
+      const svg = svgIn(box, W, Hh, `${D.engagements.length} engagements de responsabilité, par année`);
+      const base = Hh - m.b;
+      el('line', { x1: m.l, x2: W - m.r, y1: base + 2, y2: base + 2, stroke: 'var(--axis)' }, svg);
+      const step = W < 560 ? 20 : 10;
+      for (let yr = 1960; yr <= y1; yr += step) text(svg, m.l + (yr - y0 + 0.5) * colW, Hh - 6, yr, { 'text-anchor': 'middle' });
+      for (const [yr, list] of byYear) {
+        list.forEach((e, k) => {
+          const cx = m.l + (yr - y0 + 0.5) * colW, cy = base - k * d - d / 2;
+          const g = el('g', { tabindex: 0, role: 'link', 'aria-label': `${dateLong(e.date)} — ${e.texte || e.titre}`, style: 'cursor:pointer' }, svg);
+          el('circle', { cx, cy, r: Math.max(rad + 3, 8), fill: 'transparent' }, g);
+          el('circle', e.censure
+            ? { cx, cy, r: rad - 0.5, fill: 'var(--surface)', stroke: 'var(--series-1)', 'stroke-width': 1.5 }
+            : { cx, cy, r: rad, fill: 'var(--series-1)', stroke: 'var(--surface)', 'stroke-width': 1 }, g);
+          const rows = () => [
+            { label: dateLong(e.date), muted: true },
+            { label: e.texte || e.titre, strong: true },
+            ...(e.lecture ? [{ label: `Lecture : ${e.lecture}`, muted: true }] : []),
+            ...(e.censure ? [{ label: 'Motion de censure adoptée : texte non adopté', muted: true }] : []),
+            { label: `Source : ${e.source}`, muted: true },
+          ];
+          g.addEventListener('pointermove', ev => showTip(rows(), ev.pageX, ev.pageY));
+          g.addEventListener('pointerleave', hideTip);
+          g.addEventListener('focus', () => { const r = g.getBoundingClientRect(); showTip(rows(), r.right + window.scrollX, r.top + window.scrollY); });
+          g.addEventListener('blur', hideTip);
+          const open = () => e.url && window.open(e.url, '_blank', 'noopener');
+          g.addEventListener('click', open);
+          g.addEventListener('keydown', ev => { if (ev.key === 'Enter') open(); });
+        });
+      }
+      const tbl = document.getElementById('e-table');
+      if (!tbl.rows.length) {
+        const head = tbl.createTHead().insertRow();
+        for (const h of ['Date', 'Texte', 'Lecture', 'Issue', 'Source']) {
+          const th = document.createElement('th'); th.className = 'sticky top-0 bg-surface py-2 px-3 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th);
+        }
+        const body = tbl.createTBody();
+        for (const e of [...D.engagements].reverse()) {
+          const tr = body.insertRow();
+          const cells = [new Date(e.date + 'T12:00:00').toLocaleDateString('fr-FR'), null, e.lecture || '—', e.censure ? 'Censure adoptée' : 'Texte considéré comme adopté', e.source];
+          cells.forEach((c, i) => {
+            const td = tr.insertCell(); td.className = 'py-1.5 px-3 border-b border-rule align-top' + (i === 0 ? ' tabnum whitespace-nowrap' : '');
+            if (i === 1) { const a = document.createElement('a'); a.href = e.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'hover:underline'; a.textContent = e.texte || e.titre; td.appendChild(a); }
+            else td.textContent = c;
+          });
+        }
+      }
+    }
+
+    // ---- Indicateurs suivis ----------------------------------------------------
+    const UNIT = {
+      ratio_contournement: v => pct(v),
+      ratio_censure: v => pct(v),
+      ratio_procedure_acceleree: v => pct(v),
+      ratio_interdictions_censurees: v => pct(v),
+      nb_decrets_malgre_reserves: v => `${num(v)} décret${v > 1 ? 's' : ''}`,
+      part_executif: v => pct(v),
+      nb_textes_electoraux_avant_scrutin: v => `${num(v)} loi${v > 1 ? 's' : ''}`,
+      nb_reports_scrutin: v => `${num(v)} report${v > 1 ? 's' : ''}`,
+      rang_rsf: v => ordinal(Math.round(v)),
+      nb_journalistes_mesures: v => `${num(v)} journaliste${v > 1 ? 's' : ''}`,
+      personnes_surveillees: v => num(Math.round(v)),
+      jours_exception: v => `${num(v)} jour${v > 1 ? 's' : ''}`,
+      nb_dissolutions: v => `${num(v)} dissolution${v > 1 ? 's' : ''}`,
+    };
+    const FEMININ = new Set(['nb_textes_electoraux_avant_scrutin', 'nb_dissolutions']);
+    const WHAT = {
+      ratio_contournement: 'des textes adoptés sans vote final ou par ordonnance',
+      jours_exception: "sous un régime d'exception, sur tout ou partie du territoire",
+      ratio_censure: 'des lois soumises au Conseil constitutionnel censurées en tout ou partie',
+      ratio_procedure_acceleree: 'des lois adoptées après engagement de la procédure accélérée',
+      ratio_interdictions_censurees: "des interdictions de manifester contestées suspendues ou annulées par le juge",
+      nb_decrets_malgre_reserves: "créant un fichier publiés après un avis réservé de la CNIL",
+      part_executif: "du temps de parole politique à la télévision et à la radio revient à l'exécutif",
+      nb_textes_electoraux_avant_scrutin: "modifiant les règles d'un scrutin national moins d'un an avant",
+      nb_reports_scrutin: "de scrutin ou prorogation de mandats électifs",
+      rang_rsf: "rang de la France au classement mondial de la liberté de la presse (RSF)",
+      nb_journalistes_mesures: "placés en garde à vue, interpellés, poursuivis ou condamnés (relevé pilote, non exhaustif)",
+      personnes_surveillees: "personnes surveillées par des techniques de renseignement dans l'année (CNCTR)",
+      nb_dissolutions: "d'associations ou de groupements par décret",
+    };
+    const ANCHOR = { 'D2.contournement_parlement': '#t-evolution', 'D2.procedure_acceleree': '#d2-2', 'D3.regimes_exception': '#d3', 'D3.lois_censurees': '#d3-2', 'D4.interdictions_manifester_juge': '#d4-2', 'D6.traitements_malgre_reserves': '#d6-2', 'D5.temps_parole_executif': '#d5-1', 'D1.regles_electorales_avant_scrutin': '#d1', 'D1.scrutins_reportes': '#d1-table', 'D5.classement_rsf': '#d5-3', 'D5.journalistes_inquietes': '#d5-2', 'D6.techniques_renseignement': '#d6-1', 'D4.dissolutions_administratives': '#d4' };
+    const CODE = { 'D2.contournement_parlement': 'D2.1', 'D2.procedure_acceleree': 'D2.2', 'D3.regimes_exception': 'D3.1', 'D3.lois_censurees': 'D3.2', 'D4.interdictions_manifester_juge': 'D4.2*', 'D6.traitements_malgre_reserves': 'D6.2', 'D5.temps_parole_executif': 'D5.1', 'D1.regles_electorales_avant_scrutin': 'D1.1', 'D1.scrutins_reportes': 'D1.2', 'D5.classement_rsf': 'D5.3', 'D5.journalistes_inquietes': 'D5.2', 'D6.techniques_renseignement': 'D6.1', 'D4.dissolutions_administratives': 'D4.1' };
+    function drawDims() {
+      document.getElementById('t-dims').textContent = `${D.dimensions.length} indicateurs suivis`;
+      const host = document.getElementById('dims');
+      host.replaceChildren();
+      for (const d of D.dimensions) {
+        const fmt = UNIT[d.metrique];
+        const card = document.createElement('a');
+        card.href = ANCHOR[d.id];
+        card.className = 'rounded-lg border border-rule bg-surface p-4 flex flex-col gap-2 hover:border-[var(--axis)]';
+        card.innerHTML = `<div class="flex items-baseline justify-between gap-2"><span class="text-xs font-semibold tracking-wide text-ink2"></span><span class="text-xs text-muted"></span></div>
+          <div class="text-3xl font-semibold tracking-tight"></div><p class="text-sm text-ink2 leading-snug"></p><div class="pos"></div><p class="text-xs text-ink2 leading-snug"></p>`;
+        const [code, since] = card.querySelectorAll('span');
+        code.textContent = `${CODE[d.id] || d.code} · ${d.label}`;
+        since.textContent = d.fin_couverture ? `${d.debut_historique.slice(0, 4)}–${d.fin_couverture.slice(0, 4)}` : `depuis ${d.debut_historique.slice(0, 4)}`;
+        card.querySelector('.text-3xl').textContent = fmt(d.actuel);
+        const [what, rank] = card.querySelectorAll('p');
+        what.textContent = WHAT[d.metrique] + (d.fin_couverture ? `, sur les douze mois précédant le ${dateLong(d.fin_couverture)}, fin du relevé` : '');
+        // Rang : plus petit = mieux classé ; « supérieur à » se lirait à l'envers.
+        const pire = d.metrique === 'rang_rsf' ? d.mensuel.filter(m => m.v > d.actuel).length / d.mensuel.length : null;
+        rank.textContent = pire !== null
+          ? (d.part_mois_inferieurs === 0
+            ? `Meilleur rang observé depuis le début de la série. Rang médian : ${fmt(d.mediane)}, rang le plus bas : ${fmt(d.max)} (${monthLong(d.date_max)}).`
+            : `Moins bon classement dans ${pct(pire)} des mois observés, meilleur dans ${pct(d.part_mois_inferieurs)}. Rang médian : ${fmt(d.mediane)}, rang le plus bas : ${fmt(d.max)} (${monthLong(d.date_max)}).`)
+          : d.actuel === 0
+          ? `${FEMININ.has(d.metrique) ? 'Aucune' : 'Aucun'} sur la période, comme ${pct(d.part_mois_nuls)} des mois observés. Maximum : ${fmt(d.max)} (${monthLong(d.date_max)}).`
+          : d.part_mois_inferieurs === 0
+            ? `Valeur la plus basse observée depuis le début de la série. Médiane : ${fmt(d.mediane)}, maximum : ${fmt(d.max)} (${monthLong(d.date_max)}).`
+            : `Supérieur à ${pct(d.part_mois_inferieurs)} des mois observés. Médiane : ${fmt(d.mediane)}, maximum : ${fmt(d.max)} (${monthLong(d.date_max)}).`;
+        host.appendChild(card);
+        // position : piste de 0 au maximum, médiane, valeur actuelle
+        const W = 260, Hh = 22, x = v => 4 + (v / (d.max || 1)) * (W - 8);
+        const svg = el('svg', { viewBox: `0 0 ${W} ${Hh}`, width: '100%', height: Hh, preserveAspectRatio: 'none', 'aria-label': `Position : ${fmt(d.actuel)}, médiane ${fmt(d.mediane)}, maximum ${fmt(d.max)}` }, card.querySelector('.pos'));
+        el('rect', { x: 4, y: 9, width: W - 8, height: 4, rx: 2, fill: 'var(--band)' }, svg);
+        el('rect', { x: 4, y: 9, width: Math.max(0, x(d.actuel) - 4), height: 4, rx: 2, fill: 'var(--hist)' }, svg);
+        el('line', { x1: x(d.mediane), x2: x(d.mediane), y1: 4, y2: 18, stroke: 'var(--ink-2)', 'stroke-width': 1, 'vector-effect': 'non-scaling-stroke' }, svg);
+        el('circle', { cx: x(d.actuel), cy: 11, r: 5, fill: 'var(--series-1)', stroke: 'var(--surface)', 'stroke-width': 2 }, svg);
+      }
+    }
+
+    // ---- Régimes d'exception : frise --------------------------------------------
+    function drawPeriods() {
+      const box = document.getElementById('periodes');
+      const P = D.periodes_exception;
+      const W = Math.max(300, box.clientWidth), lanes = [['oui', "État d'urgence, métropole ou France entière"], ['a16', 'Article 16'], ['non', 'Outre-mer']];
+      const laneOf = p => p.regime === 'article 16' ? 'a16' : p.metropole ? 'oui' : 'non';
+      const m = { l: W < 560 ? 8 : 260, r: 10, t: 8, b: 26 }, lane = 34;
+      const Hh = m.t + lanes.length * lane + m.b + (W < 560 ? lanes.length * 16 : 0);
+      const t0 = new Date('1958-01-01T12:00:00').getTime(), t1 = new Date(D.fin_donnees + 'T12:00:00').getTime();
+      const x = s => m.l + ((new Date(s + 'T12:00:00').getTime() - t0) / (t1 - t0)) * (W - m.l - m.r);
+      const svg = svgIn(box, W, Hh, "Périodes de régime d'exception depuis 1958");
+      const laneY = i => m.t + i * lane + (W < 560 ? (i + 1) * 16 : 0);
+      for (let yr = 1960; yr <= 2020; yr += W < 560 ? 20 : 10) {
+        const xx = x(`${yr}-01-01`);
+        el('line', { x1: xx, x2: xx, y1: m.t, y2: Hh - m.b, stroke: 'var(--rule)' }, svg);
+        text(svg, xx, Hh - 8, yr, { 'text-anchor': 'middle' });
+      }
+      lanes.forEach(([key, label], i) => {
+        const y = laneY(i);
+        if (W < 560) text(svg, m.l, y - 4, label, { fill: 'var(--ink-2)' });
+        else text(svg, m.l - 10, y + lane / 2 + 4, label, { 'text-anchor': 'end', fill: 'var(--ink-2)' });
+        el('line', { x1: m.l, x2: W - m.r, y1: y + lane / 2, y2: y + lane / 2, stroke: 'var(--rule)' }, svg);
+        for (const p of P.filter(p => laneOf(p) === key)) {
+          const x0 = x(p.debut), x1 = Math.max(x0 + 3, x(p.fin || D.fin_donnees) + 1);
+          const g = el('g', { tabindex: 0, role: 'link', 'aria-label': `${p.regime}, ${p.territoire}, du ${dateLong(p.debut)} au ${p.fin ? dateLong(p.fin) : 'en cours'}`, style: 'cursor:pointer' }, svg);
+          el('rect', { x: x0 - 3, y: y + 4, width: x1 - x0 + 6, height: lane - 8, fill: 'transparent' }, g);
+          el('rect', p.a_verifier
+            ? { x: x0, y: y + 9, width: x1 - x0, height: lane - 18, rx: 2, fill: 'var(--surface)', stroke: 'var(--series-1)', 'stroke-width': 1.5 }
+            : { x: x0, y: y + 9, width: x1 - x0, height: lane - 18, rx: 2, fill: 'var(--series-1)' }, g);
+          const days = Math.round((new Date((p.fin || D.fin_donnees) + 'T12:00:00') - new Date(p.debut + 'T12:00:00')) / 864e5) + 1;
+          const rows = () => [
+            { label: `${p.regime[0].toUpperCase()}${p.regime.slice(1)} — ${p.territoire}`, strong: true },
+            { label: `Du ${dateLong(p.debut)} au ${p.fin ? dateLong(p.fin) : 'en cours'} (${num(days)} jours)`, muted: true },
+            { label: p.preuve, muted: true },
+            ...(p.a_verifier ? [{ label: `À vérifier : ${p.note}`, muted: true }] : []),
+          ];
+          g.addEventListener('pointermove', e => showTip(rows(), e.pageX, e.pageY));
+          g.addEventListener('pointerleave', hideTip);
+          g.addEventListener('focus', () => { const r = g.getBoundingClientRect(); showTip(rows(), r.right + window.scrollX, r.top + window.scrollY); });
+          g.addEventListener('blur', hideTip);
+          g.addEventListener('click', () => p.url && window.open(p.url, '_blank', 'noopener'));
+        }
+      });
+      const tbl = document.getElementById('p-table');
+      if (!tbl.rows.length) {
+        const head = tbl.createTHead().insertRow();
+        for (const h of ['Période', 'Régime', 'Territoire', 'Preuve', 'Statut']) {
+          const th = document.createElement('th'); th.className = 'sticky top-0 bg-surface py-2 px-3 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th);
+        }
+        const body = tbl.createTBody();
+        for (const p of [...P].reverse()) {
+          const tr = body.insertRow();
+          const cells = [`${new Date(p.debut + 'T12:00:00').toLocaleDateString('fr-FR')} → ${p.fin ? new Date(p.fin + 'T12:00:00').toLocaleDateString('fr-FR') : 'en cours'}`, p.regime, p.territoire, p.preuve, p.a_verifier ? `À vérifier : ${p.note}` : 'Établie'];
+          cells.forEach((c, i) => { const td = tr.insertCell(); td.className = 'py-1.5 px-3 border-b border-rule align-top' + (i === 0 ? ' tabnum whitespace-nowrap' : ''); td.textContent = c; });
+        }
+      }
+    }
+
+    // ---- Procédure accélérée : une tuile par législature -----------------------
+    function drawProcedure() {
+      const P = D.procedure_acceleree;
+      const share = l => (l.nb_lois_statut_inconnu || 0) / ((l.nb_lois_statut_connu || 0) + (l.nb_lois_statut_inconnu || 0) || 1);
+      legislatureBars(document.getElementById('pa-chart'), P.legislatures, 'Part des lois adoptées en procédure accélérée, par législature', {
+        ratio: l => l.ratio_procedure_acceleree,
+        weak: l => share(l) > 0.1,
+        rows: (l, r) => [
+          { label: r === undefined ? 'Aucune loi' : `${num(l.nb_lois_procedure_acceleree)} lois sur ${num(l.nb_lois_statut_connu)} (${pct(r)})` },
+          ...(l.nb_lois_statut_inconnu ? [{ label: `Procédure inconnue pour ${num(l.nb_lois_statut_inconnu)} autre${l.nb_lois_statut_inconnu > 1 ? 's' : ''} loi${l.nb_lois_statut_inconnu > 1 ? 's' : ''}, non comptée${l.nb_lois_statut_inconnu > 1 ? 's' : ''}`, muted: true }] : []),
+        ],
+      });
+      const inconnues = P.legislatures.reduce((a, l) => a + (l.nb_lois_statut_inconnu || 0), 0);
+      const parLeg = P.legislatures.filter(l => l.nb_lois_statut_inconnu).map(l => `${num(l.nb_lois_statut_inconnu)} sous la ${ROMAN(l.legislature)}e`).join(', ');
+      document.getElementById('pa-couverture').textContent =
+        `Couverture : pour ${num(inconnues)} lois, ni l'Assemblée ni le Sénat n'indiquent la procédure suivie (${parLeg}). ` +
+        `Elles ne sont pas comptées. Depuis 2012, les deux sources sont comparées pour ${num(P.comparees_an_senat)} lois : ` +
+        `${P.discordances_an_senat ? `elles divergent pour ${num(P.discordances_an_senat)} (un engagement enregistré par une seule source suffit, sauf retrait connu du Sénat).` : 'elles concordent toutes.'}`;
+      const tbl = document.getElementById('pa-table');
+      if (!tbl.rows.length) {
+        const head = tbl.createTHead().insertRow();
+        for (const h of ['Promulgation', 'Loi', 'Procédure']) {
+          const th = document.createElement('th'); th.className = 'sticky top-0 bg-surface py-2 px-3 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th);
+        }
+        const body = tbl.createTBody();
+        for (const l of P.lois_fenetre) {
+          const tr = body.insertRow();
+          const td0 = tr.insertCell(); td0.className = 'py-1.5 px-3 border-b border-rule tabnum whitespace-nowrap align-top'; td0.textContent = new Date(l.date + 'T12:00:00').toLocaleDateString('fr-FR');
+          const td1 = tr.insertCell(); td1.className = 'py-1.5 px-3 border-b border-rule align-top';
+          const a = document.createElement('a'); a.href = l.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'hover:underline'; a.textContent = l.titre; td1.appendChild(a);
+          const td2 = tr.insertCell(); td2.className = 'py-1.5 px-3 border-b border-rule align-top' + (l.acceleree ? ' font-medium' : ' text-ink2');
+          td2.textContent = l.acceleree ? `Accélérée${l.date_engagement ? ` (engagée le ${new Date(l.date_engagement + 'T12:00:00').toLocaleDateString('fr-FR')})` : ''}` : 'Ordinaire';
+        }
+      }
+    }
+
+    // ---- D1 : frise des scrutins nationaux et des lois électorales ------------------
+    function drawElections() {
+      const E = D.elections, box = document.getElementById('d1-chart');
+      const lanes = [['presidentielle', 'Présidentielle'], ['legislatives', 'Législatives'], ['europeennes', 'Européennes'], ['referendum', 'Référendum']];
+      const W = Math.max(300, box.clientWidth), narrow = W < 560, m = { l: narrow ? 8 : 110, r: 12, t: 6, b: 24 }, lane = narrow ? 44 : 34;
+      const Hh = m.t + lanes.length * lane + m.b;
+      const t0 = new Date('1993-01-01T12:00:00').getTime(), t1 = new Date(D.fin_donnees + 'T12:00:00').getTime();
+      const X = s => m.l + ((new Date(s + 'T12:00:00').getTime() - t0) / (t1 - t0)) * (W - m.l - m.r);
+      const svg = svgIn(box, W, Hh, 'Scrutins nationaux et lois électorales depuis 1993');
+      for (let yr = 1995; yr <= Number(D.fin_donnees.slice(0, 4)); yr += narrow ? 10 : 5) {
+        el('line', { x1: X(`${yr}-01-01`), x2: X(`${yr}-01-01`), y1: m.t, y2: Hh - m.b, stroke: 'var(--rule)' }, svg);
+        text(svg, X(`${yr}-01-01`), Hh - 8, yr, { 'text-anchor': 'middle' });
+      }
+      const hover = (g, rows, url) => {
+        g.addEventListener('pointermove', e => showTip(rows, e.pageX, e.pageY));
+        g.addEventListener('pointerleave', hideTip);
+        g.addEventListener('focus', () => { const b = g.getBoundingClientRect(); showTip(rows, b.right + window.scrollX, b.top + window.scrollY); });
+        g.addEventListener('blur', hideTip);
+        if (url) g.addEventListener('click', () => window.open(url, '_blank', 'noopener'));
+      };
+      lanes.forEach(([key, label], i) => {
+        const y = m.t + i * lane + lane / 2 + (narrow ? 6 : 0);
+        if (narrow) text(svg, m.l, y - 14, label, { fill: 'var(--ink-2)' });
+        else text(svg, m.l - 10, y + 4, label, { 'text-anchor': 'end', fill: 'var(--ink-2)' });
+        el('line', { x1: m.l, x2: W - m.r, y1: y, y2: y, stroke: 'var(--rule)' }, svg);
+        for (const s of E.scrutins.filter(s => s.type === key && s.date >= '1993')) {
+          const g = el('g', { tabindex: 0, 'aria-label': `${label} du ${dateLong(s.date)}` }, svg);
+          el('rect', { x: X(s.date) - 4, y: y - 4, width: 8, height: 8, transform: `rotate(45 ${X(s.date)} ${y})`, fill: 'var(--ink-2)' }, g);
+          hover(g, [{ label: `${label}`, strong: true }, { label: `1er tour : ${dateLong(s.date)}${s.t2 ? ` ; 2nd tour : ${dateLong(s.t2)}` : ''}`, muted: true }], s.url);
+        }
+        for (const t of E.textes.filter(t => t.types_scrutin.includes(key) && t.date >= '1993')) {
+          // délai jusqu'au scrutin suivant de CETTE ligne (un texte peut viser plusieurs types)
+          const next = E.scrutins.find(s => s.type === key && s.date > t.date);
+          const jours = next ? Math.round((new Date(next.date + 'T12:00:00') - new Date(t.date + 'T12:00:00')) / 864e5) : null;
+          const proche = jours !== null && jours <= 365;
+          const g = el('g', { tabindex: 0, 'aria-label': t.titre }, svg);
+          el('circle', { cx: X(t.date), cy: y, r: 9, fill: 'transparent' }, g);
+          el('circle', { cx: X(t.date), cy: y, r: 5, ...(proche ? { fill: 'var(--series-1)', stroke: 'var(--surface)', 'stroke-width': 1.5 } : { fill: 'var(--surface)', stroke: 'var(--series-1)', 'stroke-width': 1.5 }) }, g);
+          hover(g, [{ label: t.titre, strong: true }, { label: next ? `${num(jours)} jours avant le scrutin suivant de ce type (${dateLong(next.date)})` : 'Aucun scrutin de ce type depuis', muted: true }], t.url);
+        }
+      });
+      const tbl = document.getElementById('d1-table');
+      if (!tbl.rows.length) {
+        const head = tbl.createTHead().insertRow();
+        for (const h of ['Publication', 'Texte']) {
+          const th = document.createElement('th'); th.className = 'sticky top-0 bg-surface py-2 px-3 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th);
+        }
+        const body = tbl.createTBody();
+        for (const r of E.reports) {
+          const tr = body.insertRow();
+          const td0 = tr.insertCell(); td0.className = 'py-1.5 px-3 border-b border-rule tabnum whitespace-nowrap align-top'; td0.textContent = new Date(r.date + 'T12:00:00').toLocaleDateString('fr-FR');
+          const td1 = tr.insertCell(); td1.className = 'py-1.5 px-3 border-b border-rule align-top';
+          const a = document.createElement('a'); a.href = r.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'hover:underline'; a.textContent = r.titre; td1.appendChild(a);
+          if (r.modification_calendrier) td1.appendChild(document.createTextNode(' — modification du calendrier, sens à vérifier'));
+        }
+      }
+    }
+
+    // ---- D5.2 : journalistes inquiétés (tableau des cas) ---------------------------
+    function drawJournalistes() {
+      const tbl = document.getElementById('j-table');
+      if (tbl.rows.length) return;
+      const LIB = { garde_a_vue: 'Garde à vue', interpellation: 'Interpellation', poursuite: 'Poursuite', mise_en_examen: 'Mise en examen', condamnation: 'Condamnation', convocation: 'Convocation ou audition' };
+      const head = tbl.createTHead().insertRow();
+      for (const h of ['Date', 'Mesure', 'Média', 'Autorité', 'Contexte']) {
+        const th = document.createElement('th'); th.className = 'sticky top-0 bg-surface py-2 px-3 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th);
+      }
+      const body = tbl.createTBody();
+      for (const j of D.journalistes) {
+        const tr = body.insertRow(); if (!j.comptee) tr.className = 'text-ink2';
+        const date = new Date(j.date + 'T12:00:00');
+        const cells = [j.date_approximative ? `vers ${date.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}` : date.toLocaleDateString('fr-FR'),
+          `${LIB[j.mesure]}${j.nb_journalistes > 1 ? ` (${j.nb_journalistes} journalistes)` : ''}${j.comptee ? '' : ' — non comptée'}`, j.media, j.autorite, j.contexte];
+        cells.forEach((c, i) => {
+          const td = tr.insertCell(); td.className = 'py-1.5 px-3 border-b border-rule align-top' + (i === 0 ? ' tabnum whitespace-nowrap' : '');
+          if (i === 1) { const a = document.createElement('a'); a.href = j.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'hover:underline'; a.textContent = c; a.title = `« ${j.extrait} »`; td.appendChild(a); }
+          else td.textContent = c;
+        });
+      }
+    }
+
+    // ---- D5.3 et D6.1 : séries annuelles ------------------------------------------
+    function annualChart(box, rows, { x, y: val, inverted, max, fmtTick, tip, title }) {
+      const W = Math.max(280, box.clientWidth), Hh = 200, m = { l: 44, r: 10, t: 14, b: 24 };
+      const xs = rows.map(x), x0 = Math.min(...xs), x1 = Math.max(...xs);
+      const X = v => m.l + (x1 === x0 ? 0.5 : (v - x0) / (x1 - x0)) * (W - m.l - m.r);
+      const Y = v => inverted ? m.t + ((v - 1) / (max - 1)) * (Hh - m.t - m.b) : Hh - m.b - (v / max) * (Hh - m.t - m.b);
+      const svg = svgIn(box, W, Hh, title);
+      const ticks = inverted ? [1, 10, 20, 30, 40, 50].filter(t => t <= max) : [0, 0.25, 0.5, 0.75, 1].map(f => Math.round(f * max));
+      for (const t of ticks) {
+        el('line', { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: (!inverted && t === 0) ? 'var(--axis)' : 'var(--rule)' }, svg);
+        text(svg, m.l - 6, Y(t) + 4, fmtTick(t), { 'text-anchor': 'end' });
+      }
+      const pas = x1 - x0 <= 12 ? 2 : 5;
+      for (let yr = Math.ceil(x0 / pas) * pas; yr <= x1; yr += pas) text(svg, X(yr), Hh - 6, yr, { 'text-anchor': X(yr) > W - m.r - 16 ? 'end' : 'middle' });
+      el('polyline', { points: rows.map(r => `${X(x(r))},${Y(val(r))}`).join(' '), fill: 'none', stroke: 'var(--series-1)', 'stroke-width': 2 }, svg);
+      rows.forEach((r, i) => {
+        const g = el('g', { tabindex: 0, 'aria-label': tip(r).map(t => t.label).join(', ') }, svg);
+        el('circle', { cx: X(x(r)), cy: Y(val(r)), r: 10, fill: 'transparent' }, g);
+        el('circle', { cx: X(x(r)), cy: Y(val(r)), r: 4, fill: 'var(--series-1)', stroke: 'var(--surface)', 'stroke-width': 1.5 }, g);
+        if (i === rows.length - 1) text(svg, X(x(r)) - 6, Y(val(r)) + (inverted ? 18 : -9), fmtTick(val(r)), { 'text-anchor': 'end', fill: 'var(--ink)', 'font-weight': 600 });
+        g.addEventListener('pointermove', e => showTip(tip(r), e.pageX, e.pageY));
+        g.addEventListener('pointerleave', hideTip);
+        g.addEventListener('focus', () => { const b = g.getBoundingClientRect(); showTip(tip(r), b.right + window.scrollX, b.top + window.scrollY); });
+        g.addEventListener('blur', hideTip);
+        g.addEventListener('click', () => window.open(r.url, '_blank', 'noopener'));
+      });
+    }
+    function drawAnnuels() {
+      const R = D.rsf;
+      if (R.length) annualChart(document.getElementById('rsf-chart'), R, {
+        x: r => r.edition, y: r => r.rang, inverted: true, max: Math.max(50, ...R.map(r => r.rang)),
+        fmtTick: ordinal, title: 'Rang de la France au classement RSF, par édition',
+        tip: r => [{ label: `Édition ${r.edition}`, strong: true }, { label: `${ordinal(r.rang)} sur ${r.nb_pays} pays` }, { label: `Score ${String(r.score).replace('.', ',')} — période ${r.periode_score}`, muted: true }],
+      });
+      const C = D.cnctr;
+      if (C.length) annualChart(document.getElementById('cnctr-chart'), C, {
+        x: r => r.annee, y: r => r.personnes_surveillees, inverted: false, max: Math.ceil(Math.max(...C.map(r => r.personnes_surveillees)) / 5000) * 5000,
+        fmtTick: v => num(v), title: 'Personnes surveillées par des techniques de renseignement, par année',
+        tip: r => [{ label: `${r.annee}`, strong: true }, { label: `${num(r.personnes_surveillees)} personnes surveillées` },
+          ...(r.demandes_techniques ? [{ label: `${num(r.demandes_techniques)} demandes de techniques`, muted: true }] : []),
+          ...(r.note ? [{ label: r.note, muted: true }] : [])],
+      });
+    }
+
+    // ---- D5.1 : part de l'exécutif dans le temps de parole, par mois ------------
+    function drawTempsParole() {
+      const T = D.temps_parole, box = document.getElementById('tp-chart');
+      if (!T.length) { box.textContent = 'Aucun relevé.'; return; }
+      const W = Math.max(300, box.clientWidth), Hh = 200, m = { l: 40, r: 8, t: 18, b: 26 };
+      const band = (W - m.l - m.r) / T.length, bw = Math.min(22, band - 3);
+      const vmax = 0.5, y = v => Hh - m.b - (v / vmax) * (Hh - m.t - m.b);
+      const svg = svgIn(box, W, Hh, "Part de l'exécutif dans le temps de parole politique, par mois");
+      for (const v of [0, 0.1, 0.2, 0.3, 0.4, 0.5]) {
+        el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: v === 0 ? 'var(--axis)' : 'var(--rule)' }, svg);
+        text(svg, m.l - 6, y(v) + 4, pct(v), { 'text-anchor': 'end' });
+      }
+      T.forEach((t, i) => {
+        const cx = m.l + (i + 0.5) * band, x0 = cx - bw / 2, top = y(t.part), rr = Math.min(4, bw / 2, Hh - m.b - top);
+        const [yr, mo] = t.mois.split('-');
+        if (mo === '01' || i === 0) text(svg, cx, Hh - 8, yr, { 'text-anchor': 'middle' });
+        else if (band >= 34) text(svg, cx, Hh - 8, new Date(t.mois + '-15').toLocaleDateString('fr-FR', { month: 'short' }), { 'text-anchor': 'middle' });
+        const g = el('g', { tabindex: 0, 'aria-label': `${monthLong(t.mois + '-01')} : ${pct(t.part, 1)}` }, svg);
+        el('rect', { x: cx - band / 2, y: m.t, width: band, height: Hh - m.t - m.b, fill: 'transparent' }, g);
+        el('path', { d: `M${x0},${Hh - m.b} V${top + rr} Q${x0},${top} ${x0 + rr},${top} H${x0 + bw - rr} Q${x0 + bw},${top} ${x0 + bw},${top + rr} V${Hh - m.b} Z`, fill: 'var(--series-1)' }, g);
+        if (i === T.length - 1) text(svg, cx, top - 6, pct(t.part), { 'text-anchor': 'middle', fill: 'var(--ink)', 'font-weight': 600 });
+        const rows = () => [{ label: monthLong(t.mois + '-01'), strong: true }, { label: `Exécutif : ${pct(t.part, 1)} du temps de parole politique` }, { label: `${num(t.h_executif)} h pour l'exécutif, ${num(t.h_partis)} h pour les partis`, muted: true }];
+        g.addEventListener('pointermove', e => showTip(rows(), e.pageX, e.pageY));
+        g.addEventListener('pointerleave', hideTip);
+        g.addEventListener('focus', () => { const b = g.getBoundingClientRect(); showTip(rows(), b.right + window.scrollX, b.top + window.scrollY); });
+        g.addEventListener('blur', hideTip);
+        g.addEventListener('click', () => window.open(t.url, '_blank', 'noopener'));
+      });
+      const parts = T.map(t => t.part), lo = T[parts.indexOf(Math.min(...parts))], hi = T[parts.indexOf(Math.max(...parts))];
+      document.getElementById('tp-resume').textContent =
+        `${num(T.length)} mois relevés, jusqu'à ${monthLong(T[T.length - 1].mois + '-01')}. Part la plus basse : ${pct(lo.part, 1)} (${monthLong(lo.mois + '-01')}) ; ` +
+        `la plus haute : ${pct(hi.part, 1)} (${monthLong(hi.mois + '-01')}). Les relevés antérieurs à 2025 ne sont pas publiés sous forme de fichiers.`;
+    }
+
+    // ---- D6.2 : décrets après avis de la CNIL, par année -----------------------
+    function drawCnil() {
+      const C = D.cnil, A = C.annees, box = document.getElementById('cnil-chart');
+      if (!A.length) { box.textContent = 'Aucun décret rapproché pour l\'instant.'; return; }
+      const y0 = Number(A[0].annee), y1 = Number(D.fin_donnees.slice(0, 4));
+      const byYear = new Map(A.map(a => [Number(a.annee), a]));
+      const years = []; for (let yr = y0; yr <= y1; yr++) years.push(byYear.get(yr) || { annee: String(yr), reserves: 0, autres: 0 });
+      const vmax = Math.max(...years.map(a => a.reserves + a.autres));
+      const W = Math.max(300, box.clientWidth), Hh = 200, m = { l: 28, r: 8, t: 14, b: 24 };
+      const band = (W - m.l - m.r) / years.length, bw = Math.max(2, Math.min(16, band - 2));
+      const y = v => Hh - m.b - (v / vmax) * (Hh - m.t - m.b);
+      const svg = svgIn(box, W, Hh, 'Décrets publiés après un avis de la CNIL sur leur projet, par année');
+      const step = vmax > 40 ? 10 : 5;
+      for (let v = 0; v <= vmax; v += step) {
+        el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: v === 0 ? 'var(--axis)' : 'var(--rule)' }, svg);
+        text(svg, m.l - 6, y(v) + 4, v, { 'text-anchor': 'end' });
+      }
+      years.forEach((a, i) => {
+        const cx = m.l + (i + 0.5) * band, x0 = cx - bw / 2, yr = Number(a.annee);
+        if (yr % (band < 14 ? 10 : 5) === 0) text(svg, cx, Hh - 6, yr, { 'text-anchor': 'middle' });
+        const g = el('g', { tabindex: 0, 'aria-label': `${yr} : ${a.reserves} décret(s) après avis réservé, ${a.autres} autre(s)` }, svg);
+        el('rect', { x: cx - band / 2, y: m.t, width: band, height: Hh - m.t - m.b, fill: 'transparent' }, g);
+        let base = 0;
+        for (const [k, fill] of [['reserves', 'var(--series-1)'], ['autres', 'var(--hist)']]) {
+          if (!a[k]) continue;
+          const top = y(base + a[k]), bottom = y(base);
+          el('rect', { x: x0, y: top, width: bw, height: Math.max(1, bottom - top - (base ? 2 : 0)), rx: Math.min(2, bw / 2), fill }, g);
+          base += a[k];
+        }
+        const rows = () => [{ label: `${yr}`, strong: true }, { label: `${a.reserves} décret${a.reserves > 1 ? 's' : ''} après un avis avec réserves` }, { label: `${a.autres} après un avis sans réserve formelle`, muted: true }];
+        g.addEventListener('pointermove', e => showTip(rows(), e.pageX, e.pageY));
+        g.addEventListener('pointerleave', hideTip);
+        g.addEventListener('focus', () => { const b = g.getBoundingClientRect(); showTip(rows(), b.right + window.scrollX, b.top + window.scrollY); });
+        g.addEventListener('blur', hideTip);
+      });
+      const tot = A.reduce((s, a) => s + a.reserves + a.autres, 0), res = A.reduce((s, a) => s + a.reserves, 0);
+      document.getElementById('cnil-resume').textContent =
+        `${num(tot)} décrets publiés ont pu être rapprochés avec une confiance forte d'un avis de la CNIL sur leur projet, dont ${num(res)} après un avis contenant des réserves formelles ` +
+        `(et ${num(A.reduce((s, a) => s + a.a_verifier, 0))} autres dont le rapprochement reste à vérifier, non comptés). ` +
+        `La CNIL a rendu ${num(C.nb_avis)} avis sur des projets de décret, dont ${num(C.nb_avis_reserves)} avec réserves formelles.`;
+      const tbl = document.getElementById('cnil-table');
+      if (!tbl.rows.length) {
+        const head = tbl.createTHead().insertRow();
+        for (const h of ['Publication', 'Décret', 'Avis de la CNIL', 'Formule']) {
+          const th = document.createElement('th'); th.className = 'sticky top-0 bg-surface py-2 px-3 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th);
+        }
+        const LIB = { defavorable: 'avis défavorable', favorable_sous_reserves: 'favorable sous réserves', reserves: 'réserves exprimées' };
+        const body = tbl.createTBody();
+        for (const d of C.decrets_reserves) {
+          const tr = body.insertRow();
+          const td0 = tr.insertCell(); td0.className = 'py-1.5 px-3 border-b border-rule tabnum whitespace-nowrap align-top'; td0.textContent = new Date(d.date + 'T12:00:00').toLocaleDateString('fr-FR');
+          const td1 = tr.insertCell(); td1.className = 'py-1.5 px-3 border-b border-rule align-top';
+          const a = document.createElement('a'); a.href = d.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'hover:underline'; a.textContent = d.titre; td1.appendChild(a);
+          const td2 = tr.insertCell(); td2.className = 'py-1.5 px-3 border-b border-rule align-top tabnum whitespace-nowrap text-ink2'; td2.textContent = d.avis.map(v => `n° ${v.numero}`).join(', ');
+          const td3 = tr.insertCell(); td3.className = 'py-1.5 px-3 border-b border-rule align-top text-ink2'; td3.textContent = d.formules.map(f => LIB[f] || f).join(', ') + (d.confiance === 'faible' ? ' — rapprochement à vérifier, non compté' : '');
+        }
+      }
+    }
+
+    // ---- Contexte : journées de mobilisation (haltères) -----------------------
+    function drawMobilisations() {
+      const J = D.mobilisations, box = document.getElementById('mobil-chart');
+      if (!J.length) { box.textContent = 'Aucune journée relevée.'; return; }
+      const val = (j, k) => j[k] ? j[k].manifestants : null;
+      const court = mv => mv.replace('projet de réforme des retraites', 'retraites').replace('réforme des retraites', 'retraites').replace('septembre-octobre', 'sept.-oct.');
+      const mouvements = [...new Set(J.map(j => j.mouvement))];
+      document.getElementById('mobil-mouvements').textContent =
+        `Mouvements couverts : ${mouvements.map(mv => `${court(mv)} (${J.filter(j => j.mouvement === mv).length} journées)`).join(', ')}.`;
+      const vmax = Math.max(...J.flatMap(j => [val(j, 'ministere_interieur'), val(j, 'organisateurs')].filter(v => v != null)));
+      const W = Math.max(300, box.clientWidth), Hh = 270, m = { l: 52, r: 10, t: 38, b: 30 };
+      // Un emplacement vide sépare deux mouvements ; chaque mouvement porte son nom au-dessus.
+      const slots = []; let prev = null;
+      J.forEach(j => { if (prev !== null && j.mouvement !== prev) slots.push(null); slots.push(j); prev = j.mouvement; });
+      const band = (W - m.l - m.r) / slots.length;
+      const y = v => Hh - m.b - (v / vmax) * (Hh - m.t - m.b);
+      const svg = svgIn(box, W, Hh, 'Manifestants par journée de mobilisation, selon le ministère et selon les organisateurs');
+      const mio = v => v >= 1e6 ? `${String(v / 1e6).replace('.', ',')} M` : `${num(v / 1000)} k`;
+      for (let v = 0; v <= vmax; v += 1e6) {
+        el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: v === 0 ? 'var(--axis)' : 'var(--rule)' }, svg);
+        text(svg, m.l - 6, y(v) + 4, v ? `${v / 1e6} M` : '0', { 'text-anchor': 'end' });
+      }
+      let k = 0;
+      slots.forEach((j, i) => {
+        if (j === null) { k = 0; return; }
+        const cx = m.l + (i + 0.5) * band, mi = j.ministere_interieur, org = j.organisateurs;
+        // noms de mouvements alternés sur deux lignes : les groupes courts ne se chevauchent pas
+        if (i === 0 || slots[i - 1] === null) text(svg, cx - band / 2 + 2, mouvements.indexOf(j.mouvement) % 2 ? 24 : 11, court(j.mouvement), { fill: 'var(--ink-2)', 'font-weight': 600 });
+        const d = new Date(j.date + 'T12:00:00');
+        if (band >= 52 || k % 2 === 0) text(svg, cx, Hh - 10, d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }), { 'text-anchor': 'middle' });
+        k += 1;
+        const g = el('g', { tabindex: 0, 'aria-label': `${dateLong(j.date)} : ${mi ? num(mi.manifestants) : '?'} selon le ministère, ${org ? num(org.manifestants) : '?'} selon les organisateurs` }, svg);
+        el('rect', { x: cx - band / 2, y: m.t, width: band, height: Hh - m.t - m.b, fill: 'transparent' }, g);
+        if (mi && org) el('line', { x1: cx, x2: cx, y1: y(mi.manifestants), y2: y(org.manifestants), stroke: 'var(--axis)', 'stroke-width': 2 }, g);
+        for (const [c, filled] of [[org, false], [mi, true]]) {
+          if (!c) continue;
+          el('circle', { cx, cy: y(c.manifestants), r: 5, fill: filled ? 'var(--series-1)' : 'var(--surface)', stroke: filled ? 'var(--surface)' : 'var(--series-1)', 'stroke-width': filled ? 2 : 1.5 }, g);
+          if (!c.verifie_dans_source) text(svg, cx + 8, y(c.manifestants) + 4, '?', { fill: 'var(--ink-2)' });
+        }
+        const line = (label, c) => c ? [{ label: `${label} : ${num(c.manifestants)}${c.verifie_dans_source ? '' : ' (non vérifié)'}` }, { label: `source : ${c.source_site}`, muted: true }] : [];
+        const rows = () => [{ label: `${dateLong(j.date)}, journée n° ${j.journee}`, strong: true }, ...line('Ministère de l\'Intérieur', mi), ...line(`Organisateurs${org ? ` (${org.compte_par})` : ''}`, org)];
+        g.addEventListener('pointermove', e => showTip(rows(), e.pageX, e.pageY));
+        g.addEventListener('pointerleave', hideTip);
+        g.addEventListener('focus', () => { const b = g.getBoundingClientRect(); showTip(rows(), b.right + window.scrollX, b.top + window.scrollY); });
+        g.addEventListener('blur', hideTip);
+        g.addEventListener('click', () => (mi || org) && window.open((mi || org).source_url, '_blank', 'noopener'));
+      });
+      const all = J.flatMap(j => [j.ministere_interieur, j.organisateurs].filter(Boolean));
+      const ratios = J.filter(j => j.ministere_interieur && j.organisateurs).map(j => j.organisateurs.manifestants / j.ministere_interieur.manifestants);
+      document.getElementById('mobil-resume').textContent =
+        `${num(J.length)} journées, ${num(all.length)} chiffres, dont ${num(all.filter(c => c.verifie_dans_source).length)} retrouvés dans leur source. ` +
+        `Le décompte des organisateurs est de ${String(Math.min(...ratios).toFixed(1)).replace('.', ',')} à ${String(Math.max(...ratios).toFixed(1)).replace('.', ',')} fois celui du ministère selon les journées. ` +
+        `Chiffres de Paris, blessés et interpellations : pas encore relevés.`;
+    }
+
+    // ---- Contexte : participation -----------------------------------------------
+    function drawParticipation() {
+      const host = document.getElementById('participation');
+      host.replaceChildren();
+      const byYear = new Map();
+      for (const s of D.participation) {
+        const y = s.date.slice(0, 4);
+        if (!byYear.has(y)) byYear.set(y, {});
+        byYear.get(y)[s.tour] = s;
+      }
+      for (const [year, tours] of byYear) {
+        const t1 = tours[1], t2 = tours[2];
+        const card = document.createElement('div');
+        card.className = 'rounded-lg border border-rule bg-surface p-4 flex flex-col gap-2';
+        card.innerHTML = `<div class="flex items-baseline justify-between gap-2"><span class="text-sm font-medium"></span><span class="text-xs text-muted">1er tour</span></div>
+          <div class="text-4xl font-semibold tracking-tight"></div><div class="bar"></div><p class="text-xs text-ink2 leading-snug"></p>`;
+        card.querySelector('span').textContent = `Législatives ${year}`;
+        const ref = t1 || t2;
+        card.querySelector('.text-4xl').textContent = pct(ref.participation, 1);
+        const W = 260, Hh = 10;
+        const svg = el('svg', { viewBox: `0 0 ${W} ${Hh}`, width: '100%', height: Hh, preserveAspectRatio: 'none', 'aria-hidden': 'true' }, card.querySelector('.bar'));
+        el('rect', { x: 0, y: 3, width: W, height: 4, rx: 2, fill: 'var(--band)' }, svg);
+        el('rect', { x: 0, y: 3, width: W * ref.participation, height: 4, rx: 2, fill: 'var(--series-1)' }, svg);
+        const p = card.querySelector('p');
+        p.textContent = `${num(ref.votants)} votants sur ${num(ref.inscrits)} inscrits (${dateLong(ref.date)}).` +
+          (t2 ? ` Second tour : ${pct(t2.participation, 1)} (${num(t2.inscrits)} inscrits concernés).` : '');
+        const a = document.createElement('a'); a.href = ref.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'underline ml-1'; a.textContent = 'Source';
+        p.appendChild(a);
+        host.appendChild(card);
+      }
+    }
+
+    // ---- Interdictions de manifester contestées : par trimestre -------------------
+    function drawManifestations() {
+      const M = D.manifestations, T = M.trimestres;
+      const box = document.getElementById('manif-chart');
+      if (!T.length) { box.textContent = 'Aucune décision retenue pour l\'instant.'; return; }
+      const total = t => t.favorable_requerant + t.rejet + t.autre;
+      const vmax = Math.max(...T.map(total));
+      const W = Math.max(300, box.clientWidth), Hh = 220, m = { l: 34, r: 8, t: 24, b: 26 };
+      const band = (W - m.l - m.r) / T.length, bw = Math.min(26, band - 4);
+      const y = v => Hh - m.b - (v / vmax) * (Hh - m.t - m.b);
+      const svg = svgIn(box, W, Hh, "Décisions de justice sur des interdictions de manifester, par trimestre");
+      const step = vmax > 40 ? 20 : vmax > 20 ? 10 : 5;
+      for (let v = 0; v <= vmax; v += step) {
+        el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: v === 0 ? 'var(--axis)' : 'var(--rule)' }, svg);
+        text(svg, m.l - 6, y(v) + 4, v, { 'text-anchor': 'end' });
+      }
+      const LAB = { favorable_requerant: 'suspendue(s) ou annulée(s)', rejet: 'rejet(s)', autre: 'autre(s) issue(s)' };
+      T.forEach((t, i) => {
+        const cx = m.l + (i + 0.5) * band, x0 = cx - bw / 2;
+        const [yr, q] = t.trimestre.split('-');
+        const finTrimestre = `${yr}-${String(Number(q.slice(1)) * 3).padStart(2, '0')}`;
+        const partiel = M.dernier_mois && finTrimestre > M.dernier_mois;
+        if (q === 'T1' || i === 0) text(svg, cx, Hh - 8, yr, { 'text-anchor': 'middle' });
+        const g = el('g', { tabindex: 0, 'aria-label': `${q} ${yr} : ${total(t)} décisions` }, svg);
+        el('rect', { x: cx - band / 2, y: m.t, width: band, height: Hh - m.t - m.b, fill: 'transparent' }, g);
+        let base = 0;
+        for (const [key, fill] of [['favorable_requerant', 'var(--series-1)'], ['rejet', 'var(--hist)'], ['autre', 'var(--muted)']]) {
+          const v = t[key]; if (!v) continue;
+          const top = y(base + v), bottom = y(base);
+          el('rect', { x: x0, y: top, width: bw, height: Math.max(1, bottom - top - (base ? 2 : 0)), rx: 2, fill }, g);
+          base += v;
+        }
+        if (partiel) text(svg, Math.min(cx, W - m.r - 22), y(total(t)) - 6, 'en cours', { 'text-anchor': 'middle' });
+        const rows = () => [{ label: `${q === 'T1' ? '1er' : q.slice(1) + 'e'} trimestre ${yr} : ${total(t)} décision${total(t) > 1 ? 's' : ''}`, strong: true },
+          ...(partiel ? [{ label: `Trimestre incomplet : données jusqu'à ${monthLong(M.dernier_mois + '-01')}`, muted: true }] : []),
+          ...Object.entries(LAB).filter(([k]) => t[k]).map(([k, l]) => ({ label: `${t[k]} ${l}`, muted: true }))];
+        g.addEventListener('pointermove', e => showTip(rows(), e.pageX, e.pageY));
+        g.addEventListener('pointerleave', hideTip);
+        g.addEventListener('focus', () => { const b = g.getBoundingClientRect(); showTip(rows(), b.right + window.scrollX, b.top + window.scrollY); });
+        g.addEventListener('blur', hideTip);
+      });
+      const fav = T.reduce((a, t) => a + t.favorable_requerant, 0), rej = T.reduce((a, t) => a + t.rejet, 0), all = T.reduce((a, t) => a + total(t), 0);
+      document.getElementById('manif-resume').textContent =
+        `Depuis le troisième trimestre 2022 : ${num(all)} décisions, dont ${num(fav + rej)} tranchées. Le juge a suspendu ou annulé l'interdiction dans ` +
+        `${num(fav)} cas (${pct(fav / (fav + rej || 1))}) et rejeté le recours dans ${num(rej)} cas. ` +
+        `* Approximation de l'indicateur D4.2 prévu par la grille, qui portera sur l'ensemble des arrêtés d'interdiction.`;
+      const tbl = document.getElementById('m-table');
+      if (!tbl.rows.length) {
+        const head = tbl.createTHead().insertRow();
+        for (const h of ['Date', 'Juridiction', 'N°', 'Procédure', 'Solution']) {
+          const th = document.createElement('th'); th.className = 'sticky top-0 bg-surface py-2 px-3 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th);
+        }
+        const body = tbl.createTBody();
+        for (const d of M.decisions) {
+          const tr = body.insertRow();
+          const cells = [new Date(d.date + 'T12:00:00').toLocaleDateString('fr-FR'), d.conseil_etat ? "Conseil d'État" : `Tribunal administratif (${d.juridiction})`, d.numero, d.refere ? 'Référé' : 'Fond', d.solution];
+          cells.forEach((c, i) => { const td = tr.insertCell(); td.className = 'py-1.5 px-3 border-b border-rule align-top' + (i === 0 || i === 2 ? ' tabnum whitespace-nowrap' : '') + (i === 4 && d.issue === 'favorable_requerant' ? ' font-medium' : ''); td.textContent = c; });
+        }
+      }
+    }
+
+    // ---- Lois censurées : par législature ---------------------------------------
+    const ROMAN = n => [[10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']].reduce((acc, [v, r]) => { while (n >= v) { acc += r; n -= v; } return acc; }, '');
+    // Barres par législature (une part entre 0 et 1), partagées par D2.2 et D3.2.
+    // opts : ratio(l), n(l) effectif du dénominateur, weak(l) barre en contour, rows(l) infobulle.
+    function legislatureBars(box, L, title, opts) {
+      const W = Math.max(300, box.clientWidth), Hh = 220, m = { l: 40, r: 8, t: 22, b: 26 };
+      const band = (W - m.l - m.r) / L.length, bw = Math.min(28, band - 4);
+      const y = v => Hh - m.b - v * (Hh - m.t - m.b);
+      const svg = svgIn(box, W, Hh, title);
+      for (const v of [0, 0.25, 0.5, 0.75, 1]) {
+        el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: v === 0 ? 'var(--axis)' : 'var(--rule)' }, svg);
+        text(svg, m.l - 6, y(v) + 4, pct(v), { 'text-anchor': 'end' });
+      }
+      L.forEach((l, i) => {
+        const cx = m.l + (i + 0.5) * band, r = opts.ratio(l);
+        const enCours = l.fin === D.fin_donnees;
+        if (W >= 560 || i % 2 === 0 || i === L.length - 1) text(svg, cx, Hh - 8, ROMAN(l.legislature), { 'text-anchor': 'middle' });
+        const g = el('g', { tabindex: 0, 'aria-label': `${ROMAN(l.legislature)}e législature : ${r === undefined ? 'aucune donnée' : pct(r)}` }, svg);
+        el('rect', { x: cx - band / 2, y: m.t, width: band, height: Hh - m.t - m.b, fill: 'transparent' }, g);
+        if (r !== undefined && r > 0) {
+          const top = y(r), x0 = cx - bw / 2, rr = Math.min(4, bw / 2, Hh - m.b - top);
+          el('path', { d: `M${x0},${Hh - m.b} V${top + rr} Q${x0},${top} ${x0 + rr},${top} H${x0 + bw - rr} Q${x0 + bw},${top} ${x0 + bw},${top + rr} V${Hh - m.b} Z`,
+            ...(opts.weak(l) ? { fill: 'var(--surface)', stroke: 'var(--series-1)', 'stroke-width': 1.5 } : { fill: 'var(--series-1)' }) }, g);
+          if (enCours) text(svg, cx, top - 6, pct(r), { 'text-anchor': 'middle', fill: 'var(--ink)', 'font-weight': 600 });
+        } else if (r === 0) {
+          // des textes jugés, aucun dans le numérateur : repère au niveau zéro plutôt qu'une absence de barre
+          el('line', { x1: cx - bw / 2, x2: cx + bw / 2, y1: Hh - m.b - 2, y2: Hh - m.b - 2, stroke: 'var(--series-1)', 'stroke-width': 2, 'stroke-linecap': 'round' }, g);
+          text(svg, cx, Hh - m.b - 8, '0 %', { 'text-anchor': 'middle' });
+        }
+        const period = `${l.debut.slice(0, 4)}–${enCours ? 'en cours' : l.fin.slice(0, 4)}`;
+        const rows = () => [{ label: `${ROMAN(l.legislature)}e législature (${period})`, strong: true }, ...opts.rows(l, r)];
+        g.addEventListener('pointermove', e => showTip(rows(), e.pageX, e.pageY));
+        g.addEventListener('pointerleave', hideTip);
+        g.addEventListener('focus', () => { const b = g.getBoundingClientRect(); showTip(rows(), b.right + window.scrollX, b.top + window.scrollY); });
+        g.addEventListener('blur', hideTip);
+      });
+    }
+
+    function drawCensures() {
+      const box = document.getElementById('censures');
+      const L = D.censures.legislatures;
+      legislatureBars(box, L, 'Part des lois censurées par le Conseil constitutionnel, par législature', {
+        ratio: l => l.ratio_censure,
+        weak: l => (l.nb_lois_deferees || 0) < 10,
+        rows: (l, r) => {
+          const n = l.nb_lois_deferees || 0;
+          return [
+            { label: r === undefined ? 'Aucune loi jugée au fond' : `${num(l.nb_lois_censurees)} loi${l.nb_lois_censurees > 1 ? 's' : ''} censurée${l.nb_lois_censurees > 1 ? 's' : ''} sur ${num(n)} jugée${n > 1 ? 's' : ''} (${pct(r)})` },
+            ...(l.ratio_censure_lois_ordinaires !== undefined ? [{ label: `Hors lois organiques : ${num(l.nb_lois_ordinaires_censurees)} sur ${num(l.nb_lois_ordinaires_deferees)} (${pct(l.ratio_censure_lois_ordinaires)})`, muted: true }] : []),
+            ...(l.nb_qpc ? [{ label: `QPC : ${num(l.nb_qpc_censures)} censure${l.nb_qpc_censures > 1 ? 's' : ''} sur ${num(l.nb_qpc)} décisions`, muted: true }] : []),
+          ];
+        },
+      });
+      const qpcTot = L.reduce((a, l) => a + (l.nb_qpc || 0), 0), qpcCens = L.reduce((a, l) => a + (l.nb_qpc_censures || 0), 0);
+      document.getElementById('censures-qpc').textContent =
+        `En contexte, hors calcul : depuis mars 2010, les questions prioritaires de constitutionnalité (QPC) permettent de contester une loi déjà en vigueur. ` +
+        `${num(qpcCens)} des ${num(qpcTot)} QPC jugées au fond ont abouti à une censure (${pct(qpcCens / qpcTot)}).`;
+      const tbl = document.getElementById('c-table');
+      if (!tbl.rows.length) {
+        const head = tbl.createTHead().insertRow();
+        for (const h of ['Date', 'Loi', 'Décision', 'Solution']) {
+          const th = document.createElement('th'); th.className = 'sticky top-0 bg-surface py-2 px-3 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th);
+        }
+        const body = tbl.createTBody();
+        for (const d of D.censures.decisions) {
+          const tr = body.insertRow();
+          const td0 = tr.insertCell(); td0.className = 'py-1.5 px-3 border-b border-rule tabnum whitespace-nowrap align-top'; td0.textContent = new Date(d.date + 'T12:00:00').toLocaleDateString('fr-FR');
+          const td1 = tr.insertCell(); td1.className = 'py-1.5 px-3 border-b border-rule align-top';
+          const a = document.createElement('a'); a.href = d.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'hover:underline'; a.textContent = d.titre; td1.appendChild(a);
+          const td2 = tr.insertCell(); td2.className = 'py-1.5 px-3 border-b border-rule tabnum whitespace-nowrap align-top text-ink2'; td2.textContent = d.ref;
+          const td3 = tr.insertCell(); td3.className = 'py-1.5 px-3 border-b border-rule align-top' + (d.censure ? ' font-medium' : ' text-ink2');
+          td3.textContent = d.solution + (d.au_fond ? '' : ' (non comptée)');
+        }
+      }
+    }
+
+    // ---- Dissolutions : par année ----------------------------------------------
+    function drawDissolutions() {
+      const box = document.getElementById('dissolutions');
+      const y0 = 1990, y1 = Number(D.fin_donnees.slice(0, 4));
+      const byYear = new Map(); for (let y = y0; y <= y1; y++) byYear.set(y, []);
+      for (const d of D.dissolutions) { const y = Number(d.date.slice(0, 4)); if (byYear.has(y)) byYear.get(y).push(d); }
+      const vmax = Math.max(...[...byYear.values()].map(v => v.length));
+      const W = Math.max(300, box.clientWidth), Hh = 200, m = { l: 28, r: 8, t: 18, b: 24 };
+      const n = y1 - y0 + 1, band = (W - m.l - m.r) / n, bw = Math.min(16, band - 2);
+      const y = v => Hh - m.b - (v / vmax) * (Hh - m.t - m.b);
+      const svg = svgIn(box, W, Hh, 'Dissolutions administratives par année depuis 1990');
+      for (let v = 0; v <= vmax; v += 2) {
+        el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: v === 0 ? 'var(--axis)' : 'var(--rule)' }, svg);
+        text(svg, m.l - 6, y(v) + 4, v, { 'text-anchor': 'end' });
+      }
+      for (const [yr, list] of byYear) {
+        const cx = m.l + (yr - y0 + 0.5) * band;
+        if (yr % (W < 560 ? 10 : 5) === 0) text(svg, cx, Hh - 6, yr, { 'text-anchor': 'middle' });
+        const g = el('g', { tabindex: 0, 'aria-label': `${yr} : ${list.length} dissolution(s)` }, svg);
+        el('rect', { x: cx - band / 2, y: m.t, width: band, height: Hh - m.t - m.b, fill: 'transparent' }, g);
+        if (list.length) {
+          const top = y(list.length), x0 = cx - bw / 2, r = Math.min(4, bw / 2, Hh - m.b - top);
+          el('path', { d: `M${x0},${Hh - m.b} V${top + r} Q${x0},${top} ${x0 + r},${top} H${x0 + bw - r} Q${x0 + bw},${top} ${x0 + bw},${top + r} V${Hh - m.b} Z`, fill: 'var(--series-1)' }, g);
+          if (list.length === vmax) text(svg, cx, top - 5, list.length, { 'text-anchor': 'middle', fill: 'var(--ink)', 'font-weight': 600 });
+        }
+        const rows = () => [{ label: `${yr} : ${list.length} décret${list.length > 1 ? 's' : ''} de dissolution`, strong: true },
+          ...list.slice(0, 6).map(d => ({ label: `${new Date(d.date + 'T12:00:00').toLocaleDateString('fr-FR')} — ${d.titre.replace(/^D[ée]cret\s+(n°\s*[\d-]+\s+)?du\s+[^p]*?(?=portant|PORTANT|DISSOLUTION)/, '')}`, muted: true })),
+          ...(list.length > 6 ? [{ label: `et ${list.length - 6} autre(s)…`, muted: true }] : [])];
+        g.addEventListener('pointermove', e => showTip(rows(), e.pageX, e.pageY));
+        g.addEventListener('pointerleave', hideTip);
+        g.addEventListener('focus', () => { const r = g.getBoundingClientRect(); showTip(rows(), r.right + window.scrollX, r.top + window.scrollY); });
+        g.addEventListener('blur', hideTip);
+      }
+      const tbl = document.getElementById('d-table');
+      if (!tbl.rows.length) {
+        const head = tbl.createTHead().insertRow();
+        const FOND = { 'L212-1': 'Code de la sécurité intérieure, art. L. 212-1', 'L332-18': 'Code du sport, art. L. 332-18', loi_1936: 'Loi du 10 janvier 1936', titre: 'Repéré par le titre (visas absents)' };
+        for (const h of ['Date', 'Décret', 'Fondement']) {
+          const th = document.createElement('th'); th.className = 'sticky top-0 bg-surface py-2 px-3 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th);
+        }
+        const body = tbl.createTBody();
+        for (const d of D.dissolutions) {
+          const tr = body.insertRow();
+          const td0 = tr.insertCell(); td0.className = 'py-1.5 px-3 border-b border-rule tabnum whitespace-nowrap align-top'; td0.textContent = new Date(d.date + 'T12:00:00').toLocaleDateString('fr-FR');
+          const td1 = tr.insertCell(); td1.className = 'py-1.5 px-3 border-b border-rule align-top';
+          const a = document.createElement('a'); a.href = d.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'hover:underline'; a.textContent = d.titre; td1.appendChild(a);
+          const td2 = tr.insertCell(); td2.className = 'py-1.5 px-3 border-b border-rule align-top text-ink2'; td2.textContent = FOND[d.fondement] || d.fondement;
+        }
+      }
+    }
+
+    // ---- Méthode, sources, pied de page --------------------------------------
+    const g = D.genere_depuis;
+    document.getElementById('grille').textContent =
+      `Grille de calcul ${g.grille} (${g.statut_grille === 'draft' ? 'brouillon, non validée' : g.statut_grille}) ; ` +
+      `seuils d'appréciation ${g.seuils_figes ? 'fixés' : 'non encore fixés'}. Échelle prévue : ${g.echelle}.`;
+    const src = document.getElementById('sources');
+    for (const s of D.sources) {
+      const li = document.createElement('li');
+      li.className = 'flex gap-2';
+      const i = document.createElement('i'); i.className = 'fa-solid fa-database text-muted mt-1 text-xs'; i.setAttribute('aria-hidden', 'true');
+      const span = document.createElement('span');
+      if (s.url.startsWith('http')) { const a = document.createElement('a'); a.href = s.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'underline'; a.textContent = s.nom; span.appendChild(a); }
+      else span.textContent = s.nom;
+      span.appendChild(document.createTextNode(` — ${s.licence}`));
+      li.append(i, span); src.appendChild(li);
+    }
+    document.getElementById('footer').textContent =
+      `Prototype. Données arrêtées au ${dateLong(D.fin_donnees)}, archive du ${dateLong(g.etat_archive.slice(0, 10))}. ` +
+      `Chaque chiffre est reconstruit à l'identique depuis les documents officiels archivés.`;
+
+    // ---- Thème -------------------------------------------------------------
+    const root = document.documentElement;
+    try { const saved = localStorage.getItem('theme'); if (saved) root.dataset.theme = saved; } catch (_) {}
+    document.getElementById('theme').addEventListener('click', () => {
+      const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+      root.dataset.theme = dark ? 'light' : 'dark';
+      try { localStorage.setItem('theme', root.dataset.theme); } catch (_) {}
+    });
+
+    // ---- Contexte D5.1 : temps de parole par parti ------------------------------
+    const TPP = D.temps_parole_partis;
+    const duree = s => { const t = Math.round(s / 60), h = Math.floor(t / 60), m = t % 60; return h ? `${num(h)} h ${String(m).padStart(2, '0')}` : `${m} min`; };
+    const moisCourt = m => new Date(m + '-15T12:00:00').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+    const PARTIS_MAX = 15;
+    function initPartis() {
+      const per = document.getElementById('partis-periode'), med = document.getElementById('partis-media');
+      const M = TPP.mois.map(m => m.mois), last = M[M.length - 1];
+      const opts = [];
+      if (M.length >= 12) opts.push([`12:${M[M.length - 12]}:${last}`, `12 derniers mois publiés (${moisCourt(M[M.length - 12])} – ${moisCourt(last)})`]);
+      opts.push([`all:${M[0]}:${last}`, `Tous les mois publiés (${moisCourt(M[0])} – ${moisCourt(last)})`]);
+      for (const y of [...new Set(M.map(m => m.slice(0, 4)))].reverse()) {
+        const inY = M.filter(m => m.startsWith(y));
+        opts.push([`y:${inY[0]}:${inY[inY.length - 1]}`, inY.length === 12 ? y : `${y} (${moisCourt(inY[0])} – ${moisCourt(inY[inY.length - 1])})`]);
+      }
+      for (const m of [...M].reverse()) opts.push([`m:${m}:${m}`, moisCourt(m)]);
+      per.replaceChildren(...opts.map(([v, l]) => new Option(l, v)));
+      const TYPES = [['Chaîne généraliste', 'Chaînes généralistes'], ["Chaîne d'information", "Chaînes d'information"], ['Radio', 'Radios']];
+      med.replaceChildren(new Option('Tous les médias', '*'));
+      const gT = document.createElement('optgroup'); gT.label = 'Par type';
+      for (const [v, l] of TYPES) gT.appendChild(new Option(l, `t:${v}`));
+      med.appendChild(gT);
+      for (const [v, l] of TYPES) {
+        const g = document.createElement('optgroup'); g.label = l;
+        for (const c of Object.keys(TPP.services).filter(c => TPP.services[c] === v).sort((a, b) => a.localeCompare(b, 'fr'))) g.appendChild(new Option(c, `c:${c}`));
+        med.appendChild(g);
+      }
+      per.addEventListener('change', drawPartis); med.addEventListener('change', drawPartis);
+      const src = document.getElementById('partis-sources');
+      for (const m of [...TPP.mois].reverse()) {
+        const li = document.createElement('li'), a = document.createElement('a');
+        a.href = m.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'underline'; a.textContent = moisCourt(m.mois);
+        li.appendChild(a); src.appendChild(li);
+      }
+    }
+    function drawPartis() {
+      const [, debut, fin] = document.getElementById('partis-periode').value.split(':');
+      const media = document.getElementById('partis-media').value;
+      const garde = media === '*' ? () => true : media.startsWith('t:') ? c => TPP.services[c] === media.slice(2) : c => c === media.slice(2);
+      const tot = new Map(); let nbMois = 0;
+      for (const m of TPP.mois) {
+        if (m.mois < debut || m.mois > fin) continue;
+        nbMois++;
+        for (const [nom, , chaines] of m.partis) {
+          let s = 0; for (const c in chaines) if (garde(c)) s += chaines[c];
+          if (s) tot.set(nom, (tot.get(nom) || 0) + s);
+        }
+      }
+      const rows = [...tot].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'fr'));
+      const total = rows.reduce((a, r) => a + r[1], 0);
+      const host = document.getElementById('partis-chart'), resume = document.getElementById('partis-resume');
+      host.replaceChildren();
+      if (!total) { resume.textContent = 'Aucun temps de parole de parti relevé pour ce choix.'; return; }
+      const shown = rows.slice(0, PARTIS_MAX), rest = rows.slice(PARTIS_MAX);
+      if (rest.length) shown.push([`${rest.length} autre${rest.length > 1 ? 's' : ''} parti${rest.length > 1 ? 's' : ''}`, rest.reduce((a, r) => a + r[1], 0), true]);
+      const vmax = Math.max(...shown.map(r => r[1]));
+      const libMedia = document.getElementById('partis-media').selectedOptions[0].textContent;
+      resume.textContent = `${libMedia}, ${nbMois} mois : ${num(rows.length)} partis ont eu du temps de parole, pour un total de ${duree(total)}. ` +
+        `Les partis sont classés par temps cumulé${rest.length ? ` ; au-delà du ${PARTIS_MAX}e, ils sont regroupés` : ''}.`;
+      for (const [nom, sec, autres] of shown) {
+        const li = document.createElement('li');
+        li.className = 'grid grid-cols-[minmax(0,1fr),auto] sm:grid-cols-[15rem,minmax(0,1fr),9.5rem] items-center gap-x-3 gap-y-1 text-sm';
+        const lab = document.createElement('span'); lab.className = autres ? 'text-ink2 italic' : 'text-ink'; lab.textContent = nom;
+        const val = document.createElement('span'); val.className = 'text-ink2 tabular-nums text-right sm:order-3';
+        val.textContent = `${duree(sec)} · ${pct(sec / total, 1)}`;
+        const track = document.createElement('span'); track.className = 'col-span-2 sm:col-span-1 sm:order-2 block h-2.5 rounded-full'; track.style.background = 'var(--band)';
+        const bar = document.createElement('span'); bar.className = 'block h-full rounded-full';
+        bar.style.width = `${Math.max(0.5, (100 * sec) / vmax)}%`; bar.style.background = autres ? 'var(--muted)' : 'var(--series-1)';
+        track.appendChild(bar);
+        li.append(lab, val, track);
+        host.appendChild(li);
+      }
+    }
+    initPartis();
+
+    // ---- Regards extérieurs : déclarations de l'ONU ----------------------------
+    let onuTheme = null;
+    function drawOnu() {
+      const L = D.onu, host = document.getElementById('onu-liste'), filtres = document.getElementById('onu-filtres');
+      const themes = [...new Set(L.map(d => d.theme))];
+      filtres.replaceChildren(...[[null, `Tous les thèmes (${L.length})`], ...themes.map(t => [t, `${t[0].toUpperCase()}${t.slice(1)} (${L.filter(d => d.theme === t).length})`])].map(([t, lab]) => {
+        const b = document.createElement('button'); b.type = 'button'; b.textContent = lab;
+        b.className = 'rounded-full border px-3 py-1 ' + (onuTheme === t ? 'border-[var(--series-1)] text-ink font-semibold' : 'border-rule text-ink2');
+        b.setAttribute('aria-pressed', String(onuTheme === t));
+        b.addEventListener('click', () => { onuTheme = t; drawOnu(); });
+        return b;
+      }));
+      host.replaceChildren();
+      for (const d of L.filter(d => !onuTheme || d.theme === onuTheme)) {
+        const li = document.createElement('li');
+        li.className = 'rounded-lg border border-rule bg-surface p-4 sm:p-5';
+        const meta = document.createElement('div'); meta.className = 'flex flex-wrap items-baseline gap-x-3 gap-y-1 text-xs text-ink2';
+        const date = document.createElement('time'); date.dateTime = d.date; date.className = 'font-semibold text-ink'; date.textContent = dateLong(d.date);
+        const org = document.createElement('span'); org.textContent = `${d.organe} · ${d.type}`;
+        const th = document.createElement('span'); th.className = 'rounded-full px-2 py-0.5'; th.style.background = 'var(--band)'; th.textContent = d.theme;
+        meta.append(date, org, th);
+        const t = document.createElement('h3'); t.className = 'mt-2 font-semibold leading-snug'; t.textContent = d.titre;
+        const q = (txt, cls) => {
+          const b = document.createElement('blockquote'); b.className = cls; b.lang = d.langue;
+          b.style.borderLeft = '3px solid var(--series-1)'; const t = txt.replace(/^[«“"\s]+|[»”"\s]+$/g, ''); b.textContent = `« ${/^[a-zà-ÿ]/.test(t) ? '… ' : ''}${t} »`; return b;
+        };
+        li.append(meta, t, q(d.extrait, 'mt-3 pl-3 text-ink leading-relaxed'));
+        if (d.extrait_complementaire) {
+          const c = q(d.extrait_complementaire, 'mt-2 pl-3 text-sm text-ink2 leading-relaxed'); c.style.borderLeftColor = 'var(--axis)'; li.appendChild(c);
+        }
+        const foot = document.createElement('p'); foot.className = 'mt-3 text-xs text-ink2';
+        const a = document.createElement('a'); a.href = d.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'underline';
+        a.textContent = 'Lire la déclaration sur ohchr.org';
+        foot.appendChild(a);
+        if (d.langue === 'en') foot.appendChild(document.createTextNode(' · original en anglais, pas de version française publiée'));
+        li.appendChild(foot);
+        host.appendChild(li);
+      }
+    }
+    drawOnu();
+
+    // ---- Regards extérieurs : presse étrangère (GDELT) -------------------------
+    const PE = D.presse_etrangere;
+    // Noms de pays de la table GDELT (anglais) -> français, via les noms de régions du navigateur.
+    const PAYS_ALIAS = { 'antigua and barbuda': 'AG', 'bosnia-herzegovina': 'BA', 'congo': 'CG', 'czech republic': 'CZ', 'democratic republic of the congo': 'CD', 'east timor': 'TL', 'french southern and antarctic lands': 'TF', 'heard island and mcdonald islands': 'HM', 'hong kong': 'HK', 'islas malvinas': 'FK', 'ivory coast': 'CI', 'keeling islands': 'CC', 'macau': 'MO', 'macedonia': 'MK', 'myanmar': 'MM', 'reunion': 'RE', 'saint helena': 'SH', 'saint kitts and nevis': 'KN', 'saint lucia': 'LC', 'saint vincent and the grenadines': 'VC', 'sao tome and principe': 'ST', 'slovak republic': 'SK', 'south georgia and the south sandwich islands': 'GS', 'svalbard': 'SJ', 'swaziland': 'SZ', 'trinidad and tobago': 'TT', 'turkey': 'TR', 'turks and caicos islands': 'TC' };
+    const PAYS_TEXTE = { 'netherlands antilles': 'Antilles néerlandaises', 'oceans': 'Océans', 'virgin islands': 'Îles Vierges', 'west bank': 'Cisjordanie' };
+    const paysFr = (() => {
+      let en, fr; const code = {};
+      try {
+        en = new Intl.DisplayNames(['en'], { type: 'region' }); fr = new Intl.DisplayNames(['fr'], { type: 'region' });
+        for (let a = 65; a <= 90; a++) for (let b = 65; b <= 90; b++) {
+          const c = String.fromCharCode(a, b);
+          try { const n = en.of(c); if (n && n !== c) code[n.toLowerCase()] = c; } catch (_) {}
+        }
+      } catch (_) { return n => n; }
+      return n => { const k = n.toLowerCase(); if (PAYS_TEXTE[k]) return PAYS_TEXTE[k]; const c = PAYS_ALIAS[k] || code[k]; return c ? fr.of(c) : n; };
+    })();
+    const THEMES_PE = [['manifestations', 'Manifestations', 'var(--series-1)'], ['force_police', 'Usage de la force par la police', 'var(--muted)']];
+    function initPresse() {
+      const sel = document.getElementById('presse-mois');
+      if (!PE.length) { document.getElementById('presse-note').textContent = 'Collecte en cours : aucun mois disponible pour l\'instant.'; sel.disabled = true; return; }
+      sel.replaceChildren(...[...PE].reverse().map(m => new Option(`${moisCourt(m.mois)}${m.jours_couverts < m.jours_dans_le_mois ? ` (${m.jours_couverts} jour${m.jours_couverts > 1 ? 's' : ''} sur ${m.jours_dans_le_mois})` : ''}`, m.mois)));
+      sel.addEventListener('change', drawPresse);
+    }
+    function drawPresse() {
+      if (!PE.length) return;
+      const m = PE.find(x => x.mois === document.getElementById('presse-mois').value) || PE[PE.length - 1];
+      const tiles = [['Articles étrangers', m.articles_etrangers, `${num(m.sites_etrangers)} sites distincts`],
+        ...THEMES_PE.map(([k, lab]) => [lab, m[k].articles, `${pct(m[k].articles / (m.articles_etrangers || 1), 1)} des articles · ${num(m[k].sites)} sites`])];
+      document.getElementById('presse-chiffres').replaceChildren(...tiles.map(([lab, v, sub]) => {
+        const d = document.createElement('div'); d.className = 'rounded-lg border border-rule bg-surface p-4';
+        d.innerHTML = '<div class="text-xs text-ink2"></div><div class="mt-1 text-2xl font-semibold tabular-nums"></div><div class="mt-1 text-xs text-ink2"></div>';
+        const [a, b, c] = d.children; a.textContent = lab; b.textContent = num(v); c.textContent = sub; return d;
+      }));
+      const partiel = m.jours_couverts < m.jours_dans_le_mois;
+      document.getElementById('presse-note').textContent =
+        `${moisCourt(m.mois)} : ${partiel ? `mois incomplet (${m.jours_couverts} jour${m.jours_couverts > 1 ? 's' : ''} collecté${m.jours_couverts > 1 ? 's' : ''} sur ${m.jours_dans_le_mois}) ; ` : ''}` +
+        `${num(m.articles_domaine_inconnu)} article${m.articles_domaine_inconnu > 1 ? 's' : ''} de sites absents de la table des pays, écarté${m.articles_domaine_inconnu > 1 ? 's' : ''}${m.tranches_manquantes ? ` ; ${m.tranches_manquantes} tranche(s) de 15 minutes absentes chez GDELT` : ''}.`;
+      // Part des thèmes, mois par mois (mois d'au moins 7 jours collectés)
+      const box = document.getElementById('presse-chart');
+      const S = PE.filter(x => x.jours_couverts >= 7);
+      box.querySelector('svg')?.remove();
+      if (S.length >= 2) {
+        const W = Math.max(280, box.clientWidth), Hh = 200, mg = { l: 40, r: 12, t: 14, b: 26 };
+        const vmax = Math.max(0.05, ...S.flatMap(x => THEMES_PE.map(([k]) => x[k].articles / (x.articles_etrangers || 1)))) * 1.1;
+        const X = i => mg.l + (S.length === 1 ? 0.5 : i / (S.length - 1)) * (W - mg.l - mg.r), Y = v => Hh - mg.b - (v / vmax) * (Hh - mg.t - mg.b);
+        const svg = svgIn(box, W, Hh, 'Part des articles étrangers sur la France codés manifestations ou usage de la force par la police, par mois');
+        for (const f of [0, 0.5, 1]) { const v = f * vmax; el('line', { x1: mg.l, x2: W - mg.r, y1: Y(v), y2: Y(v), stroke: f ? 'var(--rule)' : 'var(--axis)' }, svg); text(svg, mg.l - 6, Y(v) + 4, pct(v), { 'text-anchor': 'end' }); }
+        S.forEach((x, i) => { if (i === 0 || x.mois.endsWith('-01')) text(svg, X(i), Hh - 8, x.mois.endsWith('-01') ? x.mois.slice(0, 4) : moisCourt(x.mois), { 'text-anchor': i === 0 ? 'start' : 'middle' }); });
+        for (const [k, lab, col] of THEMES_PE) {
+          el('polyline', { points: S.map((x, i) => `${X(i)},${Y(x[k].articles / (x.articles_etrangers || 1))}`).join(' '), fill: 'none', stroke: col, 'stroke-width': 2 }, svg);
+          S.forEach((x, i) => {
+            const g = el('g', { tabindex: 0 }, svg);
+            el('circle', { cx: X(i), cy: Y(x[k].articles / (x.articles_etrangers || 1)), r: x.mois === m.mois ? 5 : 3, fill: col }, g);
+            const rows = () => [{ label: moisCourt(x.mois), strong: true }, { label: `${lab} : ${pct(x[k].articles / (x.articles_etrangers || 1), 1)} (${num(x[k].articles)} articles sur ${num(x.articles_etrangers)})` }];
+            g.addEventListener('pointermove', e => showTip(rows(), e.pageX, e.pageY)); g.addEventListener('pointerleave', hideTip);
+          });
+        }
+      } else {
+        box.textContent = '';
+      }
+      const pays = document.getElementById('presse-pays'), vmaxP = m.par_pays[0]?.[1] || 1;
+      pays.replaceChildren(...m.par_pays.slice(0, 10).map(([nom, n]) => {
+        const li = document.createElement('li'); li.className = 'grid grid-cols-[minmax(0,1fr),auto] gap-x-3 gap-y-1 text-sm';
+        const a = document.createElement('span'); a.textContent = paysFr(nom);
+        const b = document.createElement('span'); b.className = 'text-ink2 tabular-nums'; b.textContent = `${num(n)} · ${pct(n / m.articles_etrangers, 1)}`;
+        const t = document.createElement('span'); t.className = 'col-span-2 block h-2 rounded-full'; t.style.background = 'var(--band)';
+        const bar = document.createElement('span'); bar.className = 'block h-full rounded-full'; bar.style.background = 'var(--series-1)'; bar.style.width = `${(100 * n) / vmaxP}%`;
+        t.appendChild(bar); li.append(a, b, t); return li;
+      }));
+      const ex = document.getElementById('presse-exemples');
+      ex.replaceChildren(...m.manifestations.exemples.map(e => {
+        const li = document.createElement('li'); li.className = 'flex gap-2';
+        const d = document.createElement('span'); d.className = 'text-xs text-muted tabular-nums shrink-0 pt-0.5'; d.textContent = `${e.date.slice(6, 8)}/${e.date.slice(4, 6)}`;
+        const a = document.createElement('a'); a.href = e.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'underline break-all'; a.textContent = e.domaine;
+        const c = document.createElement('span'); c.className = 'text-xs text-ink2 pt-0.5'; c.textContent = paysFr(e.pays);
+        li.append(d, a, c); return li;
+      }));
+      if (!m.manifestations.exemples.length) ex.textContent = 'Aucun article codé « manifestations » ce mois-ci.';
+    }
+    initPresse();
+
+    // ---- Sommaire -----------------------------------------------------------
+    const TOC = [
+      ["Vue d'ensemble", [['t-indice', "Le baromètre aujourd'hui"], ['t-dims', 'Indicateurs suivis']]],
+      ['D1 · Élections et alternance', [['t-d1', 'D1.1–D1.2 · Règles électorales et reports']]],
+      ['D2 · Place du Parlement', [['titre', "D2.1 · L'essentiel"], ['t-evolution', 'Depuis 1959'], ['t-composantes', 'De quoi est fait le chiffre'], ['t-leg', 'Législature par législature'], ['t-493', 'Les recours au 49.3'], ['t-d2-2', 'D2.2 · Procédure accélérée']]],
+      ["D3 · Contre-pouvoirs et État de droit", [['t-d3', "D3.1 · Régimes d'exception"], ['t-d3-2', 'D3.2 · Lois censurées']]],
+      ['D4 · Libertés publiques', [['t-d4-2', 'D4.2* · Interdictions de manifester'], ['t-d4', 'D4.1 · Dissolutions']]],
+      ['Regards extérieurs (non noté)', [['t-onu', "Déclarations de l'ONU"], ['t-presse', 'Presse étrangère']]],
+      ['D5 · Pluralisme et information', [['t-d5-1', 'D5.1 · Temps de parole'], ['t-partis', 'Temps de parole par parti'], ['t-d5-2', 'D5.2 · Journalistes inquiétés'], ['t-annuels', 'D5.3 · Classement RSF']]],
+      ['D6 · Surveillance et données', [['t-annuels', 'D6.1 · Personnes surveillées'], ['t-d6-2', 'D6.2 · Fichiers et avis de la CNIL']]],
+      ['Contexte (non noté)', [['t-mobil', 'Journées de mobilisation'], ['t-participation', 'Participation aux législatives']]],
+      ['Méthode', [['t-methode', 'Méthode et limites']]],
+    ];
+    const tocLinks = [];
+    const buildToc = host => {
+      for (const [group, items] of TOC) {
+        const h = document.createElement('div'); h.className = 'toc-group'; h.textContent = group; host.appendChild(h);
+        for (const [id, label] of items) {
+          const a = document.createElement('a'); a.href = `#${id}`; a.className = 'toc-link'; a.textContent = label; a.dataset.target = id;
+          host.appendChild(a); tocLinks.push(a);
+        }
+      }
+      host.firstChild.style.marginTop = '0';
+    };
+    const side = document.getElementById('toc-side'), panel = document.getElementById('toc-panel'), toggle = document.getElementById('toc-toggle');
+    buildToc(side); buildToc(panel);
+    const setPanel = open => { panel.hidden = !open; toggle.setAttribute('aria-expanded', String(open)); };
+    toggle.addEventListener('click', () => setPanel(panel.hidden));
+    panel.addEventListener('click', e => { if (e.target.closest('a')) setPanel(false); });
+    addEventListener('keydown', e => { if (e.key === 'Escape' && !panel.hidden) { setPanel(false); toggle.focus(); } });
+    // Ordre de la page : une entrée par titre, dans l'ordre où il apparaît.
+    const heads = [...new Set(TOC.flatMap(([, items]) => items.map(([id]) => id)))]
+      .map(id => document.getElementById(id)).filter(Boolean)
+      .sort((a, b) => a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
+    let current = null;
+    const spy = () => {
+      const line = innerHeight * 0.3;
+      let active = heads[0];
+      for (const h of heads) if ((h.closest('section') || h).getBoundingClientRect().top <= line) active = h;
+      if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) active = heads[heads.length - 1];
+      if (active === current) return;
+      current = active;
+      let label = '';
+      for (const a of tocLinks) {
+        const on = a.dataset.target === active.id;
+        if (on) { a.setAttribute('aria-current', 'location'); label = label || a.textContent; } else a.removeAttribute('aria-current');
+      }
+      document.getElementById('toc-current').textContent = label;
+      const link = side.querySelector('[aria-current]');
+      if (link && side.scrollHeight > side.clientHeight) {
+        const r = link.getBoundingClientRect(), b = side.getBoundingClientRect();
+        if (r.top < b.top + 24 || r.bottom > b.bottom - 24) side.scrollTop += r.top - b.top - b.height / 3;
+      }
+    };
+    let spyRaf; addEventListener('scroll', () => { cancelAnimationFrame(spyRaf); spyRaf = requestAnimationFrame(spy); }, { passive: true });
+
+    // ---- Rendu -------------------------------------------------------------
+    const render = () => { drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawMobilisations(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
+    render(); spy();
+    let raf; addEventListener('resize', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { render(); current = null; spy(); }); });
+  })();
+  </script>
+</body>
+</html>

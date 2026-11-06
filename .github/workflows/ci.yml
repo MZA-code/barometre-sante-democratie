@@ -1,0 +1,17 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv python install 3.12
+      - run: make install
+      - run: make test
+      - name: rebuild sur base vide
+        run: make rebuild DB=data/ci.sqlite RAW=data/ci-raw EXPORTS=data/ci-exports

@@ -1,0 +1,17 @@
+# Collecte quotidienne du baromètre (service utilisateur, sans droits administrateur).
+# Installé par `make planifier` : @RACINE@ est remplacé par le chemin du projet.
+[Unit]
+Description=Baromètre démocratique : collecte et reconstruction quotidiennes
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=@RACINE@
+ExecStart=@UV@ run --frozen python -m ops.quotidien
+Nice=10
+IOSchedulingClass=idle
+# La lecture complète des archives DILA peut prendre ~15 min après un changement d'extracteur.
+TimeoutStartSec=3h
+# Code 2 : une exécution était déjà en cours, ce n'est pas un échec.
+SuccessExitStatus=2

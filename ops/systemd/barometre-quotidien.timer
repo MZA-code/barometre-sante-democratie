@@ -1,0 +1,13 @@
+# Tous les jours à 6 h 30. La DILA publie ses incréments vers 21 h la veille.
+# Persistent=true : si le poste était éteint à l'heure prévue, l'exécution a lieu au
+# prochain démarrage de la session.
+[Unit]
+Description=Baromètre démocratique : déclenchement quotidien
+
+[Timer]
+OnCalendar=*-*-* 06:30:00
+RandomizedDelaySec=15min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

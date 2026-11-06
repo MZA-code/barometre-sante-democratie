@@ -1,0 +1,29 @@
+# Législatures de la Ve République (référentiel factuel, pas un paramètre de notation).
+#
+# Source 1 à 14 : Assemblée nationale, « Législatures »,
+#   https://www.assemblee-nationale.fr/histoire/leg5repnew.asp (consultée le 2026-10-26).
+# Source 15 à 17 : À VÉRIFIER — dates non présentes sur la page ci-dessus,
+#   renseignées d'après les dates d'ouverture connues des législatures.
+#
+# Fenêtre « législature » des métriques : de l'ouverture d'une législature à la veille de
+# l'ouverture de la suivante (les intervalles entre deux législatures, dissolution
+# comprise, sont rattachés à la législature sortante pour que tout fait soit compté).
+
+legislatures:
+  - {numero: 1, debut: 1958-12-09, fin: 1962-10-09}
+  - {numero: 2, debut: 1962-12-06, fin: 1967-04-02}
+  - {numero: 3, debut: 1967-04-03, fin: 1968-05-30}
+  - {numero: 4, debut: 1968-07-11, fin: 1973-04-01}
+  - {numero: 5, debut: 1973-04-02, fin: 1978-04-02}
+  - {numero: 6, debut: 1978-04-03, fin: 1981-05-22}
+  - {numero: 7, debut: 1981-07-02, fin: 1986-04-01}
+  - {numero: 8, debut: 1986-04-02, fin: 1988-05-14}
+  - {numero: 9, debut: 1988-06-23, fin: 1993-04-01}
+  - {numero: 10, debut: 1993-04-02, fin: 1997-04-21}
+  - {numero: 11, debut: 1997-06-01, fin: 2002-06-18}
+  - {numero: 12, debut: 2002-06-19, fin: 2007-06-19}
+  - {numero: 13, debut: 2007-06-20, fin: 2012-06-19}
+  - {numero: 14, debut: 2012-06-20, fin: 2017-06-20}
+  - {numero: 15, debut: 2017-06-21, fin: 2022-06-21, a_verifier: true}
+  - {numero: 16, debut: 2022-06-22, fin: 2024-06-09, a_verifier: true}
+  - {numero: 17, debut: 2024-07-18, fin: null, a_verifier: true}

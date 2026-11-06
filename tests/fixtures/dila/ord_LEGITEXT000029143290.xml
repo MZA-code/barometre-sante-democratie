@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TEXTE_VERSION>
+<META>
+<META_COMMUN>
+<ID>LEGITEXT000029143290</ID>
+<ANCIEN_ID/>
+<ORIGINE>LEGI</ORIGINE>
+<URL>texte/version/LEGI/TEXT/00/00/29/14/32/LEGITEXT000029143290.xml</URL>
+<NATURE>ORDONNANCE</NATURE>
+</META_COMMUN>
+<META_SPEC>
+<META_TEXTE_CHRONICLE>
+<CID>JORFTEXT000029140226</CID>
+<NUM>2014-697</NUM>
+<NUM_PARUTION>0147</NUM_PARUTION>
+<NUM_SEQUENCE>32</NUM_SEQUENCE>
+<NOR>FCPX1413059R</NOR>
+<DATE_PUBLI>2014-06-27</DATE_PUBLI>
+<DATE_TEXTE>2014-06-26</DATE_TEXTE>
+<DERNIERE_MODIFICATION>2019-07-22</DERNIERE_MODIFICATION>
+<VERSIONS_A_VENIR/>
+<ORIGINE_PUBLI/>
+<PAGE_DEB_PUBLI>10622</PAGE_DEB_PUBLI>
+<PAGE_FIN_PUBLI>10622</PAGE_FIN_PUBLI>
+</META_TEXTE_CHRONICLE>
+<META_TEXTE_VERSION>
+
+
+<TITRE>ORDONNANCE n°2014-697 du 26 juin 2014</TITRE>
+<TITREFULL>Ordonnance n° 2014-697 du 26 juin 2014 relative au développement de la facturation électronique</TITREFULL>
+
+<ETAT>ABROGE</ETAT>
+<DATE_DEBUT>2014-06-28</DATE_DEBUT>
+<DATE_FIN>2019-07-22</DATE_FIN>
+<AUTORITE/>
+<MINISTERE/>
+<LIENS>
+<LIEN cidtexte="JORFTEXT000000889241" datesignatexte="1975-12-31" id="JORFTEXT000000889241" naturetexte="LOI" nortexte="" num="" numtexte="75-1334" sens="source" typelien="CITATION">LOI n° 75-1334 du 31 décembre 1975</LIEN>
+<LIEN cidtexte="JORFTEXT000000636232" datesignatexte="2005-12-08" id="JORFTEXT000000636232" naturetexte="ORDONNANCE" nortexte="ECOX0500286R" num="" numtexte="2005-1516" sens="source" typelien="CITATION">Ordonnance n° 2005-1516 du 8 décembre 2005</LIEN>
+<LIEN cidtexte="JORFTEXT000019283050" datesignatexte="2008-08-04" id="JORFTEXT000019283050" naturetexte="LOI" nortexte="ECEX0808477L" num="" numtexte="2008-776" sens="source" typelien="CITATION">LOI n° 2008-776 du 4 août 2008</LIEN>
+<LIEN cidtexte="JORFTEXT000028424785" datesignatexte="2014-01-02" id="JORFTEXT000028424785" naturetexte="LOI" nortexte="EFIX1320236L" num="" numtexte="2014-1" sens="source" typelien="CITATION">LOI n° 2014-1 du 2 janvier 2014</LIEN>
+<LIEN cidtexte="JORFTEXT000038496102" datesignatexte="2019-05-22" id="LEGIARTI000038497517" naturetexte="LOI" nortexte="ECOT1810669L" num="193" numtexte="2019-486" sens="cible" typelien="ABROGE">LOI n° 2019-486 du 22 mai 2019 - art. 193 (V)</LIEN>
+<LIEN cidtexte="LEGITEXT000006070633" datesignatexte="2999-01-01" id="LEGITEXT000006070633" naturetexte="CODE" nortexte="" num="" numtexte="" sens="source" typelien="CITATION">Code général des collectivités territoriales</LIEN>
+</LIENS>
+
+
+</META_TEXTE_VERSION>
+</META_SPEC>
+</META>
+<VISAS>
+<CONTENU>
+<p align="left">
+<br/>Le Président de la République,<br/>Sur le rapport du Premier ministre et du ministre des finances et des comptes publics,<br/>Vu la Constitution, notamment son article 38 ;<br/>Vu le code général des collectivités territoriales ;<br/>Vu la loi n° 75-1334 du 31 décembre 1975 modifiée relative à la sous-traitance, notamment son article 4 ;<br/>Vu la loi n° 2008-776 du 4 août 2008 modifiée de modernisation de l'économie, notamment ses articles 25 et 51 ;<br/>Vu la loi n° 2014-1 du 2 janvier 2014 habilitant le Gouvernement à simplifier et sécuriser la vie des entreprises, notamment son article 1er ;<br/>Vu l'ordonnance n° 2005-1516 du 8 décembre 2005 modifiée relative aux échanges électroniques entre les usagers et les autorités administratives et entre les autorités administratives ;<br/>Vu l'avis du comité des finances locales (commission consultative d'évaluation des normes) en date du 6 mai 2014 ;<br/>Vu la saisine du conseil territorial de Saint-Martin en date du 9 mai 2014 ;<br/>Le Conseil d'Etat (section des finances) entendu ;<br/>Le conseil des ministres entendu,<br/>Ordonne :</p>
+</CONTENU>
+</VISAS>
+<SIGNATAIRES>
+<CONTENU>
+<div align="left">
+<p>Fait le 26 juin 2014.</p>
+</div>
+<div align="left">
+<p>François Hollande</p>
+<p>Par le Président de la République :</p>
+</div>
+<div align="left">
+<p>Le Premier ministre,</p>
+<p>Manuel Valls</p>
+</div>
+<div align="left">
+<p>Le ministre des finances et des comptes publics,</p>
+<p>Michel Sapin</p>
+</div>
+<div align="left">
+<p>Le ministre de l'intérieur,</p>
+<p>Bernard Cazeneuve</p>
+</div>
+<div align="left">
+<p>La ministre de la décentralisation et de la fonction publique,</p>
+<p>Marylise Lebranchu</p>
+</div>
+</CONTENU>
+</SIGNATAIRES>
+<TP>
+<CONTENU/>
+</TP>
+<NOTA>
+<CONTENU>
+<p>Conformément au III l’article 193 de la loi n° 2019-486 du 22 mai 2019, les présentes dispositions sont abrogées à une date fixée par décret, et au plus tard deux mois après la promulgation de la présente loi.</p>
+</CONTENU>
+</NOTA>
+<ABRO>
+<CONTENU/>
+</ABRO>
+<RECT>
+<CONTENU/>
+</RECT>
+
+
+</TEXTE_VERSION>

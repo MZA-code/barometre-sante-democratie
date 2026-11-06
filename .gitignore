@@ -1,0 +1,22 @@
+# Archive brute immuable : jamais versionnée
+data/raw/
+# Base dérivée : reconstruite par `make rebuild`
+data/*.sqlite
+data/*.sqlite-*
+data/exports/
+
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.idea/
+.remember/
+.claude/settings.local.json
+data/cache/
+data/.fingerprint-*
+front/prototype/data.js
+.playwright-mcp/
+data/logs/
+data/.quotidien.lock
+front/publication/dist/

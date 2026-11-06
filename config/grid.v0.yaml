@@ -1,0 +1,404 @@
+# Grille d'indicateurs du baromètre — version v0
+#
+# Référence méthodologique : « Baromètre de la santé démocratique française —
+# Grille d'indicateurs » (v0).
+#
+# Règles (voir BRIEF.md §3) :
+#   - le code de scoring lit ce fichier et n'embarque aucun seuil en dur ;
+#   - tant qu'un seuil vaut null, le pipeline publie les métriques brutes mais
+#     refuse de produire une note 0-4 ;
+#   - changer un seuil = nouveau fichier grid.vN.yaml + entrée dans
+#     CHANGELOG-GRILLE.md + recalcul complet de l'historique.
+#
+# Convention de notation : `thresholds` contient exactement 4 bornes [s1, s2, s3, s4].
+#   - direction: increasing -> bornes croissantes, note = nombre de bornes s
+#     telles que valeur >= s (la note monte quand la métrique monte) ;
+#   - direction: decreasing -> bornes décroissantes, note = nombre de bornes s
+#     telles que valeur <= s (la note monte quand la métrique baisse).
+
+version: v0
+status: draft          # draft tant que le comité n'a pas figé les seuils
+frozen_on: null        # date de gel par le comité (AAAA-MM-JJ)
+
+scale:
+  # Sens de l'échelle (décision du 2026-10-26) : plus la note est haute, plus la situation
+  # appelle la vigilance. Libellés de chaque niveau à rédiger par le comité.
+  meaning: "0 = fonctionnement démocratique normal ; 4 = alerte maximale"
+  labels: {0: null, 1: null, 2: null, 3: null, 4: null}
+
+indicators:
+  D2.contournement_parlement:
+    label: Contournement du Parlement
+    description: >-
+      Part des textes adoptés sans vote final du Parlement (article 49 alinéa 3)
+      ou par délégation au gouvernement (ordonnances).
+    fact_types:
+      - engagement_49_3
+      - ordonnance_publiee
+      - loi_promulguee
+    history_start: 1958-12-09   # ouverture de la Ire législature de la Ve République
+    windows:
+      - type: rolling       # fenêtre glissante, calculée chaque jour
+        days: 365
+      - type: legislature   # par législature (décision du 2026-10-26), cf. config/legislatures.yaml
+    metrics:
+      - nb_49_3                 # engagements de responsabilité (chaque lecture compte)
+      - nb_textes_49_3          # textes distincts ayant fait l'objet d'au moins un 49.3
+      - nb_textes_adoptes_49_3  # idem, en excluant les engagements suivis d'une censure adoptée
+      - nb_ordonnances          # ordonnances publiées, tous fondements
+      - nb_ordonnances_art38    # dont fondées sur l'article 38 (lu dans les visas)
+      - nb_lois                 # lois promulguées (ordinaires, organiques, constitutionnelles)
+      - nb_lois_hors_conventions  # dont lois n'autorisant pas un engagement international
+      - ratio_contournement
+    ratios:
+      # somme(numérateur) / somme(dénominateur), non calculé si le dénominateur est nul.
+      # Décisions du 2026-10-26 : seules les ordonnances de l'article 38 comptent ; les lois
+      # autorisant la ratification ou l'approbation d'un traité sont exclues.
+      ratio_contournement:
+        numerateur: [nb_textes_adoptes_49_3, nb_ordonnances_art38]
+        denominateur: [nb_lois_hors_conventions, nb_ordonnances_art38]
+    scored_metric: ratio_contournement
+    direction: increasing
+    thresholds: [null, null, null, null]   # à fixer par le comité
+    weight: null                           # pondération dans l'agrégat, à fixer
+
+  D2.procedure_acceleree:
+    label: Procédure accélérée
+    description: >-
+      Part des lois promulguées adoptées après engagement de la procédure accélérée
+      (article 45 de la Constitution : une seule lecture par assemblée avant la commission
+      mixte paritaire ; « déclaration d'urgence » avant la révision de 2008). Statut lu dans
+      l'open data de l'Assemblée (depuis 2012), à défaut dans la base Dosleg du Sénat
+      (depuis 1977) ; dates de promulgation lues au Journal officiel. Hors lois autorisant
+      un engagement international (comme D2), lois constitutionnelles et lois de finances et
+      de financement de la sécurité sociale. Les lois dont aucune source ne donne le statut
+      sont comptées à part.
+    fact_types:
+      - loi_procedure
+    history_start: 1978-04-03   # VIe législature ; base Dosleg : dépôts depuis octobre 1977
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - nb_lois_statut_connu          # lois promulguées dont la procédure est connue
+      - nb_lois_procedure_acceleree   # dont procédure accélérée (ou urgence) non retirée
+      - nb_lois_statut_inconnu        # couverture : aucune source ne donne la procédure
+      - ratio_procedure_acceleree
+    ratios:
+      ratio_procedure_acceleree:
+        numerateur: [nb_lois_procedure_acceleree]
+        denominateur: [nb_lois_statut_connu]
+    scored_metric: ratio_procedure_acceleree
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
+  D3.regimes_exception:
+    label: Régimes d'exception
+    description: >-
+      Jours passés sous un régime d'exception (état d'urgence, état d'urgence sanitaire,
+      article 16 de la Constitution, état de siège) dans la fenêtre.
+    fact_types:
+      - periode_regime_exception
+    history_start: 1958-12-09
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - jours_exception            # jours où au moins une partie du territoire est concernée
+      - jours_exception_metropole  # jours où le territoire métropolitain est concerné
+    scored_metric: jours_exception
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
+  D3.lois_censurees:
+    label: Lois censurées par le Conseil constitutionnel
+    description: >-
+      Part des lois soumises au Conseil constitutionnel avant promulgation (décisions DC)
+      déclarées non conformes en tout ou partie. Seules les décisions rendues au fond
+      comptent (irrecevabilité, incompétence, rejet et non-lieu exclus). Lecture prudente :
+      une hausse peut traduire des lois plus contestables comme un contrôle plus exigeant.
+      Le comité doit dire si l'indicateur est noté ou seulement affiché. Avant la réforme
+      du 29 octobre 1974 (saisine par 60 députés ou 60 sénateurs), les lois ordinaires
+      sont rarement déférées.
+    fact_types:
+      - decision_dc_loi
+      - decision_qpc
+    history_start: 1958-12-09
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - nb_lois_deferees              # décisions DC au fond portant sur une loi
+      - nb_lois_censurees             # dont non-conformité partielle ou totale
+      - nb_lois_ordinaires_deferees   # hors lois organiques (transmises d'office)
+      - nb_lois_ordinaires_censurees
+      - ratio_censure
+      - ratio_censure_lois_ordinaires
+      - nb_qpc                        # contexte : QPC jugées au fond (depuis mars 2010)
+      - nb_qpc_censures
+    ratios:
+      ratio_censure:
+        numerateur: [nb_lois_censurees]
+        denominateur: [nb_lois_deferees]
+      ratio_censure_lois_ordinaires:
+        numerateur: [nb_lois_ordinaires_censurees]
+        denominateur: [nb_lois_ordinaires_deferees]
+    scored_metric: ratio_censure
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
+  D4.interdictions_manifester_juge:
+    label: Interdictions de manifester contestées devant le juge
+    description: >-
+      Approximation automatique de l'indicateur D4.2 de la grille (« Interdictions de
+      manifester », défini à partir des arrêtés préfectoraux, collecte semi-manuelle) : on
+      ne voit ici que les interdictions contestées devant le juge administratif (tribunaux
+      administratifs depuis juin 2022, Conseil d'État depuis juin 2021). Unité : la décision
+      de justice (une même interdiction peut en produire plusieurs). Part des contestations
+      tranchées où le juge a donné raison au requérant (suspension ou annulation de
+      l'interdiction), hors désistements et non-lieux. Une hausse du nombre de décisions
+      peut traduire plus d'interdictions comme plus de recours.
+    fact_types:
+      - decision_interdiction_manifestation
+    history_start: 2022-06-01   # open data des tribunaux administratifs
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - nb_decisions_manifestation             # toutes les décisions retenues
+      - nb_decisions_manifestation_tranchees   # le juge a donné raison ou a rejeté
+      - nb_decisions_manifestation_favorables  # le juge a donné raison au requérant
+      - ratio_interdictions_censurees
+    ratios:
+      ratio_interdictions_censurees:
+        numerateur: [nb_decisions_manifestation_favorables]
+        denominateur: [nb_decisions_manifestation_tranchees]
+    scored_metric: ratio_interdictions_censurees
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
+  D4.dissolutions_administratives:
+    label: Dissolutions administratives
+    description: >-
+      Associations et groupements de fait dissous par décret pour un motif d'ordre public
+      (code de la sécurité intérieure, code du sport, loi du 10 janvier 1936).
+    fact_types:
+      - dissolution_administrative
+    # L'indexation du Journal officiel n'est fiable qu'à partir de 1990 (voir extract/libertes.py).
+    history_start: 1990-01-01
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - nb_dissolutions
+    scored_metric: nb_dissolutions
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
+  D6.traitements_malgre_reserves:
+    label: Fichiers créés malgré les réserves de la CNIL
+    description: >-
+      Décrets créant ou modifiant un traitement de données publié après un avis de la CNIL
+      sur le projet de décret qui contenait des réserves formelles (avis défavorable, avis
+      favorable sous réserves, réserves exprimées). Critère strict : les formules
+      d'observation (« regrette », « demande que ») ne comptent pas. Depuis 2018 (RGPD), la
+      CNIL qualifie rarement ses avis : une baisse peut traduire un changement de rédaction
+      plutôt que moins de réserves. Avis lus dans le fonds CNIL de la DILA, décrets dans les
+      fonds JORF et LEGI, rapprochés par le numéro ou la date de la délibération citée dans
+      les visas.
+    fact_types:
+      - decret_apres_avis_cnil
+      - avis_cnil_projet_decret
+    history_start: 1983-01-01
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - nb_decrets_malgre_reserves    # décrets publiés après un avis réservé (confiance forte)
+      - nb_decrets_avis_cnil          # décrets publiés après un avis sur projet de décret (idem)
+      - nb_decrets_malgre_reserves_a_verifier  # rapprochement de confiance faible, non compté
+      - nb_avis_cnil_reserves         # contexte : avis réservés (datés du jour de l'avis)
+      - nb_avis_cnil_projets_decret   # contexte : avis sur projet de décret
+    scored_metric: nb_decrets_malgre_reserves
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
+  D5.temps_parole_executif:
+    label: Temps de parole de l'exécutif
+    description: >-
+      Part du temps de parole de l'exécutif (Gouvernement et propos du Président de la
+      République relevant du débat politique national, selon les règles de l'Arcom) dans le
+      temps de parole politique total à la télévision et à la radio, hors période électorale.
+      Secondes additionnées sur les mois relevés de la fenêtre, d'après les agrégats publiés
+      par l'Arcom (« Total Pouvoir exécutif », « Total Partis politiques »). Fichiers publiés
+      depuis janvier 2025, environ trois mois après la diffusion.
+    fact_types:
+      - temps_parole_mois
+    history_start: 2025-01-01
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - part_executif
+      - secondes_executif
+      - secondes_partis
+      - nb_mois_temps_parole    # mois relevés dans la fenêtre (publication décalée)
+    ratios:
+      part_executif:
+        numerateur: [secondes_executif]
+        denominateur: [secondes_executif, secondes_partis]
+    scored_metric: part_executif
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
+  D5.classement_rsf:
+    label: Classement RSF de la liberté de la presse
+    description: >-
+      Rang de la France dans le classement mondial de la liberté de la presse de Reporters
+      sans frontières (source externe, annuelle). Le rang est suivi plutôt que le score, qui
+      change d'échelle en 2013 et de méthodologie en 2022 ; le nombre de pays classés passe de
+      139 (2002) à 180 (depuis 2014). Chaque édition est datée du 1er janvier de son année
+      (date conventionnelle) : une fenêtre de 365 jours contient une édition, dont le rang
+      est celui de la fenêtre (moyenne si plusieurs).
+    fact_types:
+      - classement_rsf
+    history_start: 2002-01-01
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - rang_rsf
+      - somme_rangs_rsf
+      - nb_editions_rsf
+      # Variante (dossier des seuils) : catégorie RSF, 0 = bonne situation ... 4 = très grave,
+      # lue dans le score selon les bornes publiées par RSF ; éditions 2022 et suivantes.
+      - categorie_rsf
+      - somme_niveaux_categorie_rsf
+      - nb_editions_categorie_rsf
+    ratios:
+      rang_rsf:
+        numerateur: [somme_rangs_rsf]
+        denominateur: [nb_editions_rsf]
+      categorie_rsf:
+        numerateur: [somme_niveaux_categorie_rsf]
+        denominateur: [nb_editions_categorie_rsf]
+    scored_metric: rang_rsf
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
+  D6.techniques_renseignement:
+    label: Techniques de renseignement
+    description: >-
+      Nombre de personnes ayant fait l'objet d'au moins une technique de renseignement dans
+      l'année, calculé par la CNCTR dans ses rapports d'activité (indicateur constant depuis
+      2016). Seed manuel, chaque chiffre vérifié dans le texte du rapport archivé. Chaque
+      année est datée du 31 décembre : une fenêtre de 365 jours contient une année, dont le
+      chiffre est celui de la fenêtre (moyenne si plusieurs). Les demandes de techniques ne
+      sont relevées que depuis 2023 (total unique publié à partir de cette année).
+    fact_types:
+      - surveillance_annee
+    history_start: 2016-01-01
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - personnes_surveillees
+      - somme_personnes_surveillees
+      - nb_annees_cnctr
+    ratios:
+      personnes_surveillees:
+        numerateur: [somme_personnes_surveillees]
+        denominateur: [nb_annees_cnctr]
+    scored_metric: personnes_surveillees
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
+  D1.regles_electorales_avant_scrutin:
+    label: Règles électorales modifiées peu avant un scrutin
+    description: >-
+      Lois, lois organiques, ordonnances et décrets touchant au mode de scrutin, au découpage
+      des circonscriptions ou au calendrier d'un scrutin national (présidentielle,
+      législatives, européennes, référendum), publiés moins d'un an (365 jours) avant le
+      scrutin suivant du même type. Textes repérés par leur titre dans le Journal officiel ;
+      calendrier des scrutins construit à partir des décrets de convocation du Journal
+      officiel (voir contexte.calendrier_scrutins), complet pour les scrutins nationaux à
+      partir de 1993 (les décrets de convocation antérieurs manquent en partie au JORF archivé).
+    fact_types:
+      - texte_electoral
+    history_start: 1993-01-01
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - nb_textes_electoraux_avant_scrutin   # publiés moins d'un an avant le scrutin visé
+      - nb_textes_electoraux                 # contexte : tous les textes de ce type
+    scored_metric: nb_textes_electoraux_avant_scrutin
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
+  D1.scrutins_reportes:
+    label: Scrutins reportés
+    description: >-
+      Lois, ordonnances et décrets reportant un scrutin ou prorogeant des mandats électifs
+      (tous scrutins, y compris locaux), repérés par leur titre dans le Journal officiel. La
+      durée cumulée des reports, prévue par la grille, n'est pas encore mesurée.
+    fact_types:
+      - report_scrutin
+    history_start: 1990-01-01
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - nb_reports_scrutin
+      # Variante (dossier des seuils) : scrutins distincts reportés dans la fenêtre, d'après la
+      # table config/scrutins_reportes.yaml (un texte non rattaché compte pour un scrutin).
+      - nb_scrutins_reportes
+    scored_metric: nb_reports_scrutin
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
+  D5.journalistes_inquietes:
+    label: Journalistes inquiétés
+    description: >-
+      Journalistes visés, dans l'exercice de leur métier, par une garde à vue, une
+      interpellation, une poursuite, une mise en examen ou une condamnation, d'après les cas
+      documentés par RSF, les syndicats de journalistes et la presse (seed manuel, chaque cas
+      vérifié dans sa source). Les convocations et auditions sont comptées à part. Relevé
+      pilote limité à 2023-2025 et non exhaustif : il dépend de ce que ces organisations ont
+      rendu public.
+    fact_types:
+      - mesure_journaliste
+    history_start: 2023-01-01
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - nb_journalistes_mesures      # gardes à vue, interpellations, poursuites, condamnations
+      - nb_journalistes_convoques    # contexte : convocations et auditions
+    scored_metric: nb_journalistes_mesures
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null

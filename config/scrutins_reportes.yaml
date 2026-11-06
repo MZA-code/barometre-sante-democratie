@@ -1,0 +1,79 @@
+# Rattachement des textes de report (D1.2) aux scrutins reportés.
+#
+# Variante demandée pour le dossier des seuils : compter les scrutins reportés plutôt que les
+# textes (un même report peut demander une ordonnance, puis un décret, puis une loi).
+#
+# Règle : un scrutin = un type d'élection + l'année où il devait se tenir, lus dans le titre du
+# texte (à défaut, l'année du texte). Un texte qui reporte plusieurs renouvellements nommés
+# séparément dans son titre compte pour chacun. Un texte absent de cette table compte comme un
+# scrutin à lui seul (`rattachement: a_rattacher`) : il faut alors l'ajouter ici.
+#
+# Table établie le 2026-11-05 à partir des seuls titres du Journal officiel : à vérifier
+# (document de vérification humaine).
+
+textes:
+  "2005-1563":
+    scrutins: [municipales-2007, cantonales-2007]
+    note: « conseillers municipaux et conseillers généraux renouvelables en 2007 ».
+  "2013-403":
+    scrutins: [calendrier-2013-403]
+    note: >-
+      « modifiant le calendrier électoral » : scrutin(s) concerné(s) non identifiable(s) par le
+      titre ; à vérifier.
+  "2013-498":
+    scrutins: [afe-2013]
+    note: Prorogation du mandat des membres de l'Assemblée des Français de l'étranger.
+  "2015-29":
+    scrutins: [calendrier-2015-29]
+    note: >-
+      « modifiant le calendrier électoral » : scrutin(s) concerné(s) non identifiable(s) par le
+      titre ; à vérifier.
+  "2020-267":
+    scrutins: [municipales-2020-t2]
+  "2020-390":
+    scrutins: [municipales-2020-t2]
+  "2020-462":
+    scrutins: [municipales-2020-t2]
+    note: Même renouvellement général, en Polynésie française et en Nouvelle-Calédonie.
+  "2020-643":
+    scrutins: [municipales-2020-t2]
+  "2020-307":
+    scrutins: [consulaires-2020]
+    note: Prorogation des mandats des conseillers et délégués consulaires.
+  "2020-760":
+    scrutins: [consulaires-2020]
+    note: >-
+      Le titre « sécurise » le second tour des municipales (pas un report) et reporte les
+      élections consulaires.
+  "2020-976":
+    scrutins: [senatoriales-fde-2020, partielles-fde-2020]
+    note: Six sénateurs des Français de l'étranger et élections partielles des Français de l'étranger.
+  "2021-191":
+    scrutins: [departementales-2021, regionales-2021]
+    note: >-
+      Les assemblées de Corse, de Guyane et de Martinique, citées dans le titre, sont élues à la
+      place des conseils régionaux : rattachées aux régionales.
+  "2021-647":
+    scrutins: [consulaires-2021]
+    note: >-
+      Report dans certaines circonscriptions ; année du texte faute d'année dans le titre. Lien
+      éventuel avec consulaires-2020 (même renouvellement ?) à vérifier.
+  "2024-343":
+    scrutins: [provinciales-nc-2024]
+  "2024-1026":
+    scrutins: [provinciales-nc-2024]
+  "2025-1055":
+    scrutins: [provinciales-nc-2024]
+    note: Troisième report du même renouvellement (congrès et assemblées de province).
+  # Textes au titre général repérés par le texte de leurs articles (detection: corps_du_texte).
+  "2020-290":
+    scrutins: [municipales-2020-t2, consulaires-2020]
+    note: >-
+      Loi d'urgence pour faire face à l'épidémie de covid-19 : « ce second tour, initialement
+      fixé au 22 mars 2020, est reporté » ; mandat des conseillers et délégués consulaires prorogé.
+  "2021-689":
+    scrutins: [consulaires-2021]
+    note: >-
+      Loi relative à la gestion de la sortie de crise sanitaire : mandat des conseillers des
+      Français de l'étranger prorogé dans certaines circonscriptions jusqu'à une élection
+      partielle. Report conditionnel : à vérifier.

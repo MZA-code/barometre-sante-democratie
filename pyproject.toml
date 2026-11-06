@@ -1,0 +1,29 @@
+[project]
+name = "barometre"
+version = "0.1.0"
+description = "Baromètre de la santé démocratique française — collecte, faits, métriques"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "defusedxml>=0.7.1",
+    "pyyaml>=6.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
