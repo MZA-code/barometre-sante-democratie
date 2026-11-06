@@ -161,3 +161,27 @@ def test_couverture_mensuelle(conn, tmp_path):
 def test_langue():
     assert collector.langue("srclc:spa;eng:GT-SPA") == "spa"
     assert collector.langue("") == "eng"
+
+
+def test_erreur_reseau_retentee_puis_reussie():
+    calls = []
+
+    @contextmanager
+    def flaky(url):
+        calls.append(url)
+        if len(calls) < 3:
+            raise urllib.error.URLError("handshake operation timed out")
+        yield io.BytesIO(zipped(event("1", "14") + "\n"))
+
+    rows = collector.fetch_rows("u", flaky, sleep=lambda s: None)
+    assert len(calls) == 3 and rows[0][0] == "1"
+
+
+def test_erreur_reseau_persistante_remonte():
+    @contextmanager
+    def down(url):
+        raise urllib.error.URLError("timeout")
+        yield
+
+    with pytest.raises(urllib.error.URLError):
+        collector.fetch_rows("u", down, sleep=lambda s: None)

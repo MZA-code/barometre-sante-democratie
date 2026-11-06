@@ -80,15 +80,30 @@ def stamps(day: dt.date) -> list[str]:
     return [f"{day:%Y%m%d}{h:02d}{m:02d}00" for h in range(24) for m in (0, 15, 30, 45)]
 
 
-def fetch_rows(url: str, opener: Opener) -> list[list[str]] | None:
-    """Lignes d'un fichier GDELT zippé (tabulations) ; None si la tranche n'existe pas."""
-    try:
-        with opener(url) as response:
-            data = response.read()
-    except urllib.error.HTTPError as e:
-        if e.code == 404:
-            return None
-        raise
+ESSAIS = 4  # tentatives par fichier en cas d'erreur réseau (délai, coupure)
+ATTENTE_S = 5.0  # attente avant la 2e tentative, doublée ensuite
+
+
+def fetch_rows(url: str, opener: Opener, sleep=time.sleep) -> list[list[str]] | None:
+    """Lignes d'un fichier GDELT zippé (tabulations) ; None si la tranche n'existe pas.
+
+    Une erreur réseau passagère est retentée ; si elle persiste, l'exception remonte : le jour
+    en cours n'est alors pas archivé (jamais d'extrait incomplet dans l'archive immuable).
+    """
+    for essai in range(ESSAIS):
+        try:
+            with opener(url) as response:
+                data = response.read()
+            break
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                return None
+            if e.code < 500 or essai == ESSAIS - 1:
+                raise
+        except (urllib.error.URLError, TimeoutError, ConnectionError, OSError):
+            if essai == ESSAIS - 1:
+                raise
+        sleep(ATTENTE_S * 2**essai)
     with zipfile.ZipFile(io.BytesIO(data)) as z:
         (name,) = z.namelist()
         text = z.read(name).decode("utf-8", errors="replace")
