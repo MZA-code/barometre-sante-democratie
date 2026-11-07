@@ -144,6 +144,24 @@ make deployer       # construit la version web et l'envoie (rsync en SSH, ou FTP
 - Envoi sans page à moitié publiée : les données partent avant la page ; en FTPS, chaque
   fichier est envoyé sous un nom temporaire puis renommé.
 
+### Collecte sur l'hébergement (cPanel, sans systemd)
+
+Pour ne plus dépendre d'un PC allumé, la collecte peut tourner sur l'hébergement lui-même
+(testé sur un mutualisé O2Switch : Python 3.12 dans `/opt/alt/python312`, disque sans quota) :
+
+```sh
+curl -LsSf https://astral.sh/uv/0.11.28/install.sh | sh     # uv dans ~/.local/bin
+git clone <dépôt> ~/barometre && cd ~/barometre
+UV_PYTHON=/opt/alt/python312/bin/python3.12 ~/.local/bin/uv sync --frozen
+printf 'MODE=local\nDESTINATION=~/dossier-du-site\nSITE_URL=https://exemple.fr/\n' > config/deploiement.local
+# archive brute et base copiées depuis la machine qui les a (rsync), puis :
+./ops/cron.sh                                                  # un passage complet, pour tester
+```
+
+Tâche cron (cPanel, « Tâches cron ») : `30 6 * * * $HOME/barometre/ops/cron.sh >> $HOME/barometre/data/logs/cron.log 2>&1`.
+Le script récupère d'abord la dernière version du code (`git pull --ff-only`), puis lance
+`make quotidien`, qui se termine par la copie du site (`MODE=local`, atomique).
+
 ### Référencement (SEO et assistants d'IA)
 
 La page construit ses chiffres en JavaScript ; la version web les écrit aussi dans le HTML

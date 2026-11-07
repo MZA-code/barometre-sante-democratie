@@ -16,6 +16,10 @@ DESTINATION=utilisateur@serveur.exemple:public_html/barometre/
 # UTILISATEUR=utilisateur
 # DOSSIER=public_html/barometre
 
+# --- Méthode 3 : copie locale (collecte installée sur le serveur qui héberge le site) -----
+# MODE=local
+# DESTINATION=~/barometre-democratique
+
 # --- Adresse publique du site (une fois le domaine choisi) -------------------------------
 # Active l'URL canonique, og:url, sitemap.xml et les liens absolus de llms.txt.
 # SITE_URL=https://exemple.fr/

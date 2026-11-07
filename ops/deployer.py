@@ -18,6 +18,10 @@ dans `config/deploiement.local` (lignes CLE=valeur) :
     # vérification ; la chaîne doit toujours remonter à une racine de confiance du système
     INTERMEDIAIRES=config/deploiement.intermediaires.pem
 
+    # ou copie locale, quand la collecte tourne sur le serveur qui héberge le site
+    MODE=local
+    DESTINATION=/home/utilisateur/barometre-democratique
+
     # adresse publique du site, une fois le domaine choisi (URL canonique, sitemap.xml)
     SITE_URL=https://exemple.fr/
 
@@ -35,6 +39,8 @@ import argparse
 import contextlib
 import ftplib
 import netrc
+import os
+import shutil
 import ssl
 import subprocess
 import sys
@@ -87,6 +93,19 @@ def envoi_rsync(source: Path, destination: str, run=subprocess.run) -> None:
             ["rsync", "-az", "--relative", "--chmod=D755,F644", f"{source}/./{name}", destination],
             check=True,
         )
+
+
+def envoi_local(source: Path, destination: str) -> None:
+    """Copie dans un dossier du même serveur : chaque fichier est écrit sous un nom temporaire puis
+    renommé (opération atomique), données avant la page."""
+    dest = Path(destination).expanduser()
+    for name in presents(source):
+        cible = dest / name
+        cible.parent.mkdir(parents=True, exist_ok=True)
+        temp = cible.with_name(cible.name + ".envoi")
+        shutil.copyfile(source / name, temp)
+        temp.chmod(0o644)
+        os.replace(temp, cible)
 
 
 def envoi_ftps(
@@ -144,6 +163,9 @@ def deploy(config: Path = CONFIG, source: Path = SOURCE, **kw) -> str:
     if mode == "rsync":
         envoi_rsync(source, conf["DESTINATION"], **kw)
         return f"envoyé par rsync vers {conf['DESTINATION']}"
+    if mode == "local":
+        envoi_local(source, conf["DESTINATION"])
+        return f"copié dans {conf['DESTINATION']}"
     if mode == "ftps":
         envoi_ftps(
             source,
@@ -154,7 +176,7 @@ def deploy(config: Path = CONFIG, source: Path = SOURCE, **kw) -> str:
             **kw,
         )
         return f"envoyé par FTPS vers {conf['HOTE']}:{conf.get('DOSSIER', '.')}"
-    raise SystemExit(f"[deployer] MODE inconnu : {mode!r} (rsync ou ftps)")
+    raise SystemExit(f"[deployer] MODE inconnu : {mode!r} (rsync, ftps ou local)")
 
 
 def main(argv: list[str] | None = None) -> int:

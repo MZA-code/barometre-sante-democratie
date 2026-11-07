@@ -129,3 +129,15 @@ def test_rsync_recree_les_sous_dossiers(tmp_path, web):
     calls = []
     deployer.envoi_rsync(web, "u@h:b/", run=lambda cmd, check: calls.append(cmd))
     assert calls[0][-2] == f"{web}/./assets/p.woff2" and "--relative" in calls[0]
+
+
+def test_copie_locale_atomique_avec_sous_dossiers(tmp_path, web):
+    (web / "assets" / "fa").mkdir(parents=True)
+    (web / "assets" / "fa" / "x.css").write_text("css")
+    conf = tmp_path / "d.local"
+    dest = tmp_path / "site"
+    conf.write_text(f"MODE=local\nDESTINATION={dest}\n")
+    assert "copié" in deployer.deploy(conf, web)
+    assert (dest / "index.html").read_text() == "<!doctype html>"
+    assert (dest / "assets" / "fa" / "x.css").read_text() == "css"
+    assert not list(dest.rglob("*.envoi"))
