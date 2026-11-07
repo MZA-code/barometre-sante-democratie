@@ -102,8 +102,14 @@ def position(d: dict) -> float:
     return (plus_bas + 0.5 * egaux) / len(v)
 
 
+def dans_indice(d: dict) -> bool:
+    """Un indicateur dont le relevé est arrêté (`fin_couverture`) n'entre pas dans l'indice."""
+    return not d.get("fin_couverture")
+
+
 def indice(dimensions: list[dict]) -> int:
-    return round(100 * sum(position(d) for d in dimensions) / len(dimensions))
+    retenus = [d for d in dimensions if dans_indice(d)]
+    return round(100 * sum(position(d) for d in retenus) / len(retenus))
 
 
 def date_longue(iso: str) -> str:
@@ -146,12 +152,24 @@ def lignes(data: dict) -> list[dict]:
                 "valeur_brute": d["actuel"],
                 "fin_couverture": d.get("fin_couverture") or "",
                 "position": round(100 * position(d)),
+                "dans_indice": dans_indice(d),
                 "mois_observes": len(d["mensuel"]),
                 "depuis": d["debut_historique"][:4],
                 "ancre": ANCRE.get(d["id"], ""),
             }
         )
-    return sorted(out, key=lambda r: (-r["position"], r["code"]))
+    return sorted(out, key=lambda r: (not r["dans_indice"], -r["position"], r["code"]))
+
+
+def phrase_exclus(data: dict) -> str:
+    """« X (relevé arrêté au …) n'est pas compté. » pour les indicateurs hors indice."""
+    hors = [r for r in lignes(data) if not r["dans_indice"]]
+    if not hors:
+        return ""
+    noms = ", ".join(
+        f"{r['code']} (relevé arrêté au {date_longue(r['fin_couverture'])})" for r in hors
+    )
+    return f" {noms} {'ne sont pas comptés' if len(hors) > 1 else 'n’est pas compté'}."
 
 
 def description(data: dict) -> str:
@@ -191,8 +209,11 @@ def json_ld(data: dict, site_url: str | None) -> str:
                 "@type": "PropertyValue",
                 "name": f"{r['code']} {r['indicateur']}",
                 "value": r["valeur"],
-                "description": f"Position {r['position']} sur 100 dans son historique "
-                f"(depuis {r['depuis']})",
+                "description": (
+                    f"Position {r['position']} sur 100 dans son historique (depuis {r['depuis']})"
+                    if r["dans_indice"]
+                    else f"Hors indice : relevé arrêté au {date_longue(r['fin_couverture'])}"
+                ),
             }
             for r in rows
         ],
@@ -252,15 +273,18 @@ def vue_statique(data: dict) -> tuple[str, str, str]:
     """Contenus de #t-indice, #indice-text et #overview, écrits avant le JavaScript."""
     score = indice(data["dimensions"])
     titre = f"{score} sur 100 : {lecture(score)}"
+    n = sum(dans_indice(d) for d in data["dimensions"])
     texte = (
-        f"Pour chacun des 13 indicateurs, position des douze derniers mois dans toute son "
+        f"Pour chacun des {n} indicateurs à jour, position des douze derniers mois dans toute son "
         f"histoire : 0 au plus bas jamais observé, 100 au plus haut, 50 à un niveau habituel. "
         f"L'indice est la moyenne simple de ces positions. Au {date_longue(data['fin_donnees'])}."
+        + phrase_exclus(data)
     )
     items = "".join(
         f'<li><a href="#{r["ancre"]}"><strong>{html.escape(r["code"])}</strong> '
-        f"{html.escape(r['indicateur'])} : position {r['position']} sur 100, "
-        f"valeur actuelle {html.escape(r['valeur'])}</a></li>"
+        f"{html.escape(r['indicateur'])} : "
+        + (f"position {r['position']} sur 100, " if r["dans_indice"] else "hors indice, ")
+        + f"valeur actuelle {html.escape(r['valeur'])}</a></li>"
         for r in lignes(data)
     )
     return html.escape(titre), html.escape(texte), items
@@ -300,10 +324,12 @@ def resume_md(data: dict, site_url: str | None) -> str:
     w("d'indicateurs est un brouillon, aucun seuil ni aucune pondération n'est encore fixé par ")
     w("le comité de méthode ; aucune note officielle n'est produite.\n\n")
     w("## Indice illustratif\n\n")
-    w(f"**{score} sur 100** : {lecture(score)}. Pour chacun des 13 indicateurs, on situe la ")
-    w("valeur des douze derniers mois dans toute l'histoire de la série (0 = plus bas jamais ")
-    w("observé, 50 = habituel, 100 = plus haut). L'indice est la moyenne simple de ces 13 ")
-    w("positions, à poids égaux. Une position plus haute correspond à ce que la grille tient ")
+    n = sum(dans_indice(d) for d in data["dimensions"])
+    w(f"**{score} sur 100** : {lecture(score)}. Pour chacun des {n} indicateurs à jour, on situe ")
+    w("la valeur des douze derniers mois dans toute l'histoire de la série (0 = plus bas jamais ")
+    w(f"observé, 50 = habituel, 100 = plus haut). L'indice est la moyenne simple de ces {n} ")
+    w("positions, à poids égaux." + phrase_exclus(data) + " Une position plus haute correspond ")
+    w("à ce que la grille tient ")
     w(
         "pour plus défavorable. Cet indice aide à lire l'ensemble ; "
         "il ne qualifie pas le régime.\n\n"
@@ -316,7 +342,8 @@ def resume_md(data: dict, site_url: str | None) -> str:
         court = " (série courte)" if r["mois_observes"] < 36 else ""
         if r["fin_couverture"]:
             court += f" ; relevé arrêté au {date_longue(r['fin_couverture'])}"
-        w(f"| {r['code']} | {lien} | {r['valeur']} | {r['position']}{court} | {r['depuis']} |\n")
+        pos = f"{r['position']}{court}" if r["dans_indice"] else f"hors indice{court}"
+        w(f"| {r['code']} | {lien} | {r['valeur']} | {pos} | {r['depuis']} |\n")
     w("\n## Données de contexte (non notées)\n\n")
     w("Présentées à côté des indicateurs, sans entrer dans l'indice : temps de parole des partis ")
     w("à la télévision et à la radio (Arcom), journées de mobilisation nationale (décomptes du ")

@@ -91,6 +91,8 @@ les saisies manuelles aient été relues.
 - [ ] **Comité** : figer les 4 bornes des 13 indicateurs (dossier des seuils et variantes), les
   libellés 0-4, les pondérations et le niveau d'alerte global.
 - [ ] **Comité** : décider du sort de l'indice illustratif (garder, pondérer, retirer).
+- [ ] **Comité** : D4.2* mesuré par le taux d'annulation (actuel) ou par le nombre de recours ;
+  indicateur « usage de la force dans le maintien de l'ordre » (instruction des sources en cours).
 - [ ] **Comité** : questions de méthode en suspens — lois de finances dans D2.2, durée cumulée des
   reports pour D1.2, périmètre de D4.2* (« rassemblement » non déclaré, supporters), comparaison
   éventuelle du temps de parole par parti à un critère de représentativité.

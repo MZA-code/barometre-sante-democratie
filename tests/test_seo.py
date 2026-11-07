@@ -95,3 +95,13 @@ def test_image_de_partage_seulement_avec_le_domaine(tmp_path):
     assert 'content="summary_large_image"' in page
     page = seo.ecrire(tmp_path, PAGE, json.dumps(DATA), None)
     assert "og:image" not in page and 'twitter:card" content="summary"' in page
+
+
+def test_indicateur_au_releve_arrete_hors_indice():
+    dims = [dict(d) for d in DATA["dimensions"]]
+    assert seo.indice(dims) == 62
+    dims[1]["fin_couverture"] = "2025-12-31"  # la position 0.875 ne compte plus
+    assert seo.indice(dims) == round(100 * seo.position(dims[0]))
+    data = {**DATA, "dimensions": dims}
+    _, texte, items = seo.vue_statique(data)
+    assert "relevé arrêté au 31 décembre 2025" in texte and "hors indice" in items

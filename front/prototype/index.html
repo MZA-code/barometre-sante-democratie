@@ -789,6 +789,9 @@
     // Position dans l'historique : part des mois plus bas, plus la moitié des mois égaux (rang moyen).
     // Sans cette correction, un indicateur sans aucun cas (valeur nulle, comme la plupart des mois)
     // serait classé au plus bas jamais observé alors qu'il est à son niveau habituel.
+    // Un indicateur dont le relevé est arrêté (fin_couverture) n'entre pas dans l'indice : sa valeur
+    // actuelle traduirait l'absence de données, pas une situation.
+    const dansIndice = d => !d.fin_couverture;
     const position = d => d.mensuel.filter(m => m.v < d.actuel).length / d.mensuel.length + 0.5 * d.mensuel.filter(m => m.v === d.actuel).length / d.mensuel.length;
     function drawIndice(rows) {
       const v = rows.reduce((a, d) => a + position(d), 0) / rows.length, score = Math.round(v * 100);
@@ -825,15 +828,17 @@
         ? `${score} sur 100 : dans l'ensemble, une situation proche de l'habitude`
         : ecart > 0 ? `${score} sur 100 : dans l'ensemble, plus haut que d'habitude` : `${score} sur 100 : dans l'ensemble, plus bas que d'habitude`;
       document.getElementById('indice-text').textContent =
-        `Pour chacun des ${rows.length} indicateurs, on regarde où se situent les douze derniers mois par rapport à toute son histoire : ` +
+        `Pour chacun des ${rows.length} indicateurs à jour, on regarde où se situent les douze derniers mois par rapport à toute son histoire : ` +
         `0 si c'est le niveau le plus bas jamais observé, 100 si c'est le plus haut, 50 si c'est un niveau habituel (une valeur partagée par beaucoup de mois, zéro compris, est placée au milieu de ces mois). ` +
         `L'indice est la moyenne de ces ${rows.length} positions. Un niveau plus haut correspond à ce que la grille tient pour plus défavorable ` +
-        `(plus de recours au 49.3, de dissolutions, de surveillance, un moins bon rang RSF…). Au ${dateLong(D.fin_donnees)}.`;
+        `(plus de recours au 49.3, de dissolutions, de surveillance, un moins bon rang RSF…). Au ${dateLong(D.fin_donnees)}.` +
+        D.dimensions.filter(d => !dansIndice(d)).map(d => ` ${CODE[d.id] || d.code} (relevé arrêté au ${dateLong(d.fin_couverture)}) n'est pas compté.`).join('');
     }
     function drawDial() {
       const host = document.getElementById('overview');
-      drawIndice(D.dimensions);
-      const rows = [...D.dimensions].sort((a, b) => position(b) - position(a) || (CODE[a.id] || a.code).localeCompare(CODE[b.id] || b.code));
+      drawIndice(D.dimensions.filter(dansIndice));
+      const ordre = (a, b) => position(b) - position(a) || (CODE[a.id] || a.code).localeCompare(CODE[b.id] || b.code);
+      const rows = D.dimensions.filter(dansIndice).sort(ordre), hors = D.dimensions.filter(d => !dansIndice(d)).sort(ordre);
       const haut = rows.filter(d => position(d) >= TIERS_HAUT).length;
       const bas = rows.filter(d => position(d) < 1 / 3).length;
       document.getElementById('t-cadran').textContent =
@@ -842,8 +847,8 @@
         `Position de la valeur des douze derniers mois parmi tous les mois observés depuis le début de chaque série ; ` +
         `${bas} indicateur${bas > 1 ? 's sont' : ' est'} dans le tiers le plus bas.`;
       host.replaceChildren();
-      for (const d of rows) {
-        const p = position(d), courte = d.mensuel.length < SERIE_COURTE;
+      for (const d of [...rows, ...hors]) {
+        const p = position(d), courte = d.mensuel.length < SERIE_COURTE, exclu = !dansIndice(d);
         const li = document.createElement('li');
         const a = document.createElement('a'); a.href = ANCHOR[d.id];
         a.className = 'grid grid-cols-[minmax(0,1fr),auto] sm:grid-cols-[17rem,minmax(0,1fr),9rem] items-center gap-x-4 gap-y-1 rounded px-1 py-1.5 hover:bg-[var(--band)]';
@@ -852,15 +857,21 @@
         lab.innerHTML = '<span class="font-semibold text-ink2"></span> <span></span>';
         lab.children[0].textContent = CODE[d.id] || d.code; lab.children[1].textContent = d.label;
         const val = document.createElement('span'); val.className = 'text-sm tabular-nums text-right sm:order-3';
-        val.textContent = `${Math.round(p * 100)}${courte ? '*' : ''}`;
+        val.textContent = exclu ? 'hors indice' : `${Math.round(p * 100)}${courte ? '*' : ''}`;
+        if (exclu) { a.style.opacity = '0.6'; a.setAttribute('aria-label', `${CODE[d.id] || d.code}, ${d.label} : relevé arrêté au ${dateLong(d.fin_couverture)}, hors indice`); }
         const sub = document.createElement('span'); sub.className = 'block text-xs text-muted'; sub.textContent = UNIT[d.metrique](d.actuel);
         val.appendChild(sub);
         const track = document.createElement('span'); track.className = 'relative col-span-2 sm:col-span-1 sm:order-2 block h-3';
         track.innerHTML = '<span class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-1.5 rounded-full" style="background:var(--band)"></span>' +
           '<span class="absolute top-1/2 -translate-y-1/2 h-1.5 rounded-r-full" style="background:var(--hist);left:66.67%;right:0"></span>' +
           '<span class="absolute top-0 h-3 w-3 -ml-1.5 rounded-full border-2" style="border-color:var(--surface)"></span>';
-        const dot = track.lastChild; dot.style.left = `${p * 100}%`; dot.style.background = courte ? 'var(--muted)' : 'var(--series-1)';
+        const dot = track.lastChild; dot.style.left = `${p * 100}%`; dot.style.background = courte || exclu ? 'var(--muted)' : 'var(--series-1)';
         a.append(lab, val, track); li.appendChild(a); host.appendChild(li);
+      }
+      for (const d of hors) {
+        const li = document.createElement('li'); li.className = 'pt-2 text-xs text-ink2';
+        li.textContent = `${CODE[d.id] || d.code} : relevé arrêté au ${dateLong(d.fin_couverture)}, hors indice tant qu'il n'est pas complété (sa valeur traduirait l'absence de données, pas la situation).`;
+        host.appendChild(li);
       }
       const n = rows.filter(d => d.mensuel.length < SERIE_COURTE);
       if (n.length) {

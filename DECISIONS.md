@@ -921,3 +921,18 @@ métriques de contexte (aucune ne change la métrique notée de la grille v0) :
   faits ; la page le dit. Indicateur de contexte `contexte.defenseur_droits`, hors grille.
 - **Licence** : documents publics d'une autorité administrative, réutilisation libre selon le
   code des relations entre le public et l'administration ; à confirmer.
+
+## 2026-11-07 — Indice illustratif : les indicateurs au relevé arrêté sont exclus
+
+- **Constat** : D5.2 (journalistes inquiétés, relevé pilote arrêté au 31 décembre 2025) était
+  compté dans l'indice avec une position de 2 sur 100 : la valeur actuelle reflétait
+  l'absence de données récentes, pas la situation. L'indice en était abaissé (52 au lieu de
+  56 au 4 novembre 2026).
+- **Règle** : un indicateur dont le relevé est arrêté (`fin_couverture` renseigné dans
+  l'export) reste affiché, grisé, avec la date de fin du relevé, mais n'entre pas dans la
+  moyenne ; il y revient dès que le relevé est complété. Règle appliquée à l'identique dans la
+  page et dans les fichiers de référencement (`seo.py`), testée.
+- **Point de méthode signalé au comité** (non tranché ici) : D4.2* mesure la part des
+  interdictions annulées ou suspendues par le juge, pas leur nombre ; en octobre 2026, le
+  nombre de décisions est au plus haut (167) alors que la part d'annulations est au plus bas
+  (position 1 sur 100). La lecture d'une baisse de cette part est ambiguë.
