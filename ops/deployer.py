@@ -52,6 +52,8 @@ FICHIERS = (
     "robots.txt",
     "favicon.svg",
     "sitemap.xml",
+    "apercu.png",
+    "404.html",
     ".htaccess",
     "index.html",
 )

@@ -66,7 +66,10 @@ et peut désormais être mise en ligne automatiquement sur un hébergement stati
   titre de section ; colonne du sommaire élargie.
 - [x] **Aucun service tiers** : polices et icônes hébergées sur le site (plus de Google Fonts ni
   de cdnjs) ; aucun cookie, avis d'information sans consentement à recueillir.
-- [ ] **Mentions légales** (obligation LCEN) : éditeur (nom ou publication anonyme) et hébergeur.
+- [x] **Mentions légales** (éditeur anonyme, hébergeur), page 404, image de partage, en-têtes de
+  sécurité (HSTS, CSP) et de cache ; jauge colorée (vert, gris « habituel », orange, rouge).
+- [ ] **Google Search Console** et Bing Webmaster Tools : validation DNS (TXT), sitemap soumis.
+- [ ] **Pages par indicateur** (référencement sur des recherches précises).
 
 ### Socle technique
 

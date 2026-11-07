@@ -155,7 +155,9 @@ La page construit ses chiffres en JavaScript ; la version web les écrit aussi d
 | `indicateurs.csv` | valeurs et positions des 13 indicateurs |
 | `llms.txt` | point d'entrée pour les assistants d'IA ([llmstxt.org](https://llmstxt.org)) |
 | `robots.txt`, `sitemap.xml` | exploration ; le sitemap et l'URL canonique exigent `SITE_URL` |
-| `.htaccess` | fichiers texte en UTF-8 ; si `SITE_URL` est en https, redirection de http et www vers cette adresse |
+| `.htaccess` | UTF-8, page 404, en-têtes de sécurité (CSP, HSTS en https…) et de cache ; si `SITE_URL` est en https, redirection de http et www vers cette adresse |
+| `apercu.png` | image de partage 1200 × 630 (`og:image`, avec `SITE_URL`) ; source : `front/publication/apercu.html` |
+| `404.html` | page « introuvable » |
 
 Une fois le domaine choisi : `SITE_URL=` dans `config/deploiement.local`, puis `make deployer`.
 

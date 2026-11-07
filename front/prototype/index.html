@@ -33,6 +33,8 @@
       --rule: #e1e0d9; --axis: #c3c2b7; --band: #f1f0ec;
       --series-1: #2a78d6; --series-1-wash: rgba(42, 120, 214, 0.10); --hist: #b7d3f6;
       --accent-soft: #e8f0fb;
+      /* Échelle de la jauge : vert (bas) - jaune - orange - rouge - rouge sombre (haut). */
+      --jauge-bas: #0ca30c; --jauge-milieu: #fab219; --jauge-haut-1: #ec835a; --jauge-haut-2: #d03b3b; --jauge-haut-3: #7a1414;
     }
     @media (prefers-color-scheme: dark) {
       :root:where(:not([data-theme="light"])) {
@@ -137,9 +139,10 @@
           <p class="mt-4 flex gap-2 text-xs text-ink2 leading-relaxed">
             <i class="fa-solid fa-flask mt-0.5 text-muted" aria-hidden="true"></i>
             <span><strong class="text-ink">Indice illustratif.</strong> Moyenne simple, chaque indicateur
-            comptant pour autant que les autres. Le comité de méthode n'a encore fixé ni les
-            pondérations ni les seuils&nbsp;: ce chiffre aide à lire l'ensemble, il ne qualifie pas le
-            régime.</span>
+            comptant pour autant que les autres. Couleurs de la jauge&nbsp;: du vert (0, plus bas que
+            d'habitude) au rouge sombre (100, plus haut que d'habitude), en passant par le jaune
+            autour de 50 et l'orange. Le comité de méthode n'a encore fixé ni les pondérations ni les seuils&nbsp;: ce
+            chiffre aide à lire l'ensemble, il ne qualifie pas le régime.</span>
           </p>
         </div>
       </div>
@@ -644,6 +647,34 @@
       <h3 class="mt-8 font-semibold text-sm">Sources</h3>
       <ul id="sources" class="mt-2 text-sm text-ink2 space-y-1"></ul>
     </section>
+
+    <!-- Mentions légales (LCEN) et données personnelles -->
+    <section class="py-10 border-t border-rule" aria-labelledby="t-mentions">
+      <h2 id="t-mentions" class="font-serif text-2xl font-semibold">Mentions légales</h2>
+      <div class="mt-4 grid gap-8 md:grid-cols-2 text-sm leading-relaxed text-ink2">
+        <div class="space-y-3">
+          <h3 class="font-semibold text-ink">Éditeur</h3>
+          <p>Site édité à titre non professionnel par un particulier qui a choisi de rester anonyme,
+            comme le permet la loi n°&nbsp;2004-575 du 21 juin 2004 pour la confiance dans l'économie
+            numérique&nbsp;: ses éléments d'identification ont été communiqués à l'hébergeur.</p>
+          <h3 class="font-semibold text-ink">Hébergeur</h3>
+          <p>o2switch, SAS au capital de 100&nbsp;000&nbsp;€, Chemin des Pardiaux, 63000 Clermont-Ferrand,
+            France. Téléphone&nbsp;: 04 44 44 60 40. SIRET&nbsp;: 510 909 807 00032 (RCS Clermont-Ferrand).</p>
+        </div>
+        <div class="space-y-3">
+          <h3 class="font-semibold text-ink">Données personnelles et cookies</h3>
+          <p>Aucun cookie, aucune mesure d'audience, aucun formulaire, aucun service tiers&nbsp;: le site
+            ne collecte aucune donnée personnelle. Votre choix de thème clair ou sombre et la fermeture
+            de l'avis sur les cookies sont gardés dans votre navigateur seulement. Comme tout serveur
+            web, celui de l'hébergeur enregistre techniquement les connexions (adresse IP, page
+            demandée, date) dans ses journaux.</p>
+          <h3 class="font-semibold text-ink">Contenus et licences</h3>
+          <p>Chaque chiffre renvoie à sa source officielle, qui garde sa propre licence. Polices&nbsp;:
+            Source Serif 4 (Adobe, SIL Open Font License 1.1)&nbsp;; icônes&nbsp;: Font Awesome Free
+            (icônes CC BY 4.0, police SIL OFL 1.1, code MIT).</p>
+        </div>
+      </div>
+    </section>
   </main>
   </div>
 
@@ -745,7 +776,14 @@
       const arc = (t0, t1, r) => { const [x0, y0] = pt(t0, r), [x1, y1] = pt(t1, r); return `M${x0},${y0} A${r},${r} 0 0 1 ${x1},${y1}`; };  // demi-cercle : jamais de grand arc
       const svg = svgIn(box, W, Hh, `Indice illustratif : ${score} sur 100`);
       el('path', { d: arc(0, 1, R), fill: 'none', stroke: 'var(--band)', 'stroke-width': thick }, svg);
-      el('path', { d: arc(0, Math.max(0.002, v), R), fill: 'none', stroke: 'var(--series-1)', 'stroke-width': thick }, svg);
+      // Remplissage coloré selon l'échelle : vert vers 0, jaune autour de 50, orange, rouge puis
+      // rouge sombre vers 100. Dégradé horizontal dont chaque arrêt est placé à l'abscisse de sa
+      // position sur l'arc (x = (1 - cos(πt)) / 2) : la couleur suit la valeur.
+      const grad = el('linearGradient', { id: 'jauge-degrade', gradientUnits: 'userSpaceOnUse', x1: cx - R, y1: 0, x2: cx + R, y2: 0 }, el('defs', {}, svg));
+      for (const [t, c] of [[0, 'bas'], [0.5, 'milieu'], [0.7, 'haut-1'], [0.85, 'haut-2'], [1, 'haut-3']]) {
+        el('stop', { offset: (1 - Math.cos(Math.PI * t)) / 2, style: `stop-color: var(--jauge-${c})` }, grad);
+      }
+      el('path', { d: arc(0, Math.max(0.002, v), R), fill: 'none', stroke: 'url(#jauge-degrade)', 'stroke-width': thick }, svg);
       const [m1x, m1y] = pt(0.5, R - thick / 2 - 4), [m2x, m2y] = pt(0.5, R + thick / 2 + 4);
       el('line', { x1: m1x, y1: m1y, x2: m2x, y2: m2y, stroke: 'var(--ink-2)', 'stroke-width': 1.5 }, svg);
       const [lx, ly] = pt(0.5, R + thick / 2 + 24);
@@ -2020,7 +2058,7 @@
       ['D5 · Pluralisme et information', 'tower-broadcast', [['t-d5-1', 'D5.1 · Temps de parole', 'microphone-lines'], ['t-partis', 'Temps de parole par parti', 'microphone-lines'], ['t-d5-2', 'D5.2 · Journalistes inquiétés', 'pen-nib'], ['t-annuels', 'D5.3 · Classement RSF', 'ranking-star']]],
       ['D6 · Surveillance et données', 'eye', [['t-annuels', 'D6.1 · Personnes surveillées', 'user-secret'], ['t-d6-2', 'D6.2 · Fichiers et avis de la CNIL', 'database']]],
       ['Contexte (non noté)', 'layer-group', [['t-mobil', 'Journées de mobilisation', 'bullhorn'], ['t-participation', 'Participation aux législatives', 'person-booth']]],
-      ['Méthode', 'book-open', [['t-methode', 'Méthode et limites', 'book-open']]],
+      ['Méthode', 'book-open', [['t-methode', 'Méthode et limites', 'book-open'], ['t-mentions', 'Mentions légales', 'circle-info']]],
     ];
     // Icône propre à un titre partagé par deux entrées du sommaire.
     const ICONE_TITRE = { 't-annuels': 'calendar-days' };

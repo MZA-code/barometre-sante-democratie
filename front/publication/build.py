@@ -141,6 +141,12 @@ def polices_locales(html: str) -> str:
     return html.replace(AVIS_TIERS, AVIS_LOCAL)
 
 
+def seo_apercu() -> str:
+    import seo  # module voisin (référencement)
+
+    return seo.APERCU
+
+
 def build_web(dist: Path = WEB, site_url: str | None = None) -> Path:
     """Version pour un hébergement web public : la page du prototype telle quelle.
 
@@ -162,6 +168,7 @@ def build_web(dist: Path = WEB, site_url: str | None = None) -> Path:
     dist.mkdir(parents=True, exist_ok=True)
     shutil.rmtree(dist / "assets", ignore_errors=True)
     shutil.copytree(ASSETS, dist / "assets")
+    shutil.copyfile(Path(__file__).resolve().parent / seo_apercu(), dist / seo_apercu())
     data_js = (SOURCE / "data.js").read_text(encoding="utf-8")
     html = seo.ecrire(dist, html, data_js, site_url)
     (dist / "index.html").write_text(html, encoding="utf-8")

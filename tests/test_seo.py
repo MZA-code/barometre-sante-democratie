@@ -71,3 +71,27 @@ def test_htaccess_sans_redirection_si_pas_https(tmp_path):
         seo.ecrire(tmp_path, PAGE, json.dumps(DATA), url)
         h = (tmp_path / ".htaccess").read_text()
         assert "AddDefaultCharset UTF-8" in h and "Rewrite" not in h
+
+
+def test_htaccess_entetes_cache_et_page_404(tmp_path):
+    seo.ecrire(tmp_path, PAGE, json.dumps(DATA), "https://exemple.fr/")
+    h = (tmp_path / ".htaccess").read_text()
+    assert "ErrorDocument 404 /404.html" in h
+    assert 'Strict-Transport-Security "max-age=31536000"' in h
+    assert 'X-Content-Type-Options "nosniff"' in h and "default-src 'self'" in h
+    assert 'Cache-Control "public, max-age=31536000, immutable"' in h
+    assert 'Cache-Control "no-cache"' in h
+    assert "noindex" in (tmp_path / "404.html").read_text()
+
+
+def test_htaccess_sans_hsts_hors_https(tmp_path):
+    seo.ecrire(tmp_path, PAGE, json.dumps(DATA), None)
+    assert "Strict-Transport-Security" not in (tmp_path / ".htaccess").read_text()
+
+
+def test_image_de_partage_seulement_avec_le_domaine(tmp_path):
+    page = seo.ecrire(tmp_path, PAGE, json.dumps(DATA), "https://exemple.fr/")
+    assert '<meta property="og:image" content="https://exemple.fr/apercu.png">' in page
+    assert 'content="summary_large_image"' in page
+    page = seo.ecrire(tmp_path, PAGE, json.dumps(DATA), None)
+    assert "og:image" not in page and 'twitter:card" content="summary"' in page

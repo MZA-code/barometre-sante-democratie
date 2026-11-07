@@ -885,3 +885,23 @@ métriques de contexte (aucune ne change la métrique notée de la grille v0) :
   illustratif comme une note officielle), `robots.txt`, `favicon.svg`. URL canonique et
   `sitemap.xml` seulement avec `SITE_URL` (domaine). Positions et indice calculés comme dans la
   page (rang moyen), testés.
+
+## 2026-11-07 — Site en ligne : couleurs de la jauge, aucun service tiers, mentions légales
+
+- **Couleurs de la jauge** (choix du porteur de projet) : arc rempli jusqu'à la valeur, du vert
+  (0) au rouge sombre (100) en passant par le jaune (50), l'orange et le rouge ; la valeur est
+  marquée par un trait. Une échelle à milieu neutre (gris autour de 50) a été proposée puis
+  écartée : le porteur de projet préfère une progression continue du vert au rouge. Ces
+  couleurs ne sont pas des seuils de la grille : l'avis « indice illustratif » le rappelle, et
+  le texte du titre reste la lecture de référence.
+- **Aucun service tiers** : feuille Tailwind construite (`make css`), polices et icônes
+  hébergées sur le site ; la construction échoue si une ressource externe réapparaît. Aucun
+  cookie : avis d'information sans recueil de consentement (rien n'y est soumis).
+- **Mentions légales** : éditeur non professionnel anonyme (identité communiquée à
+  l'hébergeur, LCEN), coordonnées de l'hébergeur relevées sur o2switch.fr (pied de page et
+  conditions générales de vente) le 7 novembre 2026.
+- **En-têtes** (`.htaccess`) : HSTS (un an, sans sous-domaines), CSP limitée au site lui-même
+  (scripts et styles en ligne admis : la page en contient), `nosniff`, `Referrer-Policy`,
+  `X-Frame-Options`. Cache : `assets/` un an (fichiers immuables, à renommer s'ils changent),
+  page et données revalidées à chaque visite. Page 404 dédiée, image de partage 1200 × 630
+  (`front/publication/apercu.png`, source `apercu.html`).
