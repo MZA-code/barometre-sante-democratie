@@ -66,6 +66,7 @@ COLLECTES = (
     ("collect-gdelt", ("GDELT_JOURS=5",)),
     # Défenseur des droits : nouvelles fiches seulement (30 s entre deux requêtes, robots.txt)
     ("collect-ddd", ()),
+    ("collect-rapports", ()),  # PDF cités par les relevés manuels, archivés une fois
 )
 # Sources interrogées pour savoir si le réseau répond (une seule suffit).
 HOTES_TEST = ("echanges.dila.gouv.fr", "www.data.gouv.fr")

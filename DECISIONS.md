@@ -936,3 +936,29 @@ métriques de contexte (aucune ne change la métrique notée de la grille v0) :
   interdictions annulées ou suspendues par le juge, pas leur nombre ; en octobre 2026, le
   nombre de décisions est au plus haut (167) alors que la part d'annulations est au plus bas
   (position 1 sur 100). La lecture d'une baisse de cette part est ambiguë.
+
+## 2026-11-07 — Usage de la force : série officielle en contexte, proposition D4.3 au comité
+
+- **Instruction des sources** (rapports IGPN 2017-2024, IGGN 2021-2025, Défenseur des droits,
+  questions écrites, commission d'enquête de l'Assemblée sur le maintien de l'ordre, 2021) :
+  aucune source officielle ne mesure l'usage de la force en manifestation, ni mensuellement,
+  ni pour la police et la gendarmerie ensemble. La seule série longue et continue est celle des
+  usages déclarés du LBD et de la grenade de désencerclement par la police nationale (TSUA,
+  rapports annuels de l'IGPN), toutes circonstances confondues, publiée environ dix mois
+  après l'année et révisée d'une édition à l'autre. Les grenades lacrymogènes ne sont comptées
+  nulle part de façon suivie.
+- **Choix** : affichage en contexte, hors indice (`contexte.usage_force`) : séries LBD et GMD
+  2017-2024, blessés graves en maintien de l'ordre ou violences urbaines (années publiées),
+  réclamations « déontologie de la sécurité » au Défenseur des droits ; chaque valeur reliée
+  à la page du PDF archivé. La section renvoie aux sources qui réagissent vite
+  (interpellations, Défenseur des droits, ONU, presse étrangère).
+- **Proposition au comité : indicateur D4.3 « Usage des armes de force intermédiaire par la
+  police nationale »** (usages déclarés LBD + GMD, annuel). Questions à trancher :
+  1. le décalage de publication (l'année N est connue fin N+1) : fenêtre de comparaison,
+     traitement de l'année en cours ;
+  2. le champ « toutes circonstances » : la part manifestations n'est publiée que pour
+     2020-2022 ;
+  3. l'absence de la gendarmerie et des grenades lacrymogènes ;
+  4. les révisions d'une édition à l'autre (dernière édition retenue).
+  En l'état, intégré à l'indice, il le ferait baisser : 2024 est l'année la plus basse de la
+  série depuis 2017.

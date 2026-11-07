@@ -47,6 +47,8 @@ et peut désormais être mise en ligne automatiquement sur un hébergement stati
 - [x] Participation aux élections législatives.
 - [x] **Défenseur des droits** (7 novembre) : décisions et rappels à la loi classés « Manifestation »
   ou « Maintien de l'ordre public », collectés chaque jour (30 s entre deux requêtes).
+- [x] **Usage de la force** (7 novembre) : LBD et grenades de désencerclement 2017-2024 (IGPN),
+  blessés graves en maintien de l'ordre, réclamations au Défenseur des droits ; rapports PDF archivés.
 - [x] **Interpellations et gardes à vue** (7 novembre) : 50 chiffres d'autorités pour 26 des 46
   journées de mobilisation, chacun avec la phrase qui le porte ; 20 journées sans bilan attribué.
 
@@ -91,8 +93,9 @@ les saisies manuelles aient été relues.
 - [ ] **Comité** : figer les 4 bornes des 13 indicateurs (dossier des seuils et variantes), les
   libellés 0-4, les pondérations et le niveau d'alerte global.
 - [ ] **Comité** : décider du sort de l'indice illustratif (garder, pondérer, retirer).
-- [ ] **Comité** : D4.2* mesuré par le taux d'annulation (actuel) ou par le nombre de recours ;
-  indicateur « usage de la force dans le maintien de l'ordre » (instruction des sources en cours).
+- [ ] **Comité** : D4.2* mesuré par le taux d'annulation (actuel) ou par le nombre de recours.
+- [ ] **Comité** : proposition D4.3 « usage des armes de force intermédiaire » (série IGPN LBD + GMD,
+  annuelle, décalée d'environ dix mois) : questions listées dans DECISIONS.md (7 novembre).
 - [ ] **Comité** : questions de méthode en suspens — lois de finances dans D2.2, durée cumulée des
   reports pour D1.2, périmètre de D4.2* (« rassemblement » non déclaré, supporters), comparaison
   éventuelle du temps de parole par parti à un critère de représentativité.

@@ -32,7 +32,7 @@
       --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
       --rule: #e1e0d9; --axis: #c3c2b7; --band: #f1f0ec;
       --series-1: #2a78d6; --series-1-wash: rgba(42, 120, 214, 0.10); --hist: #b7d3f6;
-      --accent-soft: #e8f0fb;
+      --accent-soft: #e8f0fb; --series-2: #eb6834;
       /* Échelle de la jauge : vert (bas) - jaune - orange - rouge - rouge sombre (haut). */
       --jauge-bas: #0ca30c; --jauge-milieu: #fab219; --jauge-haut-1: #ec835a; --jauge-haut-2: #d03b3b; --jauge-haut-3: #7a1414;
     }
@@ -42,7 +42,7 @@
         --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
         --rule: #2c2c2a; --axis: #383835; --band: #222220;
         --series-1: #3987e5; --series-1-wash: rgba(57, 135, 229, 0.14); --hist: #184f95;
-        --accent-soft: #16263b;
+        --accent-soft: #16263b; --series-2: #d95926;
       }
     }
     :root[data-theme="dark"] {
@@ -50,7 +50,7 @@
       --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --muted: #898781;
       --rule: #2c2c2a; --axis: #383835; --band: #222220;
       --series-1: #3987e5; --series-1-wash: rgba(57, 135, 229, 0.14); --hist: #184f95;
-      --accent-soft: #16263b;
+      --accent-soft: #16263b; --series-2: #d95926;
     }
     body { background: var(--page); color: var(--ink); }
     .tabnum { font-variant-numeric: tabular-nums; }
@@ -630,6 +630,43 @@
       <p id="ddd-resume" class="mt-4 max-w-3xl text-sm text-ink2"></p>
       <ol id="ddd-liste" class="mt-5 space-y-4"></ol>
       <button id="ddd-tout" type="button" class="mt-4 rounded-full border border-rule px-3 py-1 text-xs text-ink2" hidden></button>
+    </section>
+
+    <!-- Contexte : usage de la force dans le maintien de l'ordre (séries annuelles officielles) -->
+    <section id="force" class="py-10 border-b border-rule" aria-labelledby="t-force">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Contexte · non noté</p>
+      <h2 id="t-force" class="mt-2 font-serif text-2xl font-semibold">L'usage de la force par les forces de l'ordre</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Les seules séries officielles publiées chaque année&nbsp;: usages déclarés du lanceur de
+        balles de défense (LBD) et de la grenade de désencerclement par la police nationale,
+        relevés par l'IGPN <strong class="font-semibold text-ink">dans toutes les circonstances</strong>
+        (manifestations, violences urbaines, interventions)&nbsp;; la gendarmerie et les grenades
+        lacrymogènes n'y figurent pas. Ces chiffres sont publiés environ dix mois après la fin de
+        l'année&nbsp;: l'année en cours n'y apparaîtra que dans le rapport suivant.
+      </p>
+      <div id="force-chart" class="viz relative mt-6"></div>
+      <div class="mt-3 flex flex-wrap gap-5 text-xs text-ink2">
+        <span class="flex items-center gap-2"><svg width="18" height="10" aria-hidden="true"><line x1="1" y1="5" x2="17" y2="5" stroke="var(--series-1)" stroke-width="2"/><circle cx="9" cy="5" r="3" fill="var(--series-1)"/></svg>LBD : usages déclarés</span>
+        <span class="flex items-center gap-2"><svg width="18" height="10" aria-hidden="true"><line x1="1" y1="5" x2="17" y2="5" stroke="var(--series-2)" stroke-width="2"/><circle cx="9" cy="5" r="3" fill="var(--series-2)"/></svg>Grenade de désencerclement : usages déclarés</span>
+      </div>
+      <h3 class="mt-8 font-semibold">Blessés graves et réclamations</h3>
+      <p class="mt-1 max-w-3xl text-sm text-ink2">
+        Blessés graves (ITT d'au moins 9 jours) lors d'opérations de maintien de l'ordre ou de
+        violences urbaines, selon l'IGPN&nbsp;: publiés seulement pour certaines années, et le
+        recensement a changé fin 2023. Réclamations reçues par le Défenseur des droits en
+        «&nbsp;déontologie de la sécurité&nbsp;»&nbsp;: des plaintes et non des faits établis, toutes
+        forces de sécurité confondues. Chaque nombre renvoie à la page du rapport.
+      </p>
+      <div class="mt-3 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+        <table class="w-full text-left text-sm" id="force-table"></table>
+      </div>
+      <p class="mt-4 max-w-3xl text-sm text-ink2">
+        Pour l'actualité récente, les sources qui réagissent vite sont plus haut sur cette page&nbsp;:
+        <a class="underline" href="#t-mobil">interpellations des journées de mobilisation</a>,
+        <a class="underline" href="#t-ddd">décisions du Défenseur des droits</a>,
+        <a class="underline" href="#t-onu">déclarations de l'ONU</a> et
+        <a class="underline" href="#t-presse">presse étrangère</a>.
+      </p>
     </section>
 
     <!-- 5 quater. Contexte : participation -->
@@ -2030,6 +2067,64 @@
       }
     }
 
+    // ---- Contexte : usage de la force (séries annuelles IGPN, Défenseur des droits) ----
+    function drawForce() {
+      const F = D.usage_force || [], box = document.getElementById('force-chart'), tbl = document.getElementById('force-table');
+      const serie = nom => F.filter(r => r.serie === nom).sort((a, b) => a.annee - b.annee);
+      const lbd = serie('igpn_lbd_declarations'), gmd = serie('igpn_gmd_declarations');
+      if (!lbd.length) { box.replaceChildren(); return; }
+      const munit = { lbd: Object.fromEntries(serie('igpn_lbd_munitions').map(r => [r.annee, r.valeur])), gmd: Object.fromEntries(serie('igpn_gmd_munitions').map(r => [r.annee, r.valeur])) };
+      const ans = lbd.map(r => r.annee), a0 = ans[0], a1 = ans[ans.length - 1];
+      const W = Math.max(280, box.clientWidth), H = 220, m = { t: 16, r: 70, b: 26, l: 44 };
+      const svg = svgIn(box, W, H, `Usages déclarés du LBD et de la grenade de désencerclement par la police nationale, ${a0}-${a1}`);
+      const max = Math.max(...lbd.map(r => r.valeur), ...gmd.map(r => r.valeur)), haut = Math.ceil(max / 1000) * 1000;
+      const x = a => m.l + (a - a0) / (a1 - a0) * (W - m.l - m.r), y = v => H - m.b - v / haut * (H - m.t - m.b);
+      for (let v = 0; v <= haut; v += 1000) {
+        el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: v ? 'var(--rule)' : 'var(--axis)', 'stroke-width': 1 }, svg);
+        text(svg, m.l - 6, y(v) + 4, num(v), { 'text-anchor': 'end' });
+      }
+      for (const a of ans) text(svg, x(a), H - 8, String(a), { 'text-anchor': 'middle' });
+      for (const [rows, coul, lib] of [[lbd, 'var(--series-1)', 'LBD'], [gmd, 'var(--series-2)', 'GMD']]) {
+        el('path', { d: rows.map((r, i) => `${i ? 'L' : 'M'}${x(r.annee)},${y(r.valeur)}`).join(''), fill: 'none', stroke: coul, 'stroke-width': 2 }, svg);
+        for (const r of rows) el('circle', { cx: x(r.annee), cy: y(r.valeur), r: 4, fill: coul, stroke: 'var(--surface)', 'stroke-width': 2 }, svg);
+        const der = rows[rows.length - 1];
+        text(svg, x(der.annee) + 8, y(der.valeur) + 4, `${lib} ${num(der.valeur)}`, { fill: 'var(--ink-2)' });
+      }
+      const bw = (W - m.l - m.r) / (ans.length - 1);
+      for (const a of ans) {
+        const l = lbd.find(r => r.annee === a), g = gmd.find(r => r.annee === a);
+        const hit = el('rect', { x: x(a) - bw / 2, y: m.t, width: bw, height: H - m.t - m.b, fill: 'transparent', tabindex: 0,
+          'aria-label': `${a} : LBD ${l ? l.valeur : '—'} usages, grenade de désencerclement ${g ? g.valeur : '—'} usages` }, svg);
+        const rows = () => [{ label: String(a), strong: true },
+          { value: num(l.valeur), label: `usages du LBD (${num(munit.lbd[a])} munitions)` },
+          { value: num(g.valeur), label: `usages de la grenade de désencerclement (${num(munit.gmd[a])} grenades)` },
+          { label: `${l.document}, p. ${l.url.split('page=')[1]}`, muted: true }];
+        hit.addEventListener('pointermove', e => showTip(rows(), e.pageX, e.pageY));
+        hit.addEventListener('pointerleave', hideTip);
+      }
+      // Tableau : blessés graves (IGPN) et réclamations (Défenseur des droits), par année.
+      const bl = Object.fromEntries(serie('igpn_blesses_mo_vu').map(r => [r.annee, r]));
+      const rc = Object.fromEntries(serie('ddd_reclamations_deontologie').map(r => [r.annee, r]));
+      const annees = [...new Set([...Object.keys(bl), ...Object.keys(rc)].map(Number))].sort((a, b) => b - a);
+      tbl.replaceChildren();
+      const head = tbl.createTHead().insertRow();
+      for (const h of ['Année', 'Blessés graves en maintien de l\'ordre ou violences urbaines (IGPN)', 'Réclamations « déontologie de la sécurité » (Défenseur des droits)']) {
+        const th = document.createElement('th'); th.className = 'py-2 pr-4 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th);
+      }
+      const body = tbl.createTBody();
+      for (const a of annees) {
+        const tr = body.insertRow();
+        const td0 = tr.insertCell(); td0.className = 'py-1.5 pr-4 border-b border-rule'; td0.textContent = String(a);
+        for (const r of [bl[a], rc[a]]) {
+          const td = tr.insertCell(); td.className = 'py-1.5 pr-4 border-b border-rule';
+          if (!r) { td.textContent = '—'; continue; }
+          const lien = document.createElement('a'); lien.href = r.url; lien.target = '_blank'; lien.rel = 'noopener'; lien.className = 'underline tabular-nums';
+          lien.textContent = num(r.valeur); lien.title = `« ${r.citation} » (${r.document}, p. ${r.url.split('page=')[1]})${r.note ? ' — ' + r.note : ''}`;
+          td.appendChild(lien);
+        }
+      }
+    }
+
     // ---- Contexte : Défenseur des droits (maintien de l'ordre) ------------------
     const DDD = D.defenseur_droits || [];
     const DDD_PREMIERS = 8;
@@ -2189,7 +2284,7 @@
       ['Regards extérieurs (non noté)', 'binoculars', [['t-onu', "Déclarations de l'ONU", 'globe'], ['t-presse', 'Presse étrangère', 'newspaper']]],
       ['D5 · Pluralisme et information', 'tower-broadcast', [['t-d5-1', 'D5.1 · Temps de parole', 'microphone-lines'], ['t-partis', 'Temps de parole par parti', 'microphone-lines'], ['t-d5-2', 'D5.2 · Journalistes inquiétés', 'pen-nib'], ['t-annuels', 'D5.3 · Classement RSF', 'ranking-star']]],
       ['D6 · Surveillance et données', 'eye', [['t-annuels', 'D6.1 · Personnes surveillées', 'user-secret'], ['t-d6-2', 'D6.2 · Fichiers et avis de la CNIL', 'database']]],
-      ['Contexte (non noté)', 'layer-group', [['t-mobil', 'Journées de mobilisation', 'bullhorn'], ['t-ddd', 'Défenseur des droits', 'user-shield'], ['t-participation', 'Participation aux législatives', 'person-booth']]],
+      ['Contexte (non noté)', 'layer-group', [['t-mobil', 'Journées de mobilisation', 'bullhorn'], ['t-ddd', 'Défenseur des droits', 'user-shield'], ['t-force', 'Usage de la force', 'shield-halved'], ['t-participation', 'Participation aux législatives', 'person-booth']]],
       ['Méthode', 'book-open', [['t-methode', 'Méthode et limites', 'book-open'], ['t-mentions', 'Mentions légales', 'circle-info']]],
     ];
     // Icône propre à un titre partagé par deux entrées du sommaire.
@@ -2250,7 +2345,7 @@
     let spyRaf; addEventListener('scroll', () => { cancelAnimationFrame(spyRaf); spyRaf = requestAnimationFrame(spy); }, { passive: true });
 
     // ---- Rendu -------------------------------------------------------------
-    const render = () => { drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawMobilisations(); drawInterpellations(); drawDdd(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
+    const render = () => { drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
     render(); spy();
     let raf; addEventListener('resize', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { render(); current = null; spy(); }); });
   })();

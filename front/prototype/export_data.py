@@ -319,6 +319,13 @@ def main(argv=None) -> int:
                 " WHERE fact_type = 'interpellations_journee' ORDER BY occurred_on, id"
             )
         ],
+        "usage_force": [
+            json.loads(a)
+            for (a,) in conn.execute(
+                "SELECT attributes FROM facts WHERE fact_type = 'usage_force_annee'"
+                " ORDER BY occurred_on, id"
+            )
+        ],
         "defenseur_droits": [
             {"date": d, "titre": t, **json.loads(a)}
             for d, t, a in conn.execute(

@@ -224,3 +224,26 @@ ne précise pas, signalé dans `note`). Donnée de contexte, hors grille
   parisiens retrouvés.
 - **À relire** (`a_verifier` = oui pour toutes les lignes) : attributions vagues, bilans
   provisoires, périmètre « agglomération parisienne » du 31 octobre 2026.
+
+## `usage_force_annuel.csv`
+
+Séries annuelles officielles sur l'usage de la force, relevées dans les rapports annuels publiés
+sur vie-publique.fr (archivés par `collectors/rapports.py`). Donnée de contexte, hors grille
+(`contexte.usage_force`). Une ligne par série et par année, avec le document, la page du PDF
+et la ligne ou la phrase citée.
+
+- `igpn_lbd_declarations`, `igpn_lbd_munitions`, `igpn_gmd_declarations`, `igpn_gmd_munitions`
+  (2017-2024) : tableaux du rapport annuel de l'IGPN 2024 (p. 87 et 106 du PDF), dernière
+  édition retenue car les chiffres sont révisés d'une édition à l'autre. Police nationale,
+  toutes circonstances (fichier TSUA, déclaratif) ; gendarmerie et grenades lacrymogènes non
+  couvertes ; GENL comptée avec la GMD depuis septembre 2020.
+- `igpn_blesses_mo_vu` (2018, 2019, 2023, 2024) : blessés (ITT d'au moins 9 jours) lors
+  d'opérations de maintien de l'ordre ou de violences urbaines ; non publié sous cette forme
+  pour 2020-2022 ; recensement pérennisé fin 2023 (rupture de couverture).
+- `ddd_reclamations_deontologie` (2018, 2019, 2021-2025) : réclamations reçues en
+  « déontologie de la sécurité » (rapports d'activité 2019, 2023, 2025 du Défenseur des
+  droits) ; 2020 non relevé.
+- **Contrôle** (2026-11-07) : chaque valeur relue à la page indiquée (`pdftotext`) ; les
+  phrases en colonnes vérifiées dans l'ordre de lecture. Recherche des sources : rapport
+  d'instruction du 2026-11-07 (IGPN, IGGN, ministère, Défenseur des droits, Parlement) ;
+  aucune série mensuelle ni propre aux manifestations n'existe.

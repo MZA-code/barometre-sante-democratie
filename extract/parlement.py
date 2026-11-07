@@ -51,6 +51,7 @@ from extract import (
     rsf,
     scrutins,
     seed,
+    usage_force,
 )
 from extract.common import INDICATOR_D2, FactDraft, latest_documents, write_facts
 from storage.archive import DEFAULT_RAW_DIR
@@ -203,6 +204,7 @@ def extract_all(conn: sqlite3.Connection, raw_dir: Path) -> list[FactDraft]:
         + gdelt.extract(conn, raw_dir)
         + ddd.extract(conn, raw_dir)
         + interpellations.extract(conn, raw_dir)
+        + usage_force.extract(conn, raw_dir)
     )
 
 

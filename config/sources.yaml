@@ -53,6 +53,11 @@ sources:
     url: https://juridique.defenseurdesdroits.fr/
     licence: Documents publiés par le Défenseur des droits (informations publiques, réutilisation libre selon le code des relations entre le public et l'administration ; à confirmer)
 
+  - id: rapports_annuels
+    name: Rapports annuels officiels cités par les relevés manuels (IGPN, Défenseur des droits ; vie-publique.fr)
+    url: https://www.vie-publique.fr/rapports
+    licence: Documents administratifs publiés (informations publiques, réutilisation libre avec citation de la source selon le code des relations entre le public et l'administration ; à confirmer)
+
   - id: rsf_classement
     name: Reporters sans frontières — classement mondial de la liberté de la presse
     url: https://rsf.org/fr/classement
