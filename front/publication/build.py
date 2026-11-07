@@ -87,6 +87,30 @@ def build(dossier: str, verification: str, dist: Path = DIST) -> Path:
 WEB = Path(__file__).resolve().parent / "web"
 
 
+TAILWIND_CSS = Path(__file__).resolve().parent / "tailwind.css"
+TAILWIND_CDN = re.compile(
+    r'\s*<script src="https://cdn\.tailwindcss\.com[^"]*"></script>'
+    r"\s*<script>\s*tailwind\.config = .*?</script>",
+    re.S,
+)
+
+
+def feuille_de_style(html: str, css_path: Path = TAILWIND_CSS) -> str:
+    """Remplace le CDN Tailwind (compilation dans le navigateur, déconseillée en production) par
+    la feuille construite par `make css`, insérée dans la page. Sans elle, le CDN reste.
+    Les classes sont celles de front/prototype/index.html : relancer `make css` après les avoir
+    modifiées (la configuration est dans tailwind.config.js)."""
+    if not TAILWIND_CDN.search(html):
+        raise ValueError("bloc Tailwind (CDN + tailwind.config) introuvable dans la page")
+    if not css_path.exists():
+        print(f"[publication] {css_path.name} absent (make css) : CDN Tailwind conservé")
+        return html
+    css = css_path.read_text(encoding="utf-8").strip().replace("</", "<\\/")
+    # En fin d'en-tête, comme le CDN qui ajoute sa feuille après les styles de la page.
+    html = TAILWIND_CDN.sub("", html, count=1)
+    return html.replace("</head>", f"  <style>{css}</style>\n</head>", 1)
+
+
 def build_web(dist: Path = WEB, site_url: str | None = None) -> Path:
     """Version pour un hébergement web public : la page du prototype telle quelle.
 
@@ -101,6 +125,7 @@ def build_web(dist: Path = WEB, site_url: str | None = None) -> Path:
         raise ValueError("lien vers un document claude.ai privé dans la page publique")
     import seo  # module voisin (référencement)
 
+    html = feuille_de_style(html)
     dist.mkdir(parents=True, exist_ok=True)
     data_js = (SOURCE / "data.js").read_text(encoding="utf-8")
     html = seo.ecrire(dist, html, data_js, site_url)

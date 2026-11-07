@@ -82,12 +82,13 @@
 <body class="font-sans antialiased">
 
   <header class="border-b border-rule">
-    <div class="mx-auto max-w-[82rem] px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
+    <div class="mx-auto max-w-[120rem] px-4 sm:px-6 lg:px-10 py-4 flex items-center justify-between gap-4">
       <div class="flex items-center gap-3">
         <i class="fa-solid fa-scale-balanced text-accent" aria-hidden="true"></i>
         <h1 class="font-serif font-semibold tracking-tight">Baromètre de la santé démocratique</h1>
       </div>
       <div class="flex items-center gap-3 text-xs text-ink2">
+        <span id="maj" class="text-right leading-tight"></span>
         <span class="hidden sm:inline rounded-full border border-rule px-2.5 py-1">Prototype</span>
         <button id="theme" class="rounded-full border border-rule px-2.5 py-1" type="button"
                 aria-label="Basculer le thème clair / sombre">
@@ -98,7 +99,7 @@
   </header>
 
   <div id="toc-bar" class="lg:hidden sticky top-0 z-30 border-b border-rule bg-page">
-    <div class="mx-auto max-w-5xl px-4 sm:px-6">
+    <div class="mx-auto max-w-[120rem] px-4 sm:px-6">
       <button id="toc-toggle" type="button" aria-expanded="false" aria-controls="toc-panel"
               class="w-full py-2.5 flex items-center gap-2 text-sm text-left">
         <i class="fa-solid fa-list-ul text-muted" aria-hidden="true"></i>
@@ -110,11 +111,11 @@
     </div>
   </div>
 
-  <div class="mx-auto max-w-[82rem] px-4 sm:px-6 lg:grid lg:grid-cols-[14rem,minmax(0,1fr)] lg:gap-10">
+  <div class="mx-auto max-w-[120rem] px-4 sm:px-6 lg:px-10 lg:grid lg:grid-cols-[14rem,minmax(0,1fr)] lg:gap-10">
   <nav aria-label="Sommaire" class="hidden lg:block">
     <div id="toc-side" class="sticky top-0 max-h-screen overflow-y-auto py-6 pr-2 text-sm" style="scrollbar-width: thin"></div>
   </nav>
-  <main class="min-w-0 max-w-5xl">
+  <main class="min-w-0">
 
     <!-- 0. Vue d'ensemble : chaque indicateur sur sa propre histoire -->
     <section class="pt-8 sm:pt-10 pb-8 border-b border-rule" aria-labelledby="t-cadran">
@@ -640,10 +641,17 @@
   </div>
 
   <footer class="border-t border-rule">
-    <div id="footer" class="mx-auto max-w-[82rem] px-4 sm:px-6 py-6 text-xs text-muted lg:pl-[calc(14rem+2.5rem+1.5rem)]"></div>
+    <div id="footer" class="mx-auto max-w-[120rem] px-4 sm:px-6 lg:px-10 py-6 text-xs text-muted lg:pl-[calc(14rem+2.5rem+2.5rem)]"></div>
   </footer>
 
   <div id="tip" class="tooltip" role="status" aria-live="polite"></div>
+
+  <div id="avis-cookies" role="region" aria-label="Cookies" hidden
+       class="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-sm z-50 rounded-lg border border-rule bg-surface p-4 text-sm text-ink2 shadow-lg">
+    <p class="flex gap-2"><i class="fa-solid fa-cookie-bite text-muted mt-0.5" aria-hidden="true"></i>
+      <span><strong class="text-ink">Aucun cookie</strong>, aucune mesure d'audience. Seul votre choix de thème reste dans votre navigateur. Polices et icônes : Google Fonts et cdnjs (Cloudflare), qui voient votre adresse IP.</span></p>
+    <button id="avis-cookies-ok" type="button" class="mt-3 ml-6 rounded-full border border-rule px-3 py-1 text-xs text-ink hover:bg-[var(--band)]">J'ai compris</button>
+  </div>
 
   <script src="data.js"></script>
   <script>
@@ -1771,6 +1779,21 @@
     document.getElementById('footer').textContent =
       `Prototype. Données arrêtées au ${dateLong(D.fin_donnees)}, archive du ${dateLong(g.etat_archive.slice(0, 10))}. ` +
       `Chaque chiffre est reconstruit à l'identique depuis les documents officiels archivés.`;
+
+    // ---- Date de mise à jour (dernière collecte) et avis sur les cookies -------
+    const majDate = (month) => new Date(g.etat_archive).toLocaleDateString('fr-FR', { day: 'numeric', month, year: 'numeric', timeZone: 'Europe/Paris' });
+    document.getElementById('maj').innerHTML =
+      `<span class="block sm:inline whitespace-nowrap">Mis à jour le</span> <time datetime="${g.etat_archive}" class="font-medium text-ink whitespace-nowrap">` +
+      `<span class="sm:hidden">${majDate('short')}</span><span class="hidden sm:inline">${majDate('long')}</span></time>` +
+      `<span class="hidden md:inline"> · données au ${dateLong(D.fin_donnees)}</span>`;
+    const avis = document.getElementById('avis-cookies');
+    let avisVu = false;
+    try { avisVu = localStorage.getItem('avis-cookies') === 'vu'; } catch (_) {}
+    if (!avisVu) avis.hidden = false;
+    document.getElementById('avis-cookies-ok').addEventListener('click', () => {
+      avis.hidden = true;
+      try { localStorage.setItem('avis-cookies', 'vu'); } catch (_) {}
+    });
 
     // ---- Thème -------------------------------------------------------------
     const root = document.documentElement;

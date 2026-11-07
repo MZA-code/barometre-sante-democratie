@@ -9,7 +9,7 @@ GRID ?= config/grid.v0.yaml
 AN_LEGISLATURES ?= 17 16 15 14
 RUN  := uv run --frozen
 
-.PHONY: help install init collect collect-seed collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-an collect-datagouv collect-gdelt verify-raw extract metrics score \
+.PHONY: css help install init collect collect-seed collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-an collect-datagouv collect-gdelt verify-raw extract metrics score \
 	rebuild reproducible controle echantillon prototype prototype-data publication publication-web deployer nouveautes quotidien planifier deplanifier etat lint test
 
 help:
@@ -114,6 +114,21 @@ nouveautes:
 # Version publiable du prototype (page claude.ai) dans front/publication/dist/.
 publication: prototype-data
 	$(RUN) python front/publication/build.py
+
+# Feuille de style de la version web (Tailwind 3.4.5, exécutable autonome vérifié par SHA-256).
+# À relancer après tout changement de classes dans front/prototype/index.html ; le résultat
+# (front/publication/tailwind.css) est versionné : la construction quotidienne n'en dépend pas.
+TAILWIND := .outils/tailwindcss-3.4.5
+TAILWIND_SHA256 := 7cf6c8ea7a77c03a92fce1a2d868a482cc8cb48547871725f83f659cb774be8b
+$(TAILWIND):
+	mkdir -p .outils
+	curl -fsSL -o $@.tmp https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.5/tailwindcss-linux-x64
+	echo "$(TAILWIND_SHA256)  $@.tmp" | sha256sum -c -
+	chmod +x $@.tmp && mv $@.tmp $@
+
+css: $(TAILWIND)
+	$(TAILWIND) -c front/publication/tailwind.config.js -i front/publication/tailwind.in.css \
+		-o front/publication/tailwind.css --minify
 
 # Version pour un hébergement public, puis envoi (config/deploiement.local, hors git).
 publication-web: prototype-data

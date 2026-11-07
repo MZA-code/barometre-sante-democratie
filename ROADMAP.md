@@ -60,6 +60,8 @@ et peut désormais être mise en ligne automatiquement sur un hébergement stati
 - [x] **En ligne** le 7 novembre 2026 : https://barometre-democratique.fr/ (O2Switch, FTPS,
   certificat Let's Encrypt), mis à jour chaque matin par la collecte quotidienne ; `.htaccess`
   pour la redirection vers https et l'UTF-8 des fichiers texte.
+- [x] **Page** (7 novembre) : pleine largeur (jusqu'à 1 920 px), date de mise à jour dans
+  l'en-tête (dernière collecte, et date des dernières données), avis « aucun cookie ».
 
 ### Socle technique
 
@@ -94,7 +96,7 @@ les saisies manuelles aient été relues.
 - [ ] **Licence** du code et des données dérivées à choisir (README).
 - [ ] Licences à confirmer : Arcom (non explicite), conditions d'utilisation de GDELT,
   législatives 2022 2ᵉ tour sur data.gouv.fr (admise par dérogation).
-- [ ] Remplacer le CDN Tailwind (déconseillé en production) par une feuille de style construite.
+- [x] CDN Tailwind remplacé par une feuille construite (`make css`, 7 novembre).
 - [ ] Bornes de catégorie RSF avant 2022 : introuvables à ce jour.
 - [ ] Accès aux données Mapping Media Freedom : demande au consortium MFRR (démarche manuelle).
 - [ ] Mettre à jour les chiffres D4.2* dans le dossier des seuils et le document de vérification
@@ -138,7 +140,7 @@ Premier passage le 6 novembre 2026 (Chromium, 1366 px et 375 px, thèmes clair e
 Reste à recetter :
 
 - [x] La page en ligne (7 novembre, Chromium 1366 px) : affichage, HTTPS, fichiers annexes.
-- [ ] La page en ligne sur mobile et en thème sombre ; redirection http vers https.
+- [x] La page en ligne sur mobile et en thème sombre ; redirection http vers https.
 - [ ] Les liens vers les sources (≈ 1 160 liens, 18 domaines) : échantillon.
 - [ ] Infobulles et clics vers les sources dans les graphiques.
 - [ ] Firefox, Safari, lecteur d'écran.
