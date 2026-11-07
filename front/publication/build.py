@@ -111,6 +111,36 @@ def feuille_de_style(html: str, css_path: Path = TAILWIND_CSS) -> str:
     return html.replace("</head>", f"  <style>{css}</style>\n</head>", 1)
 
 
+ASSETS = Path(__file__).resolve().parent / "assets"
+POLICES_EXTERNES = re.compile(
+    r'\s*<link rel="preconnect" href="https://fonts\.googleapis\.com">'
+    r'\s*<link rel="preconnect" href="https://fonts\.gstatic\.com" crossorigin>'
+    r'\s*<link href="https://fonts\.googleapis\.com/css2\?family=Source\+Serif\+4[^"]*"'
+    r' rel="stylesheet">'
+    r'\s*<link rel="stylesheet" href="https://cdnjs\.cloudflare\.com/ajax/libs/font-awesome/'
+    r'6\.5\.1/css/all\.min\.css">'
+)
+POLICES_LOCALES = """
+  <link rel="preload" href="assets/polices/source-serif-4-latin.woff2" as="font"
+        type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/polices/source-serif-4.css">
+  <link rel="stylesheet" href="assets/fa/css/fontawesome.min.css">
+  <link rel="stylesheet" href="assets/fa/css/solid.min.css">"""
+AVIS_TIERS = "Polices et icônes : Google Fonts et cdnjs (Cloudflare), qui voient votre adresse IP."
+AVIS_LOCAL = "Polices et icônes sont servies par ce site : aucun service tiers."
+
+
+def polices_locales(html: str) -> str:
+    """Polices (Source Serif 4) et icônes (Font Awesome Solid) servies par le site lui-même :
+    aucune requête vers Google Fonts ni cdnjs, donc aucune adresse IP transmise à un tiers."""
+    if not POLICES_EXTERNES.search(html):
+        raise ValueError("liens Google Fonts / Font Awesome introuvables dans la page")
+    if AVIS_TIERS not in html:
+        raise ValueError("phrase de l'avis cookies sur les services tiers introuvable")
+    html = POLICES_EXTERNES.sub(lambda _: POLICES_LOCALES, html, count=1)
+    return html.replace(AVIS_TIERS, AVIS_LOCAL)
+
+
 def build_web(dist: Path = WEB, site_url: str | None = None) -> Path:
     """Version pour un hébergement web public : la page du prototype telle quelle.
 
@@ -125,8 +155,13 @@ def build_web(dist: Path = WEB, site_url: str | None = None) -> Path:
         raise ValueError("lien vers un document claude.ai privé dans la page publique")
     import seo  # module voisin (référencement)
 
-    html = feuille_de_style(html)
+    html = polices_locales(feuille_de_style(html))
+    for externe in ("fonts.googleapis", "fonts.gstatic", "cdnjs.cloudflare"):
+        if externe in html:
+            raise ValueError(f"ressource externe restante dans la page publique : {externe}")
     dist.mkdir(parents=True, exist_ok=True)
+    shutil.rmtree(dist / "assets", ignore_errors=True)
+    shutil.copytree(ASSETS, dist / "assets")
     data_js = (SOURCE / "data.js").read_text(encoding="utf-8")
     html = seo.ecrire(dist, html, data_js, site_url)
     (dist / "index.html").write_text(html, encoding="utf-8")

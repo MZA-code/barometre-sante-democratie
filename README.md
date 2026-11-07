@@ -132,6 +132,10 @@ make deployer       # construit la version web et l'envoie (rsync en SSH, ou FTP
   par `front/publication/tailwind.css` (versionnée), construite par `make css` (Tailwind 3.4.5,
   exécutable autonome vérifié par SHA-256). Relancer `make css` après tout changement de classes
   dans `front/prototype/index.html`.
+- Polices et icônes servies par le site (`front/publication/assets/`) : Source Serif 4 (SIL OFL
+  1.1) et Font Awesome Free 6.5.1, style Solid seulement (icônes CC BY 4.0, police SIL OFL 1.1,
+  code MIT), licences jointes. La page publique ne contacte aucun service tiers (vérifié à la
+  construction).
 - `make quotidien` (et donc le timer de 6 h 30) se termine par `deployer` : le site est mis à jour
   chaque matin. Sans `config/deploiement.local`, l'étape ne fait rien.
 - Envoi sans page à moitié publiée : les données partent avant la page ; en FTPS, chaque

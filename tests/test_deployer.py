@@ -42,6 +42,9 @@ class FakeFTP:
     def cwd(self, d):
         self.log.append(("cwd", d))
 
+    def mkd(self, d):
+        self.log.append(("mkd", d))
+
     def storbinary(self, cmd, f):
         self.log.append(("stor", cmd.split()[1], f.read()))
 
@@ -102,3 +105,27 @@ def test_ftps_intermediaires_ajoutes_sans_relacher_la_verification(monkeypatch, 
     ctx = seen["context"]
     assert ctx.verify_mode == deployer.ssl.CERT_REQUIRED and ctx.check_hostname
     assert ctx.cert_store_stats()["x509_ca"] == base + 1
+
+
+def test_ftps_cree_les_sous_dossiers_et_envoie_les_polices_avant_la_page(tmp_path, web):
+    (web / "assets" / "fa" / "css").mkdir(parents=True)
+    (web / "assets" / "fa" / "css" / "solid.min.css").write_text("x")
+    (web / "assets" / "polices.css").write_text("y")
+    deployer.envoi_ftps(web, "h", "u", ".", ftp_factory=FakeFTP, password="p")
+    log = FakeFTP.last.log
+    assert [e[1] for e in log if e[0] == "mkd"] == ["assets", "assets/fa", "assets/fa/css"]
+    stors = [e[1] for e in log if e[0] == "stor"]
+    assert stors == [
+        "assets/fa/css/solid.min.css.envoi",
+        "assets/polices.css.envoi",
+        "data.js.envoi",
+        "index.html.envoi",
+    ]
+
+
+def test_rsync_recree_les_sous_dossiers(tmp_path, web):
+    (web / "assets").mkdir()
+    (web / "assets" / "p.woff2").write_bytes(b"0")
+    calls = []
+    deployer.envoi_rsync(web, "u@h:b/", run=lambda cmd, check: calls.append(cmd))
+    assert calls[0][-2] == f"{web}/./assets/p.woff2" and "--relative" in calls[0]

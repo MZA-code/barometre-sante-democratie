@@ -399,6 +399,7 @@ def htaccess(site_url: str | None) -> str:
         "AddDefaultCharset UTF-8\n"
         "<IfModule mod_mime.c>\n"
         "  AddType text/markdown .md\n"
+        "  AddType font/woff2 .woff2\n"
         "  AddCharset UTF-8 .md .txt .csv .js .svg .xml\n"
         "</IfModule>\n"
     )

@@ -74,3 +74,15 @@ def test_feuille_construite_a_jour_pour_les_classes_a_valeur_libre():
     assert classes
     absentes = sorted(c for c in classes if "." + _echappe(c) not in css)
     assert not absentes, f"relancer make css : {absentes}"
+
+
+def test_version_web_sans_service_tiers():
+    """La page publique ne charge ni Google Fonts ni cdnjs, et l'avis cookies le dit."""
+    racine = Path(__file__).resolve().parents[1]
+    page = (racine / "front" / "prototype" / "index.html").read_text(encoding="utf-8")
+    out = build.polices_locales(page)
+    for externe in ("fonts.googleapis", "fonts.gstatic", "cdnjs"):
+        assert externe not in out
+    assert build.AVIS_LOCAL in out and build.AVIS_TIERS not in out
+    for lien in re.findall(r'href="(assets/[^"]+)"', out):
+        assert (racine / "front" / "publication" / lien).exists(), lien

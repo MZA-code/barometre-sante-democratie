@@ -64,6 +64,9 @@ et peut désormais être mise en ligne automatiquement sur un hébergement stati
   l'en-tête (dernière collecte, et date des dernières données), avis « aucun cookie ».
 - [x] **Repères** : une icône par catégorie et par entrée du sommaire, la même devant chaque
   titre de section ; colonne du sommaire élargie.
+- [x] **Aucun service tiers** : polices et icônes hébergées sur le site (plus de Google Fonts ni
+  de cdnjs) ; aucun cookie, avis d'information sans consentement à recueillir.
+- [ ] **Mentions légales** (obligation LCEN) : éditeur (nom ou publication anonyme) et hébergeur.
 
 ### Socle technique
 

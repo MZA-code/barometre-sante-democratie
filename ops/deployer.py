@@ -1,7 +1,8 @@
 """Envoie la page publique (front/publication/web/) vers l'hébergement web.
 
 La collecte et les calculs restent sur la machine qui a l'archive brute ; l'hébergement ne
-reçoit que deux fichiers statiques : `index.html` et `data.js`. Configuration locale, hors git,
+reçoit que des fichiers statiques : la page, ses données, ses polices (`assets/`) et les fichiers
+de référencement. Configuration locale, hors git,
 dans `config/deploiement.local` (lignes CLE=valeur) :
 
     # SSH (rsync) : la clé SSH doit être autorisée sur l'hébergement
@@ -31,6 +32,7 @@ Usage :
 from __future__ import annotations
 
 import argparse
+import contextlib
 import ftplib
 import netrc
 import ssl
@@ -57,7 +59,11 @@ OBLIGATOIRES = ("data.js", "index.html")
 
 
 def presents(source: Path) -> list[str]:
-    return [name for name in FICHIERS if (source / name).exists()]
+    """Fichiers à envoyer, chemins relatifs : polices et icônes (`assets/`), puis FICHIERS."""
+    assets = sorted(
+        p.relative_to(source).as_posix() for p in (source / "assets").rglob("*") if p.is_file()
+    )
+    return assets + [name for name in FICHIERS if (source / name).exists()]
 
 
 def lire_config(path: Path) -> dict[str, str] | None:
@@ -74,7 +80,11 @@ def lire_config(path: Path) -> dict[str, str] | None:
 
 def envoi_rsync(source: Path, destination: str, run=subprocess.run) -> None:
     for name in presents(source):  # un appel par fichier : l'ordre est garanti
-        run(["rsync", "-az", "--chmod=F644", str(source / name), destination], check=True)
+        # « /./ » + --relative : les sous-dossiers (assets/…) sont recréés à destination.
+        run(
+            ["rsync", "-az", "--relative", "--chmod=D755,F644", f"{source}/./{name}", destination],
+            check=True,
+        )
 
 
 def envoi_ftps(
@@ -105,7 +115,15 @@ def envoi_ftps(
         if hasattr(ftp, "prot_p"):
             ftp.prot_p()  # canal de données chiffré
         ftp.cwd(dossier)
+        crees = set()
         for name in presents(source):
+            parties = name.split("/")[:-1]
+            for i in range(1, len(parties) + 1):
+                sous = "/".join(parties[:i])
+                if sous not in crees:
+                    with contextlib.suppress(ftplib.error_perm):  # dossier déjà présent
+                        ftp.mkd(sous)
+                    crees.add(sous)
             with open(source / name, "rb") as f:
                 ftp.storbinary(f"STOR {name}.envoi", f)
             ftp.rename(f"{name}.envoi", name)
