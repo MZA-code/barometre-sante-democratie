@@ -2166,7 +2166,7 @@
         const li = document.createElement('li');
         li.className = 'rounded-lg border border-rule bg-surface p-4 sm:p-5';
         const meta = document.createElement('div'); meta.className = 'flex flex-wrap items-baseline gap-x-3 gap-y-1 text-xs text-ink2';
-        const date = document.createElement('time'); date.dateTime = d.date; date.className = 'font-semibold text-ink'; date.textContent = dateLong(d.date);
+        const date = document.createElement('time'); date.dateTime = d.precision_date === 'année' ? d.date.slice(0, 4) : d.date; date.className = 'font-semibold text-ink'; date.textContent = d.precision_date === 'année' ? d.date.slice(0, 4) : dateLong(d.date);
         const typ = document.createElement('span'); typ.textContent = d.numero ? `${d.type} n° ${d.numero}` : d.type;
         meta.append(date, typ);
         for (const s of (d.suites || []).filter(s => s.toLowerCase() !== d.type)) {  // pas de doublon avec le type

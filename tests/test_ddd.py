@@ -114,3 +114,23 @@ def test_page_inattendue_refusee(conn, tmp_path):
 
     with pytest.raises(ValueError, match="page inattendue"):
         col.collect(conn, tmp_path / "raw", opener=Vide(), sleep=lambda s: None)
+
+
+def test_fiche_datee_de_l_annee_seulement(conn, tmp_path):
+    raw = tmp_path / "raw"
+    page = re.sub(
+        r"(record_year.*?<span>)07/07/2026", r"\g<1>2010", NOTICE.decode(), count=1, flags=re.S
+    )
+    assert ">2010<" in page
+    store(
+        conn,
+        raw,
+        source_id=col.SOURCE_ID,
+        external_id="1",
+        url="u",
+        fetched_at="2026-11-07T00:00:00Z",
+        chunks=[page.encode()],
+        suffix=".html",
+    )
+    (f,) = ddd.extract(conn, raw)
+    assert f.occurred_on == "2010-12-31" and f.attributes["precision_date"] == "année"

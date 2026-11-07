@@ -32,6 +32,7 @@ LIGNE = re.compile(r'<tr class="record_(\w+)">(.*?)</tr>', re.S)
 CATEG = re.compile(r"<p>\[([^\]]+)\]\s*<a [^>]*>(.*?)</a></p>", re.S)
 PDF = re.compile(r'href="(https://juridique\.defenseurdesdroits\.fr/doc_num\.php\?explnum_id=\d+)"')
 DATE = re.compile(r"^(\d{2})/(\d{2})/(\d{4})$")
+ANNEE = re.compile(r"^(\d{4})$")
 
 
 def _texte(fragment: str) -> str:
@@ -70,21 +71,26 @@ def extract(conn: sqlite3.Connection, raw_dir: Path) -> list[FactDraft]:
             raise ValueError(f"fiche {doc['external_id']} : titre introuvable")
         if f["type"] not in TYPES_RETENUS:
             continue
-        m = DATE.match(f["date"])
-        if not m:
+        m, a = DATE.match(f["date"]), ANNEE.match(f["date"])
+        if m:
+            jour, precision = f"{m.group(3)}-{m.group(2)}-{m.group(1)}", "jour"
+        elif a:  # fiche datée de l'année seulement : fin d'année, précision notée
+            jour, precision = f"{a.group(1)}-12-31", "année"
+        else:
             raise ValueError(f"fiche {doc['external_id']} : date illisible {f['date']!r}")
         url = f"{BASE}index.php?lvl=notice_display&id={doc['external_id']}"
         drafts.append(
             FactDraft(
                 indicator_id=INDICATOR,
                 fact_type="decision_ddd_manifestation",
-                occurred_on=f"{m.group(3)}-{m.group(2)}-{m.group(1)}",
+                occurred_on=jour,
                 title=f["titre"],
                 official_ref=url,
                 extraction_method=EXTRACTOR,
                 raw_document_ids=(doc["id"],),
                 attributes={
                     "type": TYPES_RETENUS[f["type"]],
+                    "precision_date": precision,
                     "numero": f["numero"],
                     "resume": f["resume"],
                     "mots_cles": f["mots_cles"],
