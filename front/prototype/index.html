@@ -76,6 +76,13 @@
     .toc-link:hover { color: var(--ink); }
     .toc-link[aria-current] { border-left-color: var(--series-1); color: var(--ink); font-weight: 600; }
     .toc-group { margin-top: .7rem; padding-left: .75rem; font-size: .6875rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .toc-link { display: flex; gap: .5rem; align-items: baseline; }
+    .toc-link > i, .toc-group > i { flex: none; width: 1.1em; text-align: center; color: var(--muted); }
+    .toc-group > i { margin-right: .4rem; }
+    .toc-link[aria-current] > i { color: var(--series-1); }
+    /* Icône devant les titres : caractère Font Awesome posé par le script (data-ic), en pseudo-
+       élément pour survivre aux textes de titre réécrits par le script. */
+    h2[data-ic]::before { content: attr(data-ic); content: attr(data-ic) / ""; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: .62em; color: var(--series-1); margin-right: .55em; vertical-align: .18em; }
     :focus-visible { outline: 2px solid var(--series-1); outline-offset: 2px; }
   </style>
 </head>
@@ -111,7 +118,7 @@
     </div>
   </div>
 
-  <div class="mx-auto max-w-[120rem] px-4 sm:px-6 lg:px-10 lg:grid lg:grid-cols-[14rem,minmax(0,1fr)] lg:gap-10">
+  <div class="mx-auto max-w-[120rem] px-4 sm:px-6 lg:px-10 lg:grid lg:grid-cols-[16rem,minmax(0,1fr)] lg:gap-10">
   <nav aria-label="Sommaire" class="hidden lg:block">
     <div id="toc-side" class="sticky top-0 max-h-screen overflow-y-auto py-6 pr-2 text-sm" style="scrollbar-width: thin"></div>
   </nav>
@@ -641,7 +648,7 @@
   </div>
 
   <footer class="border-t border-rule">
-    <div id="footer" class="mx-auto max-w-[120rem] px-4 sm:px-6 lg:px-10 py-6 text-xs text-muted lg:pl-[calc(14rem+2.5rem+2.5rem)]"></div>
+    <div id="footer" class="mx-auto max-w-[120rem] px-4 sm:px-6 lg:px-10 py-6 text-xs text-muted lg:pl-[calc(16rem+2.5rem+2.5rem)]"></div>
   </footer>
 
   <div id="tip" class="tooltip" role="status" aria-live="polite"></div>
@@ -2002,24 +2009,35 @@
     initPresse();
 
     // ---- Sommaire -----------------------------------------------------------
+    // [catégorie, icône, [[id du titre, libellé, icône]]] (icônes Font Awesome 6, style plein).
     const TOC = [
-      ["Vue d'ensemble", [['t-indice', "Le baromètre aujourd'hui"], ['t-dims', 'Indicateurs suivis']]],
-      ['D1 · Élections et alternance', [['t-d1', 'D1.1–D1.2 · Règles électorales et reports']]],
-      ['D2 · Place du Parlement', [['titre', "D2.1 · L'essentiel"], ['t-evolution', 'Depuis 1959'], ['t-composantes', 'De quoi est fait le chiffre'], ['t-leg', 'Législature par législature'], ['t-493', 'Les recours au 49.3'], ['t-d2-2', 'D2.2 · Procédure accélérée']]],
-      ["D3 · Contre-pouvoirs et État de droit", [['t-d3', "D3.1 · Régimes d'exception"], ['t-d3-2', 'D3.2 · Lois censurées']]],
-      ['D4 · Libertés publiques', [['t-d4-2', 'D4.2* · Interdictions de manifester'], ['t-d4', 'D4.1 · Dissolutions']]],
-      ['Regards extérieurs (non noté)', [['t-onu', "Déclarations de l'ONU"], ['t-presse', 'Presse étrangère']]],
-      ['D5 · Pluralisme et information', [['t-d5-1', 'D5.1 · Temps de parole'], ['t-partis', 'Temps de parole par parti'], ['t-d5-2', 'D5.2 · Journalistes inquiétés'], ['t-annuels', 'D5.3 · Classement RSF']]],
-      ['D6 · Surveillance et données', [['t-annuels', 'D6.1 · Personnes surveillées'], ['t-d6-2', 'D6.2 · Fichiers et avis de la CNIL']]],
-      ['Contexte (non noté)', [['t-mobil', 'Journées de mobilisation'], ['t-participation', 'Participation aux législatives']]],
-      ['Méthode', [['t-methode', 'Méthode et limites']]],
+      ["Vue d'ensemble", 'gauge-high', [['t-indice', "Le baromètre aujourd'hui", 'gauge-high'], ['t-dims', 'Indicateurs suivis', 'list-check']]],
+      ['D1 · Élections et alternance', 'check-to-slot', [['t-d1', 'D1.1–D1.2 · Règles électorales et reports', 'check-to-slot']]],
+      ['D2 · Place du Parlement', 'landmark', [['titre', "D2.1 · L'essentiel", 'landmark'], ['t-evolution', 'Depuis 1959', 'chart-line'], ['t-composantes', 'De quoi est fait le chiffre', 'puzzle-piece'], ['t-leg', 'Législature par législature', 'table-columns'], ['t-493', 'Les recours au 49.3', 'forward'], ['t-d2-2', 'D2.2 · Procédure accélérée', 'bolt']]],
+      ["D3 · Contre-pouvoirs et État de droit", 'gavel', [['t-d3', "D3.1 · Régimes d'exception", 'triangle-exclamation'], ['t-d3-2', 'D3.2 · Lois censurées', 'gavel']]],
+      ['D4 · Libertés publiques', 'people-group', [['t-d4-2', 'D4.2* · Interdictions de manifester', 'ban'], ['t-d4', 'D4.1 · Dissolutions', 'users-slash']]],
+      ['Regards extérieurs (non noté)', 'binoculars', [['t-onu', "Déclarations de l'ONU", 'globe'], ['t-presse', 'Presse étrangère', 'newspaper']]],
+      ['D5 · Pluralisme et information', 'tower-broadcast', [['t-d5-1', 'D5.1 · Temps de parole', 'microphone-lines'], ['t-partis', 'Temps de parole par parti', 'microphone-lines'], ['t-d5-2', 'D5.2 · Journalistes inquiétés', 'pen-nib'], ['t-annuels', 'D5.3 · Classement RSF', 'ranking-star']]],
+      ['D6 · Surveillance et données', 'eye', [['t-annuels', 'D6.1 · Personnes surveillées', 'user-secret'], ['t-d6-2', 'D6.2 · Fichiers et avis de la CNIL', 'database']]],
+      ['Contexte (non noté)', 'layer-group', [['t-mobil', 'Journées de mobilisation', 'bullhorn'], ['t-participation', 'Participation aux législatives', 'person-booth']]],
+      ['Méthode', 'book-open', [['t-methode', 'Méthode et limites', 'book-open']]],
     ];
+    // Icône propre à un titre partagé par deux entrées du sommaire.
+    const ICONE_TITRE = { 't-annuels': 'calendar-days' };
+    const icone = nom => { const i = document.createElement('i'); i.className = `fa-solid fa-${nom}`; i.setAttribute('aria-hidden', 'true'); return i; };
+    // Caractère de l'icône lu dans la feuille Font Awesome (rien si elle n'est pas chargée).
+    const caractere = nom => {
+      const i = icone(nom); i.style.position = 'absolute'; document.body.appendChild(i);
+      const c = getComputedStyle(i, '::before').content; i.remove();
+      return c && c !== 'none' && c !== 'normal' ? c.replace(/^["']|["']$/g, '') : '';
+    };
     const tocLinks = [];
     const buildToc = host => {
-      for (const [group, items] of TOC) {
-        const h = document.createElement('div'); h.className = 'toc-group'; h.textContent = group; host.appendChild(h);
-        for (const [id, label] of items) {
-          const a = document.createElement('a'); a.href = `#${id}`; a.className = 'toc-link'; a.textContent = label; a.dataset.target = id;
+      for (const [group, ic, items] of TOC) {
+        const h = document.createElement('div'); h.className = 'toc-group'; h.append(icone(ic), group); host.appendChild(h);
+        for (const [id, label, icl] of items) {
+          const a = document.createElement('a'); a.href = `#${id}`; a.className = 'toc-link'; a.dataset.target = id;
+          const t = document.createElement('span'); t.textContent = label; a.append(icone(icl), t);
           host.appendChild(a); tocLinks.push(a);
         }
       }
@@ -2027,12 +2045,16 @@
     };
     const side = document.getElementById('toc-side'), panel = document.getElementById('toc-panel'), toggle = document.getElementById('toc-toggle');
     buildToc(side); buildToc(panel);
+    for (const [, , items] of TOC) for (const [id, , icl] of items) {
+      const h2 = document.getElementById(id), c = h2 && !h2.dataset.ic && caractere(ICONE_TITRE[id] || icl);
+      if (c) h2.dataset.ic = c;
+    }
     const setPanel = open => { panel.hidden = !open; toggle.setAttribute('aria-expanded', String(open)); };
     toggle.addEventListener('click', () => setPanel(panel.hidden));
     panel.addEventListener('click', e => { if (e.target.closest('a')) setPanel(false); });
     addEventListener('keydown', e => { if (e.key === 'Escape' && !panel.hidden) { setPanel(false); toggle.focus(); } });
     // Ordre de la page : une entrée par titre, dans l'ordre où il apparaît.
-    const heads = [...new Set(TOC.flatMap(([, items]) => items.map(([id]) => id)))]
+    const heads = [...new Set(TOC.flatMap(([, , items]) => items.map(([id]) => id)))]
       .map(id => document.getElementById(id)).filter(Boolean)
       .sort((a, b) => a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1);
     let current = null;

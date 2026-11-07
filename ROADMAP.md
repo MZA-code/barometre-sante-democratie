@@ -62,6 +62,8 @@ et peut désormais être mise en ligne automatiquement sur un hébergement stati
   pour la redirection vers https et l'UTF-8 des fichiers texte.
 - [x] **Page** (7 novembre) : pleine largeur (jusqu'à 1 920 px), date de mise à jour dans
   l'en-tête (dernière collecte, et date des dernières données), avis « aucun cookie ».
+- [x] **Repères** : une icône par catégorie et par entrée du sommaire, la même devant chaque
+  titre de section ; colonne du sommaire élargie.
 
 ### Socle technique
 
