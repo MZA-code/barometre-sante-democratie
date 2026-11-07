@@ -55,3 +55,19 @@ def test_domaine_connu(tmp_path):
     assert '<link rel="canonical" href="https://exemple.fr/">' in page
     assert "<loc>https://exemple.fr/barometre.md</loc>" in (tmp_path / "sitemap.xml").read_text()
     assert "https://exemple.fr/indicateurs.csv" in (tmp_path / "llms.txt").read_text()
+
+
+def test_htaccess_utf8_et_redirection_https(tmp_path):
+    seo.ecrire(tmp_path, PAGE, json.dumps(DATA), "https://exemple.fr/")
+    h = (tmp_path / ".htaccess").read_text()
+    assert "AddCharset UTF-8 .md .txt" in h
+    assert r"RewriteCond %{HTTP_HOST} !^exemple\.fr$ [NC]" in h
+    assert "RewriteRule ^ https://exemple.fr%{REQUEST_URI} [R=301,L]" in h
+    assert r"!^/\.well-known/" in h
+
+
+def test_htaccess_sans_redirection_si_pas_https(tmp_path):
+    for url in (None, "http://exemple.fr/"):
+        seo.ecrire(tmp_path, PAGE, json.dumps(DATA), url)
+        h = (tmp_path / ".htaccess").read_text()
+        assert "AddDefaultCharset UTF-8" in h and "Rewrite" not in h

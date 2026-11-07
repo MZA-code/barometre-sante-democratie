@@ -1,4 +1,6 @@
 # ruff: noqa: E501
+from pathlib import Path
+
 import pytest
 
 from ops import deployer
@@ -83,3 +85,20 @@ def test_ftps_verifie_le_certificat(monkeypatch, tmp_path, web):
     deployer.envoi_ftps(web, "ftp.exemple.fr", "moi", ".", password="x")
     ctx = seen["context"]
     assert ctx.verify_mode == deployer.ssl.CERT_REQUIRED and ctx.check_hostname
+
+
+def test_ftps_intermediaires_ajoutes_sans_relacher_la_verification(monkeypatch, web):
+    seen = {}
+
+    class Capture(FakeFTP):
+        def __init__(self, host, timeout, context=None):
+            super().__init__(host, timeout)
+            seen["context"] = context
+
+    monkeypatch.setattr(deployer.ftplib, "FTP_TLS", Capture)
+    pem = Path(__file__).parent / "fixtures" / "letsencrypt_yr2.pem"
+    base = deployer.ssl.create_default_context().cert_store_stats()["x509_ca"]
+    deployer.envoi_ftps(web, "ftp.exemple.fr", "moi", ".", password="x", intermediaires=str(pem))
+    ctx = seen["context"]
+    assert ctx.verify_mode == deployer.ssl.CERT_REQUIRED and ctx.check_hostname
+    assert ctx.cert_store_stats()["x509_ca"] == base + 1

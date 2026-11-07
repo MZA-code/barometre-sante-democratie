@@ -10,7 +10,9 @@ Et on écrit à côté de la page :
   - `barometre.md` : résumé en texte simple, chaque chiffre avec sa source ;
   - `indicateurs.csv` : les 13 indicateurs, valeur actuelle et position dans leur historique ;
   - `llms.txt` : point d'entrée pour les assistants d'IA (format llmstxt.org) ;
-  - `robots.txt`, et `sitemap.xml` si l'adresse du site est connue (`SITE_URL`).
+  - `robots.txt`, et `sitemap.xml` si l'adresse du site est connue (`SITE_URL`) ;
+  - `.htaccess` (Apache, hébergement mutualisé) : fichiers texte servis en UTF-8 et, si
+    `SITE_URL` est en https, redirection permanente vers cette adresse (http et www).
 
 Les positions sont calculées comme dans la page (`position` dans index.html) : part des mois
 plus bas plus la moitié des mois égaux ; indice = moyenne simple × 100.
@@ -25,6 +27,7 @@ import io
 import json
 import re
 from pathlib import Path
+from urllib.parse import urlsplit
 
 TITRE = "Baromètre de la santé démocratique en France"
 CODE = {
@@ -390,6 +393,31 @@ def sitemap_xml(site_url: str, lastmod: str) -> str:
     )
 
 
+def htaccess(site_url: str | None) -> str:
+    out = (
+        "# Généré par front/publication/seo.py\n"
+        "AddDefaultCharset UTF-8\n"
+        "<IfModule mod_mime.c>\n"
+        "  AddType text/markdown .md\n"
+        "  AddCharset UTF-8 .md .txt .csv .js .svg .xml\n"
+        "</IfModule>\n"
+    )
+    parts = urlsplit(site_url or "")
+    if parts.scheme == "https" and parts.hostname:
+        hote = parts.hostname
+        out += (
+            "<IfModule mod_rewrite.c>\n"
+            "  RewriteEngine On\n"
+            "  # validations des certificats (Let's Encrypt) laissées telles quelles\n"
+            "  RewriteCond %{REQUEST_URI} !^/\\.well-known/\n"
+            "  RewriteCond %{HTTPS} off [OR]\n"
+            f"  RewriteCond %{{HTTP_HOST}} !^{re.escape(hote)}$ [NC]\n"
+            f"  RewriteRule ^ https://{hote}%{{REQUEST_URI}} [R=301,L]\n"
+            "</IfModule>\n"
+        )
+    return out
+
+
 def ecrire(dist: Path, page: str, data_js: str, site_url: str | None) -> str:
     data = lire_donnees(data_js)
     page = appliquer(page, data, site_url)
@@ -398,6 +426,7 @@ def ecrire(dist: Path, page: str, data_js: str, site_url: str | None) -> str:
     (dist / "llms.txt").write_text(llms_txt(data, site_url), encoding="utf-8")
     (dist / "robots.txt").write_text(robots_txt(site_url), encoding="utf-8")
     (dist / "favicon.svg").write_text(FAVICON, encoding="utf-8")
+    (dist / ".htaccess").write_text(htaccess(site_url), encoding="utf-8")
     sitemap = dist / "sitemap.xml"
     if site_url:
         sitemap.write_text(sitemap_xml(site_url, data["fin_donnees"]), encoding="utf-8")

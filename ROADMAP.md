@@ -1,6 +1,6 @@
 # Feuille de route
 
-Mise à jour : 6 novembre 2026. Choix détaillés et constats : [DECISIONS.md](DECISIONS.md).
+Mise à jour : 7 novembre 2026. Choix détaillés et constats : [DECISIONS.md](DECISIONS.md).
 
 ## Où en est le projet
 
@@ -57,6 +57,9 @@ et peut désormais être mise en ligne automatiquement sur un hébergement stati
 - [x] **Référencement** : chiffres écrits dans le HTML (lisibles sans JavaScript), description,
   Open Graph, JSON-LD `Dataset`, `barometre.md`, `indicateurs.csv`, `llms.txt`, `robots.txt`.
 - [x] Dépôt GitHub créé, premiers commits poussés, CI verte.
+- [x] **En ligne** le 7 novembre 2026 : https://barometre-democratique.fr/ (O2Switch, FTPS,
+  certificat Let's Encrypt), mis à jour chaque matin par la collecte quotidienne ; `.htaccess`
+  pour la redirection vers https et l'UTF-8 des fichiers texte.
 
 ### Socle technique
 
@@ -88,10 +91,6 @@ les saisies manuelles aient été relues.
 
 ### Priorité 2 — mise en ligne et fiabilité
 
-- [ ] **Premier envoi sur O2Switch** : remplir `config/deploiement.local` (SSH ou FTPS), puis
-  `make deployer` ; vérifier la page à son adresse provisoire.
-- [ ] **Domaine** : une fois choisi, `SITE_URL=` dans `config/deploiement.local` (URL canonique,
-  `sitemap.xml`), puis HTTPS chez l'hébergeur.
 - [ ] **Licence** du code et des données dérivées à choisir (README).
 - [ ] Licences à confirmer : Arcom (non explicite), conditions d'utilisation de GDELT,
   législatives 2022 2ᵉ tour sur data.gouv.fr (admise par dérogation).
@@ -138,7 +137,8 @@ Premier passage le 6 novembre 2026 (Chromium, 1366 px et 375 px, thèmes clair e
 
 Reste à recetter :
 
-- [ ] La page à son adresse en ligne (O2Switch).
+- [x] La page en ligne (7 novembre, Chromium 1366 px) : affichage, HTTPS, fichiers annexes.
+- [ ] La page en ligne sur mobile et en thème sombre ; redirection http vers https.
 - [ ] Les liens vers les sources (≈ 1 160 liens, 18 domaines) : échantillon.
 - [ ] Infobulles et clics vers les sources dans les graphiques.
 - [ ] Firefox, Safari, lecteur d'écran.

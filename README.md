@@ -147,8 +147,13 @@ La page construit ses chiffres en JavaScript ; la version web les écrit aussi d
 | `indicateurs.csv` | valeurs et positions des 13 indicateurs |
 | `llms.txt` | point d'entrée pour les assistants d'IA ([llmstxt.org](https://llmstxt.org)) |
 | `robots.txt`, `sitemap.xml` | exploration ; le sitemap et l'URL canonique exigent `SITE_URL` |
+| `.htaccess` | fichiers texte en UTF-8 ; si `SITE_URL` est en https, redirection de http et www vers cette adresse |
 
 Une fois le domaine choisi : `SITE_URL=` dans `config/deploiement.local`, puis `make deployer`.
+
+En FTPS, si le serveur n'envoie pas ses certificats intermédiaires (cas d'O2Switch), les
+fournir dans un fichier PEM indiqué par `INTERMEDIAIRES=` : la chaîne doit toujours remonter à
+une racine de confiance du système, rien n'est envoyé sinon.
 
 ## Organisation
 

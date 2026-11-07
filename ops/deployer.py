@@ -13,6 +13,9 @@ dans `config/deploiement.local` (lignes CLE=valeur) :
     HOTE=ftp.exemple.fr
     UTILISATEUR=utilisateur
     DOSSIER=public_html/barometre
+    # facultatif : certificats intermédiaires que le serveur n'envoie pas (PEM), ajoutés à la
+    # vérification ; la chaîne doit toujours remonter à une racine de confiance du système
+    INTERMEDIAIRES=config/deploiement.intermediaires.pem
 
     # adresse publique du site, une fois le domaine choisi (URL canonique, sitemap.xml)
     SITE_URL=https://exemple.fr/
@@ -47,6 +50,7 @@ FICHIERS = (
     "robots.txt",
     "favicon.svg",
     "sitemap.xml",
+    ".htaccess",
     "index.html",
 )
 OBLIGATOIRES = ("data.js", "index.html")
@@ -80,6 +84,7 @@ def envoi_ftps(
     dossier: str,
     ftp_factory=None,
     password: str | None = None,
+    intermediaires: str | None = None,
 ) -> None:
     if password is None:
         auth = netrc.netrc().authenticators(hote)
@@ -90,6 +95,8 @@ def envoi_ftps(
         # Certificat et nom d'hôte vérifiés avant l'envoi du mot de passe (le contexte par
         # défaut de FTP_TLS ne vérifie rien). HOTE doit être le nom inscrit dans le certificat.
         contexte = ssl.create_default_context()
+        if intermediaires:
+            contexte.load_verify_locations(cafile=intermediaires)
         ftp = ftplib.FTP_TLS(hote, timeout=60, context=contexte)
     else:
         ftp = ftp_factory(hote, timeout=60)
@@ -118,7 +125,14 @@ def deploy(config: Path = CONFIG, source: Path = SOURCE, **kw) -> str:
         envoi_rsync(source, conf["DESTINATION"], **kw)
         return f"envoyé par rsync vers {conf['DESTINATION']}"
     if mode == "ftps":
-        envoi_ftps(source, conf["HOTE"], conf["UTILISATEUR"], conf.get("DOSSIER", "."), **kw)
+        envoi_ftps(
+            source,
+            conf["HOTE"],
+            conf["UTILISATEUR"],
+            conf.get("DOSSIER", "."),
+            intermediaires=conf.get("INTERMEDIAIRES") or None,
+            **kw,
+        )
         return f"envoyé par FTPS vers {conf['HOTE']}:{conf.get('DOSSIER', '.')}"
     raise SystemExit(f"[deployer] MODE inconnu : {mode!r} (rsync ou ftps)")
 
