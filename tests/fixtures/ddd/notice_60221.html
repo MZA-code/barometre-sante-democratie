@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta http-equiv="Content-Security-Policy" content="">
+			<meta charset="utf-8">
+			<meta name="author" content="Défenseur des droits">
+
+			<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, bibliothèque, médiathèque, pmb, phpmybibli">
+			<meta name="description" content="Portail documentaire"><meta name="robots" content="all">
+			
+			<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	
+	
+	
+				<script src="./styles/common/toolkits/jquery/versions/jquery-2.2.4.min.js"></script>
+				
+				
+				<!--[if lte IE 8]>
+				  <script src='./styles/common/toolkits/jquery/components/jquery-1.9.1.min.js'></script>
+				<![endif]--><script src="./styles/common/toolkits/jquery/components/jquery.mobile.custom.min.js"></script><script src="./styles/common/toolkits/uikit/js/uikit.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/uikit.min.css?1606292673"><script src="./styles/common/toolkits/uikit/js/components/grid.min.js"></script><script src="./styles/common/toolkits/uikit/js/components/init-responsive.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/components/init-responsive.min.css?1606292673"><script src="./styles/common/toolkits/uikit/js/components/remplace-facette-see-more.min.js"></script><script src="./styles/common/toolkits/uikit/js/components/search-box-tgle-clpse.min.js"></script><script src="./styles/common/toolkits/uikit/js/components/set-grid-footer.min.js"></script><script src="./styles/ddd/toolkits/uikit/js/components/set-grid-main-colored.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/ddd/toolkits/uikit/css/components/set-grid-main-colored.min.css?1625565279"><script src="./styles/common/toolkits/uikit/js/components/touch-user-box-tgle.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/components/touch-user-box-tgle.min.css?1625565279">
+<link rel="stylesheet" type="text/css" href="./styles/common/animation_display.css?1615825938">
+<link rel="stylesheet" type="text/css" href="./styles/common/common.css?1758718758">
+<link rel="stylesheet" type="text/css" href="./styles/common/contrib.css?1673276618">
+<link rel="stylesheet" type="text/css" href="./styles/common/dGrowl.css?1657616134">
+<link rel="stylesheet" type="text/css" href="./styles/common/dsi.css?1699608113">
+<link rel="stylesheet" type="text/css" href="./styles/common/font-awesome.css?1478593624">
+<link rel="stylesheet" type="text/css" href="./styles/common/open-sans.css?1479312986">
+<link rel="stylesheet" type="text/css" href="./styles/common/pagination.css?1532013719">
+<link rel="stylesheet" type="text/css" href="./styles/common/record_display.css?1540561363">
+<link rel="stylesheet" type="text/css" href="./styles/common/visionneuse.css?1646663637">
+<link rel="stylesheet" type="text/css" href="./styles/ddd/1-grid.css?1625565279">
+<link rel="stylesheet" type="text/css" href="./styles/ddd/2-base.css?1625565279">
+<link rel="stylesheet" type="text/css" href="./styles/ddd/ddd.css?1743755590">
+<link rel="stylesheet" type="text/css" href="./styles/ddd/font.css?1625565279">
+<link rel="stylesheet" type="text/css" href="./styles/ddd/fontAcontent.css?1625565279">
+<link rel="stylesheet" type="text/css" href="./styles/ddd/z_ddd_responsive.css?1625565279"><script type="text/javascript">var opac_style= 'ddd';</script>
+	<style type="text/css">
+	div#TglUser {
+    display: block!important;
+    visibility: visible!important;
+}
+
+.MenuHoriz .Nav > li > a {
+    padding:6px 20px 1px;
+}
+
+#connexion.uk-visible-large {
+    display: block !important;
+}
+
+#cms_module_search_22 uk-visible-large {
+    display: block !important;
+}
+
+#TglSearchResp .Tgllogin{min-width: 25px;}
+
+.MenuHoriz .Nav > li.home > a {
+    padding-top: 3px;
+    padding-bottom: 4px;
+}
+
+.dispoLien_notice {
+    display: none;
+}
+
+#bannette_portail {
+    max-width:670px;
+    margin:25px auto;
+}
+
+#cms_module_search_22.hide {
+    display:none;
+}
+
+#cms_module_search_22 {
+    display:block;
+}
+
+#search form .form-contenu input[value="X"] {
+  background-color: #935757;
+}
+
+.exemplaires td:last-child, 
+.exemplaires th.expl_header_statut {
+    display:none;
+}
+
+ul.search_tabs>li:first-child {
+    display:none;
+}
+
+.search_other_link a:before {
+    content:none;
+}
+
+.search_other_link a {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0 30px;
+    font-size:16px;
+    font-weight: normal;
+    font-family: 'Oswald', 'Open Sans', Arial, Helvetica, sans-serif;
+}
+
+.search_other_link {
+    float: left;
+    background-color: #935757;
+    font-size: 114%;
+    text-transform: uppercase;
+    height: 34px;
+    font-weight: normal;
+    border-radius: 3px;
+    line-height: 34px;
+    position: absolute;
+    top: 40px;
+    padding-right:0;
+    right: 60px;
+}
+
+@media screen and (max-width:960px) {
+ /* #cms_module_search_22.hide {
+    display: inherit !important;
+ }
+
+ #cms_module_search_22.uk-hidden {
+    display:none !important;
+ }*/
+
+  div#cms_module_search_22.uk-hidden {
+    display: block !important;
+    visibility: visible !important;
+  }
+
+}
+
+/*  #158046 Ajout d'une nouvelle rubrique / Affichage du rubriquage sur le bandeau */
+.MenuHoriz #TglSearch a {
+  margin-right: 25px;
+}
+
+.MenuHoriz .Nav > li > a {
+  padding: 6px 10px 1px;
+    padding-top: 6px;
+    padding-bottom: 1px;
+}
+
+
+/*** Correction #165252 LA ***/
+
+.pmb_bc_recordlist {background-color: #eaeef1 !important;}
+
+/*** fin ***/
+
+/* #173785 */
+.descr_notice .record_lien {
+line-break: anywhere !important;
+}
+
+.form_criteria_rmc{padding:12px;}
+
+.rmc_search_criteria {
+    justify-content: unset !important;
+    width: 100%;
+}
+
+.rmc_criteria_form_text input{width:100%;}
+.search_variable_id_thesaurus {
+  display: inline-flex;
+  align-items: baseline;
+  gap:8px;
+}
+
+#field_2_f_11_lib_2 {width:100%;}
+.form_criteria_rmc > div:last-child{float:unset!important; display:flex; justify-content: center; height:unset; margin-top:40px;gap:1rem;}
+
+.bouton_add_criterie_rmc.bouton {
+  bottom: -40px !important;
+}
+
+.form_criteria_rmc select {padding-left:12px; height : 40px !important;}
+.rmc_criteria_form_container{width:79%;}
+.rmc_criteria_form_authority .rmc_search_authority_container{width:100%;}
+.rmc_criteria_form_authority .rmc_search_authority_container>input{width:100%;}
+
+.search_variable_id_thesaurus {
+  display: flex !important;
+  gap:8px !important;
+  height: 54px !important;
+  width: 200px;
+}
+
+.rmc_search_sub_fields{width:54% !important;}
+
+.search_variable_id_thesaurus .search_value select {width:100% !important; margin-block: unset;}
+
+.rmc_search_sub_fields > div {width : 100% !important;}
+
+.rmc_search_sub_fields {display: none;}
+
+.form_criteria_rmc .rmc_row:first-child .rmc_search_criteria > .rmc_container.rmc_inter_container {
+  display: block;
+}
+
+@media screen and (max-width: 960px) {
+
+    span.search_chp_option {
+        width: 37% !important;
+    }
+
+    .rmc_row{height: unset !important;}
+
+    .rmc_criteria_container{min-width:unset !important; width: 100%;}
+
+    .rmc_search_criteria {
+    flex-direction: column;
+    }
+
+    .rmc_criteria_form_container{width:100% ! important;}
+    .rmc_criteria_form_text{
+        flex-direction: column !important;
+        gap:8px !important;
+        width: 100% !important;
+    }
+
+    div #search form select{width:100% !important;}
+
+    .rmc_inter_container{width:40% !important;}
+    .rmc_criteria_form_authority{flex-direction: column; gap:8px; height: 100%;}
+    
+}
+
+.rmc_datalist{width: -webkit-fill-available !important; width: -moz-available !important; width: stretch !important; max-height: 144px !important; }
+#search {margin: 20px 0px 62px !important;}
+
+		</style>
+		<link rel="SHORTCUT ICON" href="./styles/ddd/images/favicon.png">
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type="text/javascript">
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script type="text/javascript">
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName =
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i);
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+
+		<link rel="stylesheet" type="text/css" href="./includes/javascript/dojo/dijit/themes/tundra/tundra.css">
+		<script type="text/javascript">
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'fr-fr',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false, lastModified:'1785216837'});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+
+				},
+			};
+		</script>
+		<script type="text/javascript" src="./includes/javascript/dojo/dojo/dojo.js"></script>
+		<script type="text/javascript">
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script type="text/javascript">
+	var pmb_img_patience = './images/patience.gif';
+</script><script type="text/javascript">
+			var opac_show_social_network =0;
+		</script>
+	<script type="text/javascript" src="./includes/javascript/http_request.js"></script>
+	<script type="text/javascript" src="./includes/javascript/track_clicks.js"></script>
+	
+<script>
+				dojo.addOnLoad(function (){
+					//on balance un evenement pour les initialiser les modules si besoin...
+					dojo.publish('init',['cms_dojo_init',{}]);
+				});
+			</script>
+
+		<script>
+			function cms_module_search_22_change_dest(){
+				var page = 0;
+                var universe = 0;
+                var default_segment = 0;
+				if(document.forms['cms_module_search_22_searchbox'].dest) {
+					var dests = document.forms['cms_module_search_22_searchbox'].dest;
+					for(var i = 0; i < dests.length; i++){
+    					if(dests[i].checked || dests[i].selected ){
+    						page = dests[i].getAttribute('page');
+	                        universe = dests[i].getAttribute('universe');
+	                        default_segment = dests[i].getAttribute('default_segment');
+							break;
+						}
+					}
+				}
+                if(universe > 0){
+                    if(default_segment > 0){
+                        document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=search_segment&action=segment_results&id='+default_segment;
+                    } else {
+                        document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=search_universe&id='+universe;
+                    }
+                } else if(page>0){
+					document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=cmspage&pageid='+page;
+				}
+                if (page.toString().indexOf('view_') != -1) {
+					var view_id = page.substr(5);
+				    document.forms['cms_module_search_22_searchbox'].action += '&opac_view='+view_id;
+				}
+			}
+		</script><title>Décision 2026-158 du 7 juillet 2026 - Opérations... Catalogue en ligne</title><meta http-equiv="Content-Type" content="charset=utf-8"></head>
+
+<body onload="window.defaultStatus='PMB : Accès public';" id="pmbopac">
+		<script type="text/javascript">
+		function findNoticeElement(id){
+			var ul=null;
+			//cas des notices classiques
+			var domNotice = document.getElementById('el'+id+'Child');
+			//notice_display
+			if(!domNotice) domNotice = document.getElementById('notice');
+			if(domNotice){
+				var uls = domNotice.getElementsByTagName('ul');
+				for (var i=0 ; i<uls.length ; i++){
+					if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+						var ul = uls[i];
+						break;
+					}
+				}
+			} else{
+				var li = document.getElementById('onglet_isbd'+id);
+				if(!li) var li = document.getElementById('onglet_public'+id);
+				if(!li) var li = document.getElementById('onglet_detail'+id);
+				if(li) var ul = li.parentNode;
+			}
+			return ul;
+		}
+		function show_what(quoi, id) {
+			switch(quoi){
+				case 'EXPL_LOC' :
+					document.getElementById('div_expl_loc' + id).style.display = 'block';
+					document.getElementById('div_expl' + id).style.display = 'none';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+					break;
+				case 'EXPL' :
+					document.getElementById('div_expl_loc' + id).style.display = 'none';
+					document.getElementById('div_expl' + id).style.display = 'block';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+					break;
+				default :
+					quoi= quoi.toLowerCase();
+					var ul = findNoticeElement(id);
+					if (ul) {
+						var items  = ul.getElementsByTagName('li');
+						for (var i=0 ; i<items.length ; i++){
+							if(items[i].getAttribute('id')){
+								if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+									items[i].className = 'isbd_public_active';
+									document.getElementById('div_'+quoi+id).style.display = 'block';
+								}else{
+									if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+										items[i].className = 'isbd_public_inactive';
+										document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+									}
+								}
+							}
+						}
+					}
+					break;
+			}
+		}
+		</script>
+	<script type="text/javascript" src="./includes/javascript/tablist_ajax.js"></script>
+<script type="text/javascript" src="./includes/javascript/tablist.js"></script>
+<script type="text/javascript" src="./includes/javascript/misc.js"></script>
+	<div id="att" style="z-Index:1000"></div>
+	<div id="container"><div id="intro" fixed="yes">
+<div id="intro_bibli" fixed="yes">
+			<h3>Documentation du Défenseur des droits</h3>
+			<div class="p1"></div>
+			<div class="p2"></div>
+			</div>
+		<div id="cms_module_section_125" class="cms_module_section cms_module uk-width-large-1-1 uk-width-medium-1-1 uk-width-1-1"><div id="logo-city">
+	<a href="https://www.defenseurdesdroits.fr/" title="Défenseur des droits" target="_blank"><img src="https://juridique.defenseurdesdroits.fr/cms_vign.php?type=section&amp;id=79&amp;database=ddd&amp;mode=custom_175" alt="Défenseur des droits"></a>
+</div></div><div id="cms_module_htmlcode_185" class="cms_module_htmlcode cms_module"><script>
+$(document).ready( function() {
+    if ($('html').hasClass('uk-touch') ) {
+ $(document.getElementById('cms_module_shelveslist_182')).insertAfter($(document.getElementById('cms_module_recordslist_146')));
+    }
+}); 
+</script></div><div id="connexion" fixed="yes">
+
+			<h3 class="login_invite">Se connecter</h3><div id="login_form"><form action="index.php?lvl=notice_display&amp;id=60221" method="post" name="myform"><label>accéder à votre compte de lecteur</label><br>
+				<input type="text" name="login" class="login" size="14" placeholder="identifiant"><br>
+                <div class="myform-password-text-visually">
+                    <input type="password" id="myform-password" name="password" class="password" size="8" placeholder="Mot de passe" value="">
+                    <button type="button" class="fa fa-eye" id="myform-password-visually" onclick='toggle_password(this, "myform-password");' title="Afficher ou masquer le mot de passe"></button>
+                </div>
+                <input type="hidden" name="force_login" value="1">
+				<input type="submit" name="ok" value="ok" class="bouton"><input type="hidden" name="csrf_token" value="84c9e3215ab69ca71ea708e29ba5fdba34a98ee4"></form><br><a class="subs_not_yet_subscriber" href="./subscribe.php">Pas encore inscrit ?</a></div>
+
+			</div><div id="cms_module_htmlcode_137" class="cms_module_htmlcode cms_module"><div class="clear"></div>
+<script>
+$('#connexion').addClass('uk-hidden');
+</script></div><div id="accessibility" fixed="yes">
+    	<input type="hidden" id="opacAccessibility" name="opacAccessibility" value="1">
+			<ul class="accessibility_font_size">
+			<li class="accessibility_font_size_small">
+				<a href="javascript:accessibilityFontSize(1);" title="Réduire le texte">A-</a>
+			</li>
+			<li class="accessibility_font_size_normal">
+				<a href="javascript:accessibilityFontSize(0);" title="Réinitialiser le texte">A</a>
+			</li>
+			<li class="accessibility_font_size_big">
+				<a href="javascript:accessibilityFontSize(2);" title="Agrandir le texte">A+</a>
+			</li>
+		</ul>
+	
+			<script src="./includes/javascript/accessibility.js"></script>
+		
+			</div><div id="cms_module_htmlcode_172" class="cms_module_htmlcode cms_module wl-tgl-login uk-width-1-1"><div class="searchResp">
+    <div id="TglSearchResp" class="TglUser">
+        <a class="Tgllogin" data-uk-toggle="{target:'#cms_module_search_22'}">
+            <img src="./styles/ddd/images/loupe.png" alt="Rechercher" title="Rechercher">      
+        </a>
+    </div>
+</div>
+
+<div id="TglUser" class="TglUser uk-hidden">
+    <a class="Tgllogin" data-uk-toggle="{target:'#connexion'}">
+        <span class="user">
+			
+				Se connecter
+			
+		</span>        
+    </a>
+</div>
+</div><div id="cms_module_htmlcode_174" class="cms_module_htmlcode cms_module uk-hidden-large wl-tgl-nav"><div id="btnMenu" class="uk-navbar">
+    <ul class="uk-navbar-nav">
+        <li class="tgLbtnMenu">
+            <a class="MenuCanvas uk-button" href="#cms_module_sectionslist_173" data-uk-offcanvas="{mode:'slide'}"><i class="fa fa-bars"></i></a>
+        </li>
+        <li class="tgLbtnMenu uk-hidden" id="tgle-facette">
+            <a class="MenuCanvas filter-canvas uk-button" href="#facette" data-uk-offcanvas="{mode:'slide'}"><i class="fa fa-search-plus" aria-hidden="true"></i></a>
+        </li>
+    </ul>
+</div></div><div id="resume_panier" class="empty" fixed="yes"></div><div id="cms_module_sectionslist_173" class="cms_module_sectionslist cms_module uk-offcanvas">	<div class="uk-offcanvas-bar uk-offcanvas-bar-custom">
+			<div class="MenuVertResp uk-panel uk-panel-box">
+			<ul class="NavResponsive uk-nav uk-nav-side">
+
+			
+							<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=36&amp;opac_view=9" title="Décisions">Décisions</a>
+											<ul class="SousNavResponsive">
+				
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=213&amp;opac_view=16" title="Recommandations">Recommandations</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=214&amp;opac_view=16" title="Observations en justice">Observations en justice</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=215&amp;opac_view=16" title="Transactions">Transactions</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=225&amp;opac_view=9" title="Prises d'acte">Prises d'acte</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=212&amp;opac_view=9" title="Décisions des précédentes AAI">Décisions des précédentes AAI</a>
+								</li>
+													</ul>
+									</li>
+							<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=91&amp;opac_view=12" title="Avis et Réformes">Avis et Réformes</a>
+											<ul class="SousNavResponsive">
+				
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=106&amp;opac_view=11" title="Avis au Parlement">Avis au Parlement</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=0&amp;=208&amp;opac_view=38" title="Propositions de réforme ">Propositions de réforme </a>
+								</li>
+													</ul>
+									</li>
+							<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=227&amp;opac_view=43" title="Rappels à la loi">Rappels à la loi</a>
+									</li>
+							<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=92&amp;opac_view=10" title="Règlements amiables">Règlements amiables</a>
+									</li>
+							<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=103&amp;opac_view=13" title="Publications">Publications</a>
+											<ul class="SousNavResponsive">
+				
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=120&amp;opac_view=21" title="Rapports et études thématiques">Rapports et études thématiques</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=115&amp;opac_view=19" title="Rapports annuels d'activité">Rapports annuels d'activité</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=116&amp;opac_view=20" title="Rapports droits de l'enfant">Rapports droits de l'enfant</a>
+								</li>
+													</ul>
+									</li>
+							<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=93&amp;opac_view=14" title="International">International</a>
+											<ul class="SousNavResponsive">
+				
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=100&amp;opac_view=23" title="Veille jurisprudentielle et législative">Veille jurisprudentielle et législative</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=98&amp;opac_view=15" title="Le Défenseur des droits et l’ONU">Le Défenseur des droits et l’ONU</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=104&amp;opac_view=24" title="Le Défenseur des droits et le Conseil de l’Europe">Le Défenseur des droits et le Conseil de l’Europe</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=99&amp;opac_view=25" title="Le Défenseur des droits et les institutions de l’UE">Le Défenseur des droits et les institutions de l’UE</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=96&amp;opac_view=32" title="Les réseaux internationaux">Les réseaux internationaux</a>
+								</li>
+													</ul>
+									</li>
+						</ul>
+		</div>
+		</div></div><div id="cms_module_sectionslist_120" class="cms_module_sectionslist cms_module">    <div class="uk-visible-large">
+		<div class="MenuHoriz uk-navbar uk-container" id="wyr-justify-nav">
+            <ul class="Nav uk-navbar-nav">
+<li id="TglSearch" class="TglUser">
+    <a class="Tgllogin" data-uk-toggle="{target:'#cms_module_search_22', animation:'uk-animation-slide-top, uk-animation-slide-top', cls:'hide'}">
+        <img src="./styles/ddd/images/loupe.png" alt="Rechercher" title="Rechercher">      
+    </a>
+</li>
+<li class="uk-parent home" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+	<a href="./index.php?opac_view=-1" title="Accueil Espace juridique"><img src="./styles/ddd/images/home_picto.png" alt="Accueil"></a>
+</li>
+            
+                            <li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+                    
+                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=36&amp;opac_view=9" title="Décisions">Décisions</a>
+                                        <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-bottom">
+                        <ul class="SousNav uk-nav uk-nav-navbar">
+                
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=213&amp;opac_view=16" title="Recommandations">Recommandations</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=214&amp;opac_view=16" title="Observations en justice">Observations en justice</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=215&amp;opac_view=16" title="Transactions">Transactions</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=225&amp;opac_view=9" title="Prises d'acte">Prises d'acte</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=212&amp;opac_view=9" title="Décisions des précédentes AAI">Décisions des précédentes AAI</a>
+                                </li>
+                                                    </ul>
+                     </div>   
+                                    </li>
+                            <li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+                    
+                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=91&amp;opac_view=12" title="Avis et Réformes">Avis et Réformes</a>
+                                        <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-bottom">
+                        <ul class="SousNav uk-nav uk-nav-navbar">
+                
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=106&amp;opac_view=11" title="Avis au Parlement">Avis au Parlement</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=208&amp;opac_view=38" title="Propositions de réforme ">Propositions de réforme </a>
+                                </li>
+                                                    </ul>
+                     </div>   
+                                    </li>
+                            <li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+                    
+                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=227&amp;opac_view=43" title="Rappels à la loi">Rappels à la loi</a>
+                                    </li>
+                            <li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+                    
+                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=92&amp;opac_view=10" title="Règlements amiables">Règlements amiables</a>
+                                    </li>
+                            <li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+                    
+                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=103&amp;opac_view=13" title="Publications">Publications</a>
+                                        <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-bottom">
+                        <ul class="SousNav uk-nav uk-nav-navbar">
+                
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=120&amp;opac_view=21" title="Rapports et études thématiques">Rapports et études thématiques</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=115&amp;opac_view=19" title="Rapports annuels d'activité">Rapports annuels d'activité</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=116&amp;opac_view=20" title="Rapports droits de l'enfant">Rapports droits de l'enfant</a>
+                                </li>
+                                                    </ul>
+                     </div>   
+                                    </li>
+                            <li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+                    
+                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=93&amp;opac_view=14" title="International">International</a>
+                                        <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-bottom">
+                        <ul class="SousNav uk-nav uk-nav-navbar">
+                
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=100&amp;opac_view=23" title="Veille jurisprudentielle et législative">Veille jurisprudentielle et législative</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=98&amp;opac_view=15" title="Le Défenseur des droits et l’ONU">Le Défenseur des droits et l’ONU</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=104&amp;opac_view=24" title="Le Défenseur des droits et le Conseil de l’Europe">Le Défenseur des droits et le Conseil de l’Europe</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=99&amp;opac_view=25" title="Le Défenseur des droits et les institutions de l’UE">Le Défenseur des droits et les institutions de l’UE</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=96&amp;opac_view=32" title="Les réseaux internationaux">Les réseaux internationaux</a>
+                                </li>
+                                                    </ul>
+                     </div>   
+                                    </li>
+                        </ul>
+   		</div>            
+    </div>
+</div><div id="cms_module_search_22" class="cms_module_search cms_module" style="position: absolute;">
+			<form method="post" class="searchbox " action="./index.php?lvl=more_results&amp;autolevel1=1" name="cms_module_search_22_searchbox" onsubmit="if (cms_module_search_22_searchbox.user_query.value.length == 0) { cms_module_search_22_searchbox.user_query.value='*';}if (typeof cms_module_search_22_change_dest == 'function') { cms_module_search_22_change_dest(); }">
+				
+				<input type="hidden" value="1" name="look_TITLE">
+				<input type="hidden" value="1" name="look_ALL"><input type="hidden" name="look_AUTHPERSO_1#" id="look_AUTHPERSO_1#" value="1"><input type="hidden" name="look_AUTHPERSO_2#" id="look_AUTHPERSO_2#" value="1"><span class="research_inputs">
+					<input type="text" name="user_query" value="" placeholder="Entrez votre recherche ici ...">
+				<input class="bouton" type="submit" value="Rechercher"></span>
+			<input type="hidden" name="csrf_token" value="fcd491dacf79c38eb9604e8d7a2df502f4bce3c4"></form></div><div id="cms_module_htmlcode_184" class="cms_module_htmlcode cms_module"><div class="change_langue">
+    <form method="post" name="form_hidden_lang_selection" action="index.php?lvl=notice_display&amp;id=60221"><input type="hidden" name="lang_sel" value=""><input type="hidden" name="csrf_token" value="8b2e6ce88f53748abd9e5378aac781d910c4c813"></form>
+    <div data-uk-dropdown="{mode:'click'}">
+        <div class="langue_selected">
+            <span>FR</span><i class="fa fa-angle-down" aria-hidden="true"></i>
+        </div>
+        <div class="uk-dropdown">   
+           <ul>
+                <li>
+					<a onclick="document.forms['form_hidden_lang_selection'].elements['lang_sel'].value = 'en_UK';document.forms['form_hidden_lang_selection'].submit();">
+                        EN
+                    </a>
+                </li>
+				<li>
+					<a onclick="document.forms['form_hidden_lang_selection'].elements['lang_sel'].value = 'es_ES';document.forms['form_hidden_lang_selection'].submit();">
+                        SP
+                    </a>
+                </li>
+				<li>
+					<a onclick="document.forms['form_hidden_lang_selection'].elements['lang_sel'].value = 'de_DE';document.forms['form_hidden_lang_selection'].submit();">
+                        DE
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>     
+</div></div></div><div id="main" fixed="yes"><div id="main_header"></div><div id="main_hors_footer">
+						
+
+<script type="text/javascript" src="./includes/javascript/auth_popup.js"></script>
+<script type="text/javascript" src="./includes/javascript/pnb.js"></script><div id="cms_module_htmlcode_170" class="cms_module_htmlcode cms_module"><div id="boutonRetour">
+<a href="javascript:history.go(-1)" title="Retour">&gt;&gt; Retour</a>
+</div>
+<div class="clear"></div> </div><div id="cms_module_metadatas_157" class="cms_module_metadatas cms_module"></div><div id="navigator" fixed="yes">
+<table style="width:100%"><tr><td class="navig_actions_first_screen"><a href="./index.php?lvl=index" class="avec_recherches"><span>Nouvelle recherche</span></a></td>
+</tr></table></div><div id="intro_message"><div class="p2"></div></div><div id="notice">
+<br>
+<div id="noticeNot">
+	<div class="parentNot">
+		<div id="blocNotice_descr">
+			
+			
+																							
+			
+						
+			
+			<div id="div_detail60221">
+									<div class="asideContentNot">
+																		
+							<div class="vignetteimgNot">
+								<div class="vignetteDocNot">
+									<img class="vignetteNot" src="https://juridique.defenseurdesdroits.fr/img_cache/ddd_record_60221.png?v=1783523266" title="Couverture de l'ouvrage" loading="lazy">
+								</div>
+							</div>
+																
+																		
+							<div class="statutNot">
+								<span class="labelStatutNot">Document public</span>
+							</div>
+																
+																					
+																					
+																					
+																																																																																					</div>
+								
+				
+				<div class="notice_contenu">
+					<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=D%C3%A9cision%202026-158%20du%207%20juillet%202026%20-%20Op%C3%A9rations%20de%20maintien%20de%20l%E2%80%99ordre%20lors%20d%E2%80%99une%20manifestation%20%C3%A0%20Sainte-Soline%20%28Recommandations%20et%20saisine%20de%20l%E2%80%99autorit%C3%A9%20hi%C3%A9rarchique%29&amp;rft.title=D%C3%A9cision%202026-158%20du%207%20juillet%202026%20-%20Op%C3%A9rations%20de%20maintien%20de%20l%E2%80%99ordre%20lors%20d%E2%80%99une%20manifestation%20%C3%A0%20Sainte-Soline%20%28Recommandations%20et%20saisine%20de%20l%E2%80%99autorit%C3%A9%20hi%C3%A9rarchique%29&amp;rft.isbn=2026-158&amp;rft.date=07%2F07%2F2026&amp;rft_id=&amp;rft.au=DDD%20D%C3%A9fenseur%20des%20droits&amp;rft.au=DS%20D%C3%A9ontologie%20de%20la%20s%C3%A9curit%C3%A9&amp;rft.aulast=D%C3%A9fenseur%20des%20droits&amp;rft.aufirst=DDD"></span>
+											<table class="descr_notice">
+							<tbody>
+																	<tr class="record_tit1">
+										<td class="labelNot">
+											<span>Titre : </span>
+										</td>
+										<td class="labelContent">
+											<span id="exempl_titleNot">Décision 2026-158 du 7 juillet 2026 - Opérations de maintien de l’ordre lors d’une manifestation à Sainte-Soline (Recommandations et saisine de l’autorité hiérarchique)</span>
+										</td>
+									</tr>
+																
+																																		
+																																		
+																																	
+																																	
+																																																				
+																																						<tr class="record_responsabilites">
+												<td class="labelNot">
+													<span>Auteurs : </span>
+												</td>
+												<td class="labelContent">
+													<span>
+																				<a href="./index.php?lvl=author_see&amp;id=39&amp;opac_view=-1" title="Défenseur des droits">Défenseur des droits</a>, Auteur																																							 ; 
+																				<a href="./index.php?lvl=author_see&amp;id=4342&amp;opac_view=-1" title="Déontologie de la sécurité">Déontologie de la sécurité</a>, Auteur																							</span>
+												</td>
+											</tr>
+																																											
+																											<tr class="record_tdoc">
+											<td class="labelNot">
+												<span>Type de document : </span> 
+											</td>
+											<td class="labelContent">
+												<span>
+																											Décisions
+																									</span>
+											</td>
+										</tr>
+																									
+																																	
+																																						<tr class="record_year">
+												<td class="labelNot">
+													<span>Année de publication : </span> 
+												</td>
+												<td class="labelContent">
+													<span>07/07/2026</span>
+												</td>
+											</tr>
+																																			
+																																	
+																																	
+																																	
+																																							
+								
+								
+																											<tr class="record_code">
+											<td class="labelNot">
+												<span>Numéro de décision ou d'affaire : </span>
+											</td>
+											<td class="labelContent">
+												<span>2026-158</span>
+											</td>
+										</tr>
+																									
+																																	
+																																	
+																																	
+																											<tr class="record_langues">
+											<td class="labelNot">
+												<span>Langues:</span>
+											</td>
+											<td class="labelContent">
+																																							<span>Français</span>
+																																				</td>
+										</tr>
+																									
+																																									
+																																	
+								
+																
+																																																		<tr class="record_categories">
+													<td class="labelNot">
+														<span>Mots-clés : </span>
+													</td>
+													<td class="labelContent">
+																																															<p>[Documents internes] <a href="./index.php?lvl=categ_see&amp;id=25&amp;opac_view=-1">Recommandation</a></p>
+																																																<p>[Documents internes] <a href="./index.php?lvl=categ_see&amp;id=881&amp;opac_view=-1">Demande de poursuites disciplinaires</a></p>
+																																																																																																														<p>[Mots-clés] <a href="./index.php?lvl=categ_see&amp;id=3846&amp;opac_view=-1">Relation avec les professionnels de la sécurité</a></p>
+																																																<p>[Mots-clés] <a href="./index.php?lvl=categ_see&amp;id=3886&amp;opac_view=-1">Déontologie de la sécurité</a></p>
+																																																<p>[Mots-clés] <a href="./index.php?lvl=categ_see&amp;id=3875&amp;opac_view=-1">Manifestation</a></p>
+																																																<p>[Mots-clés] <a href="./index.php?lvl=categ_see&amp;id=5061&amp;opac_view=-1">Usage de la force</a></p>
+																																																<p>[Mots-clés] <a href="./index.php?lvl=categ_see&amp;id=4177&amp;opac_view=-1">Arme</a></p>
+																																																<p>[Mots-clés] <a href="./index.php?lvl=categ_see&amp;id=4907&amp;opac_view=-1">Gaz lacrymogène</a></p>
+																																																<p>[Mots-clés] <a href="./index.php?lvl=categ_see&amp;id=5267&amp;opac_view=-1">Grenade de désencerclement</a></p>
+																																																<p>[Mots-clés] <a href="./index.php?lvl=categ_see&amp;id=4906&amp;opac_view=-1">Lanceur de balle de défense</a></p>
+																																																<p>[Mots-clés] <a href="./index.php?lvl=categ_see&amp;id=5432&amp;opac_view=-1">Matricule</a></p>
+																																																<p>[Mots-clés] <a href="./index.php?lvl=categ_see&amp;id=5237&amp;opac_view=-1">Enquête administrative</a></p>
+																																																<p>[Mots-clés] <a href="./index.php?lvl=categ_see&amp;id=5384&amp;opac_view=-1">Contrôle hiérarchique</a></p>
+																																															</td>
+												</tr>
+																																														
+																																	
+																											<tr class="record_resume">
+											<td class="labelNot">
+												<span>Résumé : </span>
+											</td>
+											<td class="labelContent">
+												<span>La Défenseure des droits s’est saisie d’office de la situation de deux hommes dont le pronostic vital était engagé après avoir été blessés au cours de la manifestation organisée contre le projet de méga-bassine à Sainte-Soline (Deux-Sèvres), le 25 mars 2023. Elle a par la suite été saisie par d’autres personnes ayant été blessées ainsi que par des témoins, au total, soixante-quinze personnes, qui dénoncent un usage disproportionné et indifférencié de la force par les militaires de la gendarmerie, des usages non règlementaires des armes ainsi qu’une entrave aux secours. <br>
+Dans sa décision publiée le 8 juillet 2026, elle conclut à des manquements des gendarmes à leurs obligations déontologiques et demande des poursuites disciplinaires. <br>
+<br>
+ <br>
+La Défenseure des droits a mené son analyse uniquement au regard des règles déontologiques professionnelles qui encadrent l’action des gendarmes, la qualification et le traitement d’une infraction pénale relevant de la compétence exclusive du juge judiciaire.<br>
+<br>
+L’enquête du Défenseur des droits met en lumière plusieurs manquements aux obligations déontologiques des gendarmes :<br>
+<br>
+<b>En premier lieu</b>, la Défenseure des droits considère que plusieurs militaires de la gendarmerie ont fait un usage non réglementaire et disproportionné des armes, notamment des grenades lacrymogènes lancées au lanceur Cougar.<br>
+<br>
+Pour la Défenseure des droits, le nombre de personnes blessées ainsi que la gravité des atteintes subies, sont l’expression manifeste du caractère disproportionné du recours au lanceur Cougar dans ces conditions non réglementaires. <br>
+<br>
+Par conséquent, elle considère que l’usage de l’arme par plusieurs gendarmes n’était pas conforme au cadre règlementaire, qui pose des conditions d’absolue nécessité et de proportionnalité (article R. 434-18 du CSI). <br>
+<br>
+Elle considère également que leurs encadrants n’ont pas assuré pleinement leurs obligations en matière d’encadrement, et manqué au principe hiérarchique au sens de l’article R. 434-4 du CSI. <br>
+<br>
+<b>En second lieu</b>, sur l’encadrement de l’emploi de la force, la Défenseure des droits considère qu’au regard de la quantité et de la gravité des blessures constatées, notamment à la tête, ainsi que du nombre de munitions utilisées dans un laps de temps très court — parfois de manière non réglementaire et indiscriminée à l’encontre des manifestants présents —que les autorités ont adopté une logique de confrontation ayant conduit à un lourd bilan humain, tant parmi les manifestants que parmi les gendarmes. <br>
+<br>
+Les autorités hiérarchiques ont exposé les militaires de la gendarmerie à des risques importants de blessures ; certains, souvent jeunes et peu expérimentés, ont déclaré avoir craint pour leur vie et plusieurs ont été durablement marqués par les événements. <br>
+<br>
+Partant, les autorités composant la chaîne de commandement n’ont pas suffisamment tenu compte des risques et menaces tant pour la population que pour les gendarmes et n’ont pas pleinement assuré un maintien et un rétablissement de l’ordre respectueux de la sécurité de l’ensemble des protagonistes, en méconnaissance de l’article R. 434-10 du CSI portant sur le discernement par les autorités de commandement. <br>
+<br>
+En outre, l’autorité hiérarchique a exposé les militaires de la gendarmerie à des risques pour leur intégrité physique, dans un contexte prévisible de violence, en violation de l’article R. 434-6 du CSI. <br>
+<br>
+Au regard de l’ensemble des manquements déontologiques constatés, elle saisit le ministre de l’intérieur afin qu’il engage une procédure disciplinaire à l’encontre des gendarmes auteurs de tirs non réglementaires et disproportionnés, ainsi qu’à l’ensemble de la chaine de commandement. <br>
+<br>
+Par ailleurs, elle constate que le cadre d’emploi du lanceur Cougar prévu par l’instruction du 27 juillet 2017 est imprécis, faute notamment de définir ce qu’est un « tir tendu » ou un tir courbe. <br>
+Elle considère, eu égard à la documentation de l’arme par le fabriquant, qu’un tir effectué avec un angle inférieur à 30 degrés peut être considéré comme tendu en raison du risque d’impacter directement des personnes. <br>
+<br>
+La Défenseure des droits recommande au ministre de l’intérieur de rédiger un nouveau cadre d’emploi précis concernant l’utilisation du lanceur Cougar, intégrant un angle minimal à respecter et insistant sur les risques de blessures en cas de tir non conforme. <br>
+<br>
+<b>En troisième lieu</b>, la Défenseure des droits considère que l’accumulation des propos dégradants, stigmatisant l’ensemble des manifestants et appelant à la violence à leur encontre, prononcés en service par un nombre important de gendarmes au cours de l’opération sans qu’ils n’aient, à sa connaissance, suscité aucune réaction de la part des autres militaires, porte une atteinte notoire au crédit et au renom de la gendarmerie nationale. <br>
+<br>
+Elle considère également que ces propos interrogent sur la formation des gendarmes mobiles, censés faire preuve de sang-froid, de discernement et de respect de la population, même au cours d’opérations difficiles. Elle relève que le manque d’exemplarité de certains gradés est particulièrement préjudiciable en raison de la participation de nombreux jeunes gendarmes à cette opération.<br>
+Elle relève des manquements à leurs obligations découlant des articles relatifs au crédit et au renom de la gendarmerie nationale et aux relations avec la population (R. 434-12 et R. 434-14 du CSI) par l’ensemble des militaires ayant pu être identifiés qui ont tenu des propos dégradants sur les manifestants et demande l’engagement de poursuites disciplinaires à leur encontre. <br>
+<br>
+Elle considère par ailleurs que le contrôle des gendarmes n’a pas été réalisé de manière satisfaisante par la hiérarchie qui se trouvait sur place et relève des manquements à l’article R. 434-4 du CSI relatif au pouvoir hiérarchique à l’encontre des responsables ayant pu être identifiés et demande l’engagement de poursuites disciplinaires à leur encontre.<br>
+<br>
+<b>En quatrième lieu</b>, la Défenseure des droits constate que la plupart des gendarmes mobiles étant intervenus ne sont pas identifiables, leur équipement recouvrant totalement leur RIO, ce qui est très problématique, particulièrement s’agissant d’une opération ayant occasionné de nombreux blessés graves parmi les manifestants. <br>
+<br>
+Elle relève dès lors un manquement au respect de la loi (art. R. 434-2 CSI) ainsi qu’au principe hiérarchique et au devoir d’exemplarité (R. 434-14 CSI), et elle demande au ministre de l’intérieur de prendre toutes les mesures utiles afin de faire respecter le port du RIO et de rendre le numéro d’identification plus lisible. <br>
+<br>
+<b>En cinquième lieu</b>, la Défenseure des droits constate que l’enquête administrative diligentée par l’IGGN sur deux tirs de LBD (lanceurs de balles de défense) effectués depuis des quads en mouvement par les militaires d’une unité de la gendarmerie, qui a conclu à une absence de faute de la part de ces derniers, a été menée uniquement sur la base des témoignages des gendarmes mis en cause, alors que l’ensemble des caméras-piétons n’avait pas été enclenché et alors que, dès le jour des faits, la hiérarchie disposait de nombreux témoignages mettant en cause les militaires de cette unité. Elle constate en outre que les enquêteurs n’ont pas investigué sur de possibles contradictions entre les déclarations des militaires lors de leurs auditions et certains des enregistrements vidéo exploités. Elle considère que d’autres diligences devaient être envisagées pour vérifier les faits au regard des obligations déontologiques des gendarmes. <br>
+<br>
+La Défenseure des droits conclut par conséquent que l’IGGN n’a pas mené son enquête de manière objective et effective et qu’elle a manqué à son obligation de contrôle prévue à l’article R. 434-25 du CSI. Elle demande au ministre de l’intérieur de rappeler aux militaires de la gendarmerie nationale exerçant des fonctions d’encadrement et à l’IGGN que les enquêtes administratives doivent être menées de manière objective et que les actes d’enquête doivent être accomplis avec diligence, afin de faire la lumière sur les faits au regard des obligations déontologiques des gendarmes. <br>
+<br>
+La Défenseure des droits constate par ailleurs que les informations détenues par les autorités dès le jour des faits portant notamment sur le nombre de blessés, la gravité des blessures, le décompte des munitions tirées, ainsi que les nombreux témoignages mettant en cause les forces de sécurité, auraient justifié l’ouverture d’une enquête administrative au périmètre plus étendu, analysant de possibles dysfonctionnements lors de cette opération de maintien de l’ordre.<br>
+<br>
+Elle considère que l’autorité hiérarchique a un devoir de réaction quand elle est informée de faits susceptibles de revêtir une qualification disciplinaire. Elle relève par ailleurs que le fait d’engager une telle enquête avec diligence aurait permis de prévenir le risque d’atteinte à l’image de la gendarmerie nationale.<br>
+<br>
+La Défenseure des droits considère que le fait de n’avoir engagé une procédure administrative qu’en 2025, lorsque les enregistrements vidéo des manquements dénoncés ont été médiatisés, caractérise un manquement au devoir de réaction de l’autorité hiérarchique. Elle demande au ministre de l’intérieur de rappeler aux militaires de la gendarmerie nationale exerçant des fonctions d’encadrement et à l’IGGN, que l’ouverture d’une enquête judiciaire ne suspend pas l’enquête administrative, dont les actes doivent permettre à l’administration d’être informée des actions de ses agents et d’envisager, le cas échéant, des poursuites disciplinaires.<br>
+<br>
+Au regard de l’ensemble des manquements déontologiques constatés, elle saisit le ministre de l’intérieur afin qu’il engage une procédure disciplinaire à l’encontre de chacun des agents.<br>
+</span>
+											</td>
+										</tr>
+																									
+																																	
+																											 																																																			<tr class="record_p_perso">
+												<td class="labelNot">
+													<span>Thématique Bulletin documentaire PDF :</span>
+												</td>
+												<td class="labelContent">
+													<span>Relation avec les professionnels de la sécurité</span>
+												</td>
+											</tr>
+																																			
+																																									
+																																</tbody>
+						</table>
+									</div>
+			</div>
+		</div>
+		<div class="clear"></div>
+										
+						
+									
+									
+					<div id="docnum">
+				<a name="docnum"><h3><span id="titre_explnum">Documents numériques (1)</span></h3></a><table class="docnum"><tr><td id="explnum_23301" class="docnum center" style="width:33%"><a href="https://juridique.defenseurdesdroits.fr/doc_num.php?explnum_id=23301" title="DEC_DDD_20260707_2026-158 - application/pdf" target="_blank"><img src="https://juridique.defenseurdesdroits.fr/vig_num.php?explnum_id=23301" alt="DEC_DDD_20260707_2026-158 - application/pdf" title="DEC_DDD_20260707_2026-158 - application/pdf" border="0" loading="lazy"></a>
+					<div id="zoom_statut_docnum23301" style="border: 2px solid rgb(85, 85, 85); background-color: rgb(255, 255, 255); position: absolute; z-index: 2000; display: none;">
+						<b></b>
+					</div>
+				
+				<a href="#" onmouseout="z=document.getElementById('zoom_statut_docnum23301'); z.style.display='none'; " onmouseover="z=document.getElementById('zoom_statut_docnum23301'); z.style.display=''; ">
+					<div class="vignette_doc_num"><img class="docnum_statutnot3" width="10" height="10" src="./images/spacer.gif" loading="lazy"></div>
+				</a>
+				<br><span class="title_docnum">DEC_DDD_20260707_2026-158</span><div class="explnum_type">Adobe Acrobat PDF</div></td><td class="docnum center" style="width:33%"> </td><td class="docnum center" style="width:33%"> </td></tr></table>
+			</div>
+				
+					
+				
+									
+									
+								</div>
+</div>
+
+</div>
+
+
+
+		</div> 
+
+		</div>
+
+		
+		<div id="bandeau" fixed="yes">
+
+
+<div id="accueil" fixed="yes">
+
+<h3><span onclick='document.location="./index.php?"' style="cursor: pointer;">Accueil</span></h3>
+<p class="centered"><a href="./index.php?"><img src="./images/home.jpg" alt="Accueil" style="border:0px" class="center" loading="lazy"></a></p>
+<div id="lang_select"><h3><span>Sélection de la langue</span></h3><form method="post" action="index.php?lvl=notice_display&amp;id=60221"><select name="lang_sel" onchange="this.form.submit();"><option value="fr_FR" selected>Français </option><option value="en_UK">English (UK)</option><option value="es_ES">Español</option><option value="de_DE">Deutsch</option></select><input type="hidden" name="csrf_token" value="18dee371b7a11a7b627429af48b16329a68da399"></form></div>
+
+					</div>
+
+<div id="adresse" fixed="yes">
+
+		<h3>Adresse</h3>
+
+		<span>
+			Documentation du Défenseur des droits<br>
+			<br>
+			 <br>
+			 <br>
+			<br><span id="opac_biblio_email">
+			<a href="mailto:documentation@defenseurdesdroits.fr" title="documentation@defenseurdesdroits.fr">contact</a></span></span>
+	    </div></div><div id="bandeau_2" fixed="yes"></div><div id="footer" fixed="yes">
+
+<div id="cms_module_sectionslist_122" class="cms_module_sectionslist cms_module uk-width-large-3-4 uk-width-medium-1-1 uk-width-1-1">    <div class="logosFooter">
+
+        <ul class="uk-thumbnav uk-grid-width-1-3">
+
+ 
+
+	<h3><span>Autres sites des partenaires du DDD</span></h3>
+
+                        
+            <li class="imgS uk-active">
+                <a href="https://www.antidiscriminations.fr/" target="_blank" title="Agir contre les discriminations">
+                    <img src="https://juridique.defenseurdesdroits.fr/temp/cms_vign/ddd/vign/section218.jpeg" alt="Agir contre les discriminations">
+                    <p class="titleLogosFooter">Agir contre les discriminations</p>
+                </a>
+            </li>
+                        
+            <li class="imgS uk-active">
+                <a href="http://egalitecontreracisme.fr/" target="_blank" title="Egalité contre le racisme">
+                    <img src="https://juridique.defenseurdesdroits.fr/temp/cms_vign/ddd/vign/section53.jpeg" alt="Egalité contre le racisme">
+                    <p class="titleLogosFooter">Egalité contre le racisme</p>
+                </a>
+            </li>
+                        
+            <li class="imgS uk-active">
+                <a href="https://educadroit.fr/" target="_blank" title="Educadroit">
+                    <img src="https://juridique.defenseurdesdroits.fr/temp/cms_vign/ddd/vign/section80.jpeg" alt="Educadroit">
+                    <p class="titleLogosFooter">Educadroit</p>
+                </a>
+            </li>
+                    </ul>    
+    </div>
+    
+</div><div id="cms_module_section_179" class="cms_module_section cms_module uk-width-large-1-4 uk-width-medium-1-1 uk-width-1-1"><div class="rubFooter">
+                  <div class="imgL">
+            <a href="https://www.defenseurdesdroits.fr/" target="_blank"><img src="https://juridique.defenseurdesdroits.fr/cms_vign.php?type=section&amp;id=77&amp;database=ddd&amp;mode=custom_300" alt="Retour au site du Défenseur des droit" title="Retour au site du Défenseur des droit"></a>
+        </div>
+              <div class="resume">
+	<p>Défenseur des droits<br>Libre réponse 71120<br>75342 Paris CEDEX 07<br><br>09 69 39 00 00<br><span style="font-size: 8pt;">* du lundi au vendredi de 8h00 à 20h00</span><br><span style="font-size: 8pt;">(coût d'un appel local)</span><br><br><a title="Nous contacter" href="http://www.defenseurdesdroits.fr/nous-contacter" target="_blank">Nous contacter</a></p>
+    </div>
+</div>
+</div><div id="cms_module_sectionslist_178" class="cms_module_sectionslist cms_module uk-width-large-1-1 uk-width-medium-1-1 uk-width-small-1-1">    <div class="logosSoc">
+
+        <ul>    
+                    
+            <li class="imgSoc">
+                <a href="https://www.facebook.com/Defenseurdesdroits" target="_blank" title="Facebook">
+                <img src="https://juridique.defenseurdesdroits.fr/cms_vign.php?type=section&amp;id=58&amp;database=ddd&amp;mode=custom_60" alt="Facebook">
+               </a>
+           </li>
+    	            
+            <li class="imgSoc">
+                <a href="https://twitter.com/Defenseurdroits" target="_blank" title="Twitter">
+                <img src="https://juridique.defenseurdesdroits.fr/cms_vign.php?type=section&amp;id=59&amp;database=ddd&amp;mode=custom_60" alt="Twitter">
+               </a>
+           </li>
+    			</ul>
+</div>
+</div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module uk-width-1-1 bottom-nav uk-grid-margin"><div class="liensFooter">
+	<div class="uk-flex uk-flex-left">
+        <ul class="navFooter">
+                          
+			 			 <li class="txtLinkFooter">
+				© Défenseur des droits 2016
+            </li>
+			                           
+			             <li>
+				<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=50" title="Accessibilité">Accessibilité</a>
+            </li>
+			                          
+			             <li>
+				<a href="https://www.defenseurdesdroits.fr/fr/nous-rejoindre" target="_blank" title="Nous rejoindre">Nous rejoindre</a>
+            </li>
+			                          
+			             <li>
+				<a href="https://www.defenseurdesdroits.fr/fr/mentions-legales" target="_blank" title="Mentions légales">Mentions légales</a>
+            </li>
+			                          
+			             <li>
+				<a href="https://www.defenseurdesdroits.fr/fr/presse" target="_blank" title="Presse">Presse</a>
+            </li>
+			                          
+			             <li>
+				<a href="https://www.defenseurdesdroits.fr/fr/faq" target="_blank" title="Besoin d'aide ?">Besoin d'aide ?</a>
+            </li>
+			                          
+			             <li>
+				<a href="https://www.defenseurdesdroits.fr/fr/contactez-nous" target="_blank" title="Contact">Contact</a>
+            </li>
+			                     </ul>
+    </div>
+</div>
+</div><div id="cms_module_htmlcode_134" class="cms_module_htmlcode cms_module"><div class="Ancre">
+	<a href="#logo" title="Top" data-uk-smooth-scroll>Λ</a>
+</div></div><span id="footer_rss" fixed="yes">
+	
+</span>
+<span id="footer_link_sup" fixed="yes">
+		  
+</span>
+
+<span id="footer_link_website" fixed="yes">
+	<a class="footer_biblio_name" href="https://juridique.defenseurdesdroits.fr/" title="Documentation du Défenseur des droits">Documentation du Défenseur des droits</a>  
+</span>
+
+<span id="footer_link_pmb" fixed="yes">
+  
+		<a class="lien_pmb_footer" href="https://www.sigb.net" title="...une solution libre pour la médiathèque..." target="_blank">pmb</a>
+</span>
+
+</div></div>
+		
+		<script type="text/javascript">init_drag();	//rechercher!!</script>
+		
+			<script type="text/javascript">
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message;
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script type="text/javascript" src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script type="text/javascript">
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": true, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "https://www.defenseurdesdroits.fr/fr/mentions-legales", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+	        });
+ 
+        </script>
+		<script type="text/javascript">
+		tarteaucitron.services.pmbstatopac = {
+		  	"key": "pmbstatopac",
+			"type": "analytic",
+			"name": "PMB (Statistiques)",
+			"needConsent": true,
+			"cookies": [],
+			"uri": "https://juridique.defenseurdesdroits.fr/",
+			"readmoreLink": "https://www.defenseurdesdroits.fr/fr/mentions-legales", // If you want to change readmore link
+			"js": function () {
+			    "use strict";
+			    // When user allow cookie
+		  	},
+		  	"fallback": function () {
+		    	"use strict";
+		    	// when use deny cookie
+		  	}
+		};
+		</script>
+		<script type="text/javascript">
+        	(tarteaucitron.job = tarteaucitron.job || []).push("pmbstatopac");
+        </script>
+<script>
+var _paq = window._paq = window._paq || [];
+/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+var u="https://matomo.defenseurdesdroits.fr/";
+_paq.push(['setTrackerUrl', u+'piwik.php']);
+_paq.push(['setSiteId', '8']);
+var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+g.async=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+})();
+</script>
+<script type="text/javascript">
+	        tarteaucitron.user.matomoId = 8;
+                tarteaucitron.user.matomoHost = 'https://matomo.defenseurdesdroits.fr/';
+	        (tarteaucitron.job = tarteaucitron.job || []).push('matomo');
+        </script>
+		</body>
+		</html>

@@ -48,6 +48,11 @@ sources:
     url: https://www.gdeltproject.org/data.html
     licence: Données ouvertes du GDELT Project, réutilisation avec citation de la source (conditions d'utilisation à confirmer)
 
+  - id: ddd_juridique
+    name: Défenseur des droits — base juridique (décisions liées aux manifestations et au maintien de l'ordre)
+    url: https://juridique.defenseurdesdroits.fr/
+    licence: Documents publiés par le Défenseur des droits (informations publiques, réutilisation libre selon le code des relations entre le public et l'administration ; à confirmer)
+
   - id: rsf_classement
     name: Reporters sans frontières — classement mondial de la liberté de la presse
     url: https://rsf.org/fr/classement

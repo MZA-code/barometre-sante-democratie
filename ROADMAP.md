@@ -45,6 +45,10 @@ et peut désormais être mise en ligne automatiquement sur un hébergement stati
   (10 et 18 septembre, 2 octobre 2025 ; 17, 24, 31 octobre et 5 novembre 2026), chaque chiffre
   retrouvé avec son attribution dans un article en accès libre.
 - [x] Participation aux élections législatives.
+- [x] **Défenseur des droits** (7 novembre) : décisions et rappels à la loi classés « Manifestation »
+  ou « Maintien de l'ordre public », collectés chaque jour (30 s entre deux requêtes).
+- [x] **Interpellations et gardes à vue** (7 novembre) : 50 chiffres d'autorités pour 26 des 46
+  journées de mobilisation, chacun avec la phrase qui le porte ; 20 journées sans bilan attribué.
 
 ### Page et mise en ligne
 
@@ -92,7 +96,7 @@ les saisies manuelles aient été relues.
   éventuelle du temps de parole par parti à un critère de représentativité.
 - [ ] **Vérification humaine** des saisies manuelles, ligne par ligne : régimes d'exception
   (13 périodes sur 20), seed 49.3 historique, journalistes inquiétés (18 lignes), seed CNCTR,
-  déclarations de l'ONU (10), mobilisations 2024-2026 (19 chiffres).
+  déclarations de l'ONU (10), mobilisations 2024-2026 (19 chiffres), interpellations (50 chiffres).
 - [ ] **Vérification humaine** des chiffres de manifestants plus anciens : 12 non confirmés, dont
   2 à supprimer faute de confirmation (05/07/2016, 10/12/2019) ; attribution 2016 à confirmer.
 - [ ] **Vérification humaine** des cas limites repérés automatiquement : 12 rapprochements CNIL

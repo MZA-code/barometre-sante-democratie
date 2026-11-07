@@ -197,3 +197,30 @@ Relevé pilote, non exhaustif (10 déclarations, 2019-2026).**
   communications, non interrogée) ; recherche des déclarations par moteur de recherche,
   donc non exhaustive. À compléter : observations finales du comité des droits de l'homme
   (2024), Examen périodique universel (2023).
+
+## `interpellations_mobilisations.csv`
+
+Interpellations et gardes à vue lors des journées nationales de `mobilisations_nationales.csv`,
+France entière et Paris, **telles qu'annoncées par une autorité** (ministère ou ministre de
+l'Intérieur, préfecture de police, parquet ; « les autorités » ou « la police » quand la source
+ne précise pas, signalé dans `note`). Donnée de contexte, hors grille
+(`contexte.interpellations`). Une ligne par journée, périmètre et mesure (`interpellations`,
+`gardes_a_vue`).
+
+- **Relevé du 2026-11-07** : 50 chiffres pour 26 des 46 journées, trouvés par recherche web
+  dans des articles en accès libre ; aucun chiffre de mémoire, aucun chiffre d'association ou
+  de syndicat, aucun mur payant contourné. La colonne `citation` recopie la phrase qui porte le
+  chiffre.
+- **Contrôle** (2026-11-07) : chaque article a été retéléchargé et la citation recherchée dans
+  son texte (`controle`) : 44 retrouvées telles quelles (nombre parfois écrit en lettres ou
+  avec un point comme séparateur), 2 aux guillemets près ; les 4 pages de France 24, qui
+  refusent les téléchargements par script, ont été vérifiées dans un navigateur.
+- **Bilans** : le dernier bilan national publié pour la journée est retenu ; un bilan
+  provisoire (« à 18 h », « pour l'instant ») l'est faute de mieux, avec l'heure en `note`.
+  17 octobre 2026 : 2 628 retenus (rappelés par le ministère le 25 octobre) ; le bilan
+  « consolidé » du 18 octobre (2 397) et un bilan provisoire (1 200) sont cités en note.
+- **Non retenus** : chiffres sans autorité nommée (ex. 7 et 11 mars 2023, 14 juin 2016,
+  6 juin 2023), approximations (« plus d'une centaine »). 2019-2020 : seulement des chiffres
+  parisiens retrouvés.
+- **À relire** (`a_verifier` = oui pour toutes les lignes) : attributions vagues, bilans
+  provisoires, périmètre « agglomération parisienne » du 31 octobre 2026.

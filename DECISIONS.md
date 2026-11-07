@@ -905,3 +905,19 @@ métriques de contexte (aucune ne change la métrique notée de la grille v0) :
   `X-Frame-Options`. Cache : `assets/` un an (fichiers immuables, à renommer s'ils changent),
   page et données revalidées à chaque visite. Page 404 dédiée, image de partage 1200 × 630
   (`front/publication/apercu.png`, source `apercu.html`).
+
+## 2026-11-07 — Défenseur des droits : décisions liées aux manifestations (contexte, non noté)
+
+- **Source** : base juridique publique du Défenseur des droits (logiciel PMB), catégories de
+  mots-clés « Manifestation » (3875) et « Maintien de l'ordre public » (3894). Pas d'API ni de
+  jeu de données ouvert : les pages de liste servent à découvrir les fiches, chaque fiche est
+  archivée telle quelle (une fois). Le `Crawl-delay: 30` du robots.txt est respecté.
+- **Périmètre** : documents propres au Défenseur des droits (décisions, rappels à la loi,
+  règlements amiables, décisions des autorités antérieures) ; la veille jurisprudentielle
+  (arrêts d'autres juridictions) est écartée. Titre, résumé et suites (« Recommandation »,
+  « Demande de poursuites disciplinaires ») repris tels que la base les donne, sans
+  qualification ajoutée.
+- **Date** : celle de la fiche (publication de la décision), souvent plusieurs années après les
+  faits ; la page le dit. Indicateur de contexte `contexte.defenseur_droits`, hors grille.
+- **Licence** : documents publics d'une autorité administrative, réutilisation libre selon le
+  code des relations entre le public et l'administration ; à confirmer.

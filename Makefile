@@ -9,11 +9,11 @@ GRID ?= config/grid.v0.yaml
 AN_LEGISLATURES ?= 17 16 15 14
 RUN  := uv run --frozen
 
-.PHONY: css help install init collect collect-seed collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-an collect-datagouv collect-gdelt verify-raw extract metrics score \
+.PHONY: css help install init collect collect-seed collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-an collect-datagouv collect-gdelt collect-ddd verify-raw extract metrics score \
 	rebuild reproducible controle echantillon prototype prototype-data publication publication-web deployer nouveautes quotidien planifier deplanifier etat lint test
 
 help:
-	@echo "Cibles : install init collect collect-seed collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-an collect-datagouv collect-gdelt"
+	@echo "Cibles : install init collect collect-seed collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-an collect-datagouv collect-gdelt collect-ddd"
 	@echo "         verify-raw"
 	@echo "         extract metrics score rebuild reproducible controle echantillon lint test"
 	@echo "         prototype prototype-data publication nouveautes quotidien planifier deplanifier etat"
@@ -25,7 +25,7 @@ install:
 init:
 	$(RUN) python -m storage.db init --db $(DB)
 
-collect: collect-seed collect-an collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-datagouv collect-gdelt
+collect: collect-seed collect-an collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-datagouv collect-gdelt collect-ddd
 
 collect-seed: init
 	$(RUN) python -m collectors.seed --db $(DB) --raw-dir $(RAW)
@@ -47,6 +47,9 @@ collect-senat: init
 
 collect-justice: init
 	$(RUN) python -m collectors.justice_admin --db $(DB) --raw-dir $(RAW)
+
+collect-ddd: init
+	$(RUN) python -m collectors.ddd --db $(DB) --raw-dir $(RAW) $(if $(DDD_COMPLET),--complet)
 
 collect-gdelt: init
 	$(RUN) python -m collectors.gdelt --db $(DB) --raw-dir $(RAW) $(if $(GDELT_JOURS),--max-jours $(GDELT_JOURS))

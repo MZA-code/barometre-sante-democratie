@@ -57,7 +57,7 @@ journaliste, aucun contenu payant archivé.
 Affichés à côté des indicateurs, sans entrer dans aucun calcul : temps de parole par parti
 (Arcom), journées de mobilisation nationale (ministère et organisateurs côte à côte), participation
 aux élections législatives, déclarations des organes de l'ONU sur la France, couverture de la France
-par la presse étrangère (GDELT).
+par la presse étrangère (GDELT), décisions du Défenseur des droits sur le maintien de l'ordre.
 
 ## Sources
 
@@ -72,6 +72,7 @@ par la presse étrangère (GDELT).
 | [CNCTR](https://www.cnctr.fr/rapports-activit%C3%A9) : rapports | PDF annuels | automatique |
 | [data.gouv.fr](https://www.data.gouv.fr) : résultats électoraux | open data | automatique |
 | [GDELT 2.0](https://www.gdeltproject.org/data.html) : presse en ligne mondiale | fichiers publics | automatique |
+| [Défenseur des droits](https://juridique.defenseurdesdroits.fr/) : décisions liées aux manifestations | base documentaire publique (30 s entre deux requêtes, robots.txt) | automatique |
 | Seeds manuels (`data/seed/`) : 49.3 avant 2012, régimes d'exception, journalistes inquiétés, mobilisations, déclarations de l'ONU, chiffres CNCTR | relevé à la main, chaque chiffre vérifié dans sa source | manuelle |
 
 Les relevés manuels n'ont pas d'API (chiffres de manifestants, déclarations de l'ONU,
@@ -169,7 +170,7 @@ une racine de confiance du système, rien n'est envoyé sinon.
 
 | Dossier | Rôle |
 | --- | --- |
-| `collectors/` | téléchargement et archivage : `an_opendata`, `senat`, `justice_admin`, `arcom`, `rsf`, `cnctr`, `dila` (LEGI, JORF, CONSTIT, CNIL), `datagouv`, `gdelt`, `seed` |
+| `collectors/` | téléchargement et archivage : `an_opendata`, `senat`, `justice_admin`, `arcom`, `rsf`, `cnctr`, `dila` (LEGI, JORF, CONSTIT, CNIL), `datagouv`, `gdelt`, `ddd`, `seed` |
 | `storage/` | schéma SQLite, archive brute immuable (`archive.py`), base (`db.py`) |
 | `extract/` | documents bruts -> faits (un module par source ou indicateur) |
 | `scoring/` | grille (`grid.py`), métriques (`metrics.py`), notes (`score.py`), rapports (`report.py`) |

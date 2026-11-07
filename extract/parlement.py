@@ -37,10 +37,12 @@ from extract import (
     cnctr,
     cnil,
     constit,
+    ddd,
     dila,
     elections,
     exception,
     gdelt,
+    interpellations,
     journalistes,
     libertes,
     manifestations,
@@ -199,6 +201,8 @@ def extract_all(conn: sqlite3.Connection, raw_dir: Path) -> list[FactDraft]:
         + journalistes.extract(conn, raw_dir)
         + onu.extract(conn, raw_dir)
         + gdelt.extract(conn, raw_dir)
+        + ddd.extract(conn, raw_dir)
+        + interpellations.extract(conn, raw_dir)
     )
 
 

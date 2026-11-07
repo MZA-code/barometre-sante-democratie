@@ -607,6 +607,29 @@
         <span class="flex items-center gap-2"><svg width="14" height="12" aria-hidden="true"><text x="2" y="10" font-size="11" fill="var(--ink-2)">?</text></svg>Chiffre non retrouvé dans sa source, à vérifier</span>
       </div>
       <p id="mobil-resume" class="mt-4 max-w-3xl text-sm text-ink2"></p>
+      <h3 class="mt-8 font-semibold">Interpellations et gardes à vue annoncées par les autorités</h3>
+      <p id="interp-texte" class="mt-1 max-w-3xl text-sm text-ink2"></p>
+      <div class="mt-3 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+        <table class="w-full text-left text-sm" id="interp-table"></table>
+      </div>
+    </section>
+
+    <!-- Contexte : décisions du Défenseur des droits sur le maintien de l'ordre -->
+    <section id="defenseur" class="py-10 border-b border-rule" aria-labelledby="t-ddd">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Contexte · non noté</p>
+      <h2 id="t-ddd" class="mt-2 font-serif text-2xl font-semibold">Le Défenseur des droits et le maintien de l'ordre</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Décisions et rappels à la loi du Défenseur des droits, autorité administrative
+        indépendante chargée notamment de la déontologie des forces de sécurité, classés par sa
+        base juridique sous «&nbsp;Manifestation&nbsp;» ou «&nbsp;Maintien de l'ordre public&nbsp;».
+        Titres, résumés et suites (recommandations, demandes de poursuites disciplinaires) sont
+        repris tels que la base les publie. Une décision intervient souvent plusieurs années après
+        les faits&nbsp;: elle est comptée à sa date de publication.
+      </p>
+      <div id="ddd-chart" class="viz relative mt-6"></div>
+      <p id="ddd-resume" class="mt-4 max-w-3xl text-sm text-ink2"></p>
+      <ol id="ddd-liste" class="mt-5 space-y-4"></ol>
+      <button id="ddd-tout" type="button" class="mt-4 rounded-full border border-rule px-3 py-1 text-xs text-ink2" hidden></button>
     </section>
 
     <!-- 5 quater. Contexte : participation -->
@@ -698,7 +721,7 @@
     const NS = 'http://www.w3.org/2000/svg';
     const pct = (v, d = 0) => new Intl.NumberFormat('fr-FR', { style: 'percent', maximumFractionDigits: d, minimumFractionDigits: d }).format(v);
     const num = v => new Intl.NumberFormat('fr-FR').format(v);
-    const dateLong = s => new Date(s + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const dateLong = s => new Date(s + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }).replace(/^1 /, '1er ');
     const monthLong = s => new Date(s + 'T12:00:00').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
     const roman = n => [['X',10],['IX',9],['V',5],['IV',4],['I',1]].reduce((acc, [r, v]) => { while (n >= v) { acc += r; n -= v; } return acc; }, '');
     const ordinalLeg = n => n === 1 ? 'Iʳᵉ' : roman(n) + 'ᵉ';
@@ -1582,7 +1605,7 @@
       document.getElementById('mobil-resume').textContent =
         `${num(J.length)} journées, ${num(all.length)} chiffres, dont ${num(all.filter(c => c.verifie_dans_source).length)} retrouvés dans leur source. ` +
         `Le décompte des organisateurs est de ${String(Math.min(...ratios).toFixed(1)).replace('.', ',')} à ${String(Math.max(...ratios).toFixed(1)).replace('.', ',')} fois celui du ministère selon les journées. ` +
-        `Chiffres de Paris, blessés et interpellations : pas encore relevés.`;
+        `Manifestants à Paris et blessés : pas encore relevés ; interpellations et gardes à vue ci-dessous.`;
     }
 
     // ---- Contexte : participation -----------------------------------------------
@@ -1965,6 +1988,104 @@
     }
     drawOnu();
 
+    // ---- Contexte : interpellations et gardes à vue des journées de mobilisation ----
+    function drawInterpellations() {
+      const I = D.interpellations || [], tbl = document.getElementById('interp-table');
+      const parJour = new Map();
+      for (const r of I) { if (!parJour.has(r.date)) parJour.set(r.date, { mouvement: r.mouvement }); parJour.get(r.date)[r.perimetre] = r.mesures; }
+      const journees = new Set(D.mobilisations.map(m => m.date));
+      const sans = [...journees].filter(d => !parJour.has(d)).length;
+      document.getElementById('interp-texte').textContent =
+        `Chiffres annoncés par le ministère de l'Intérieur, la préfecture de police ou un parquet, relevés dans des articles en accès libre ; ` +
+        `chaque nombre renvoie à l'article et porte, au survol, la phrase qui le contient. ${parJour.size} journées sur ${journees.size} ont au moins un chiffre ; ` +
+        `pour les ${sans} autres, aucun bilan attribué à une autorité n'a été retrouvé. Les bilans du soir peuvent être révisés ensuite ; relevé à relire.`;
+      tbl.replaceChildren();
+      const head = tbl.createTHead().insertRow();
+      for (const h of ['Date', 'Mouvement', 'France : interpellations', 'France : gardes à vue', 'Paris : interpellations', 'Paris : gardes à vue']) {
+        const th = document.createElement('th'); th.className = 'py-2 pr-4 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th);
+      }
+      const body = tbl.createTBody();
+      for (const [date, j] of [...parJour].sort((a, b) => b[0].localeCompare(a[0]))) {
+        const tr = body.insertRow();
+        const cell = c => { const td = tr.insertCell(); td.className = 'py-1.5 pr-4 border-b border-rule'; if (typeof c === 'string') td.textContent = c; else td.appendChild(c); };
+        cell(dateLong(date)); cell(j.mouvement);
+        for (const per of ['France entière', 'Paris']) for (const mes of ['interpellations', 'gardes_a_vue']) {
+          const m = j[per] && j[per][mes];
+          if (!m) { cell('—'); continue; }
+          const a = document.createElement('a'); a.href = m.source_url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'underline tabular-nums';
+          a.textContent = num(m.nombre); a.title = `« ${m.citation} » (${m.source_site}, selon ${m.compte_par})${m.note ? ' — ' + m.note : ''}`;
+          cell(a);
+        }
+      }
+    }
+
+    // ---- Contexte : Défenseur des droits (maintien de l'ordre) ------------------
+    const DDD = D.defenseur_droits || [];
+    const DDD_PREMIERS = 8;
+    let dddTout = false;
+    function drawDdd() {
+      const box = document.getElementById('ddd-chart'), liste = document.getElementById('ddd-liste');
+      const resume = document.getElementById('ddd-resume'), bouton = document.getElementById('ddd-tout');
+      if (!DDD.length) { box.replaceChildren(); resume.textContent = 'Relevé en cours : aucune décision archivée pour le moment.'; return; }
+      // Histogramme : documents par année de publication.
+      const parAn = {};
+      for (const d of DDD) parAn[d.date.slice(0, 4)] = (parAn[d.date.slice(0, 4)] || 0) + 1;
+      const y0 = Math.min(...Object.keys(parAn).map(Number)), y1 = Math.max(Number(D.fin_donnees.slice(0, 4)), ...Object.keys(parAn).map(Number));
+      const ans = Array.from({ length: y1 - y0 + 1 }, (_, i) => y0 + i);
+      const W = Math.max(280, box.clientWidth), H = 200, m = { t: 16, r: 8, b: 26, l: 30 };
+      const svg = svgIn(box, W, H, `Documents du Défenseur des droits liés aux manifestations, par année, de ${y0} à ${y1}`);
+      const max = Math.max(...Object.values(parAn)), pas = max > 20 ? 10 : max > 8 ? 5 : 2, haut = Math.ceil(max / pas) * pas;
+      const bw = (W - m.l - m.r) / ans.length, y = v => H - m.b - (v / haut) * (H - m.t - m.b);
+      for (let v = 0; v <= haut; v += pas) {
+        el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: v ? 'var(--rule)' : 'var(--axis)', 'stroke-width': 1 }, svg);
+        text(svg, m.l - 6, y(v) + 4, String(v), { 'text-anchor': 'end' });
+      }
+      const tous = ans.length <= 16 || W >= 700;
+      ans.forEach((a, i) => {
+        const n = parAn[a] || 0, x = m.l + i * bw, w = Math.max(2, Math.min(36, bw - 4)), cx = x + bw / 2;
+        if (n) el('rect', { x: cx - w / 2, y: y(n), width: w, height: H - m.b - y(n), rx: Math.min(4, w / 2), fill: a === y1 ? 'var(--hist)' : 'var(--series-1)' }, svg);
+        if (tous || a % 2 === y1 % 2) text(svg, cx, H - 8, String(a), { 'text-anchor': 'middle' });
+        const hit = el('rect', { x, y: m.t, width: bw, height: H - m.t - m.b, fill: 'transparent', tabindex: 0, 'aria-label': `${a} : ${n} document${n > 1 ? 's' : ''}` }, svg);
+        const rows = () => [{ label: a === y1 ? `${a} (année en cours)` : String(a), strong: true }, { value: num(n), label: n > 1 ? 'documents' : 'document' }];
+        hit.addEventListener('pointermove', e => showTip(rows(), e.pageX, e.pageY));
+        hit.addEventListener('pointerleave', hideTip);
+      });
+      const avecSuites = DDD.filter(d => (d.suites || []).some(s => /Recommandation|poursuites/i.test(s))).length;
+      resume.textContent = `${num(DDD.length)} document${DDD.length > 1 ? 's' : ''} publié${DDD.length > 1 ? 's' : ''} de ${y0} à ${y1} ` +
+        `(décisions, rappels à la loi${DDD.some(d => d.type === 'règlement amiable') ? ', règlements amiables' : ''}), dont ${num(avecSuites)} accompagné${avecSuites > 1 ? 's' : ''} ` +
+        `de recommandations ou d'une demande de poursuites disciplinaires selon la base. L'année en cours est en bleu clair.`;
+      // Liste : les plus récents, puis tout sur demande.
+      liste.replaceChildren();
+      for (const d of dddTout ? DDD : DDD.slice(0, DDD_PREMIERS)) {
+        const li = document.createElement('li');
+        li.className = 'rounded-lg border border-rule bg-surface p-4 sm:p-5';
+        const meta = document.createElement('div'); meta.className = 'flex flex-wrap items-baseline gap-x-3 gap-y-1 text-xs text-ink2';
+        const date = document.createElement('time'); date.dateTime = d.date; date.className = 'font-semibold text-ink'; date.textContent = dateLong(d.date);
+        const typ = document.createElement('span'); typ.textContent = d.numero ? `${d.type} n° ${d.numero}` : d.type;
+        meta.append(date, typ);
+        for (const s of (d.suites || []).filter(s => s.toLowerCase() !== d.type)) {  // pas de doublon avec le type
+          const c = document.createElement('span'); c.className = 'rounded-full px-2 py-0.5'; c.style.background = 'var(--band)'; c.textContent = s; meta.appendChild(c);
+        }
+        const t = document.createElement('h3'); t.className = 'mt-2 font-semibold leading-snug'; t.textContent = d.titre;
+        li.append(meta, t);
+        if (d.resume) {
+          const r = document.createElement('p'); r.className = 'mt-2 text-sm text-ink2 leading-relaxed';
+          r.textContent = d.resume.length > 360 ? d.resume.slice(0, d.resume.lastIndexOf(' ', 350)) + ' […]' : d.resume;
+          li.appendChild(r);
+        }
+        const foot = document.createElement('p'); foot.className = 'mt-3 text-xs text-ink2';
+        const lien = (href, lab) => { const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.className = 'underline'; a.textContent = lab; return a; };
+        if (d.pdf) foot.append(lien(d.pdf, 'Lire le document (PDF)'), document.createTextNode(' · '));
+        foot.appendChild(lien(d.url, 'Fiche sur juridique.defenseurdesdroits.fr'));
+        li.appendChild(foot);
+        liste.appendChild(li);
+      }
+      bouton.hidden = DDD.length <= DDD_PREMIERS;
+      bouton.textContent = dddTout ? `Afficher seulement les ${DDD_PREMIERS} plus récents` : `Afficher les ${num(DDD.length)} documents`;
+      bouton.setAttribute('aria-expanded', String(dddTout));
+    }
+    document.getElementById('ddd-tout').addEventListener('click', () => { dddTout = !dddTout; drawDdd(); });
+
     // ---- Regards extérieurs : presse étrangère (GDELT) -------------------------
     const PE = D.presse_etrangere;
     // Noms de pays de la table GDELT (anglais) -> français, via les noms de régions du navigateur.
@@ -2057,7 +2178,7 @@
       ['Regards extérieurs (non noté)', 'binoculars', [['t-onu', "Déclarations de l'ONU", 'globe'], ['t-presse', 'Presse étrangère', 'newspaper']]],
       ['D5 · Pluralisme et information', 'tower-broadcast', [['t-d5-1', 'D5.1 · Temps de parole', 'microphone-lines'], ['t-partis', 'Temps de parole par parti', 'microphone-lines'], ['t-d5-2', 'D5.2 · Journalistes inquiétés', 'pen-nib'], ['t-annuels', 'D5.3 · Classement RSF', 'ranking-star']]],
       ['D6 · Surveillance et données', 'eye', [['t-annuels', 'D6.1 · Personnes surveillées', 'user-secret'], ['t-d6-2', 'D6.2 · Fichiers et avis de la CNIL', 'database']]],
-      ['Contexte (non noté)', 'layer-group', [['t-mobil', 'Journées de mobilisation', 'bullhorn'], ['t-participation', 'Participation aux législatives', 'person-booth']]],
+      ['Contexte (non noté)', 'layer-group', [['t-mobil', 'Journées de mobilisation', 'bullhorn'], ['t-ddd', 'Défenseur des droits', 'user-shield'], ['t-participation', 'Participation aux législatives', 'person-booth']]],
       ['Méthode', 'book-open', [['t-methode', 'Méthode et limites', 'book-open'], ['t-mentions', 'Mentions légales', 'circle-info']]],
     ];
     // Icône propre à un titre partagé par deux entrées du sommaire.
@@ -2118,7 +2239,7 @@
     let spyRaf; addEventListener('scroll', () => { cancelAnimationFrame(spyRaf); spyRaf = requestAnimationFrame(spy); }, { passive: true });
 
     // ---- Rendu -------------------------------------------------------------
-    const render = () => { drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawMobilisations(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
+    const render = () => { drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawMobilisations(); drawInterpellations(); drawDdd(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
     render(); spy();
     let raf; addEventListener('resize', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { render(); current = null; spy(); }); });
   })();

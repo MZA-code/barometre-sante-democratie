@@ -1,0 +1,2082 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta http-equiv="Content-Security-Policy" content="">
+			<meta charset="utf-8">
+			<meta name="author" content="Défenseur des droits">
+
+			<meta name="keywords" content="OPAC, web, library, opensource, catalog, catalogue, bibliothèque, médiathèque, pmb, phpmybibli">
+			<meta name="description" content="Portail documentaire"><meta name="robots" content="all">
+			
+			<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	
+	
+	
+				<script src="./styles/common/toolkits/jquery/versions/jquery-2.2.4.min.js"></script>
+				
+				
+				<!--[if lte IE 8]>
+				  <script src='./styles/common/toolkits/jquery/components/jquery-1.9.1.min.js'></script>
+				<![endif]--><script src="./styles/common/toolkits/jquery/components/jquery.mobile.custom.min.js"></script><script src="./styles/common/toolkits/uikit/js/uikit.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/uikit.min.css?1606292673"><script src="./styles/common/toolkits/uikit/js/components/grid.min.js"></script><script src="./styles/common/toolkits/uikit/js/components/init-responsive.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/components/init-responsive.min.css?1606292673"><script src="./styles/common/toolkits/uikit/js/components/remplace-facette-see-more.min.js"></script><script src="./styles/common/toolkits/uikit/js/components/search-box-tgle-clpse.min.js"></script><script src="./styles/common/toolkits/uikit/js/components/set-grid-footer.min.js"></script><script src="./styles/ddd/toolkits/uikit/js/components/set-grid-main-colored.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/ddd/toolkits/uikit/css/components/set-grid-main-colored.min.css?1625565279"><script src="./styles/common/toolkits/uikit/js/components/touch-user-box-tgle.min.js"></script><link rel="stylesheet" type="text/css" href="./styles/common/toolkits/uikit/css/components/touch-user-box-tgle.min.css?1625565279">
+<link rel="stylesheet" type="text/css" href="./styles/common/animation_display.css?1615825938">
+<link rel="stylesheet" type="text/css" href="./styles/common/common.css?1758718758">
+<link rel="stylesheet" type="text/css" href="./styles/common/contrib.css?1673276618">
+<link rel="stylesheet" type="text/css" href="./styles/common/dGrowl.css?1657616134">
+<link rel="stylesheet" type="text/css" href="./styles/common/dsi.css?1699608113">
+<link rel="stylesheet" type="text/css" href="./styles/common/font-awesome.css?1478593624">
+<link rel="stylesheet" type="text/css" href="./styles/common/open-sans.css?1479312986">
+<link rel="stylesheet" type="text/css" href="./styles/common/pagination.css?1532013719">
+<link rel="stylesheet" type="text/css" href="./styles/common/record_display.css?1540561363">
+<link rel="stylesheet" type="text/css" href="./styles/common/visionneuse.css?1646663637">
+<link rel="stylesheet" type="text/css" href="./styles/ddd/1-grid.css?1625565279">
+<link rel="stylesheet" type="text/css" href="./styles/ddd/2-base.css?1625565279">
+<link rel="stylesheet" type="text/css" href="./styles/ddd/ddd.css?1743755590">
+<link rel="stylesheet" type="text/css" href="./styles/ddd/font.css?1625565279">
+<link rel="stylesheet" type="text/css" href="./styles/ddd/fontAcontent.css?1625565279">
+<link rel="stylesheet" type="text/css" href="./styles/ddd/z_ddd_responsive.css?1625565279"><script type="text/javascript">var opac_style= 'ddd';</script>
+	<style type="text/css">
+	div#TglUser {
+    display: block!important;
+    visibility: visible!important;
+}
+
+.MenuHoriz .Nav > li > a {
+    padding:6px 20px 1px;
+}
+
+#connexion.uk-visible-large {
+    display: block !important;
+}
+
+#cms_module_search_22 uk-visible-large {
+    display: block !important;
+}
+
+#TglSearchResp .Tgllogin{min-width: 25px;}
+
+.MenuHoriz .Nav > li.home > a {
+    padding-top: 3px;
+    padding-bottom: 4px;
+}
+
+.dispoLien_notice {
+    display: none;
+}
+
+#bannette_portail {
+    max-width:670px;
+    margin:25px auto;
+}
+
+#cms_module_search_22.hide {
+    display:none;
+}
+
+#cms_module_search_22 {
+    display:block;
+}
+
+#search form .form-contenu input[value="X"] {
+  background-color: #935757;
+}
+
+.exemplaires td:last-child, 
+.exemplaires th.expl_header_statut {
+    display:none;
+}
+
+ul.search_tabs>li:first-child {
+    display:none;
+}
+
+.search_other_link a:before {
+    content:none;
+}
+
+.search_other_link a {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0 30px;
+    font-size:16px;
+    font-weight: normal;
+    font-family: 'Oswald', 'Open Sans', Arial, Helvetica, sans-serif;
+}
+
+.search_other_link {
+    float: left;
+    background-color: #935757;
+    font-size: 114%;
+    text-transform: uppercase;
+    height: 34px;
+    font-weight: normal;
+    border-radius: 3px;
+    line-height: 34px;
+    position: absolute;
+    top: 40px;
+    padding-right:0;
+    right: 60px;
+}
+
+@media screen and (max-width:960px) {
+ /* #cms_module_search_22.hide {
+    display: inherit !important;
+ }
+
+ #cms_module_search_22.uk-hidden {
+    display:none !important;
+ }*/
+
+  div#cms_module_search_22.uk-hidden {
+    display: block !important;
+    visibility: visible !important;
+  }
+
+}
+
+/*  #158046 Ajout d'une nouvelle rubrique / Affichage du rubriquage sur le bandeau */
+.MenuHoriz #TglSearch a {
+  margin-right: 25px;
+}
+
+.MenuHoriz .Nav > li > a {
+  padding: 6px 10px 1px;
+    padding-top: 6px;
+    padding-bottom: 1px;
+}
+
+
+/*** Correction #165252 LA ***/
+
+.pmb_bc_recordlist {background-color: #eaeef1 !important;}
+
+/*** fin ***/
+
+/* #173785 */
+.descr_notice .record_lien {
+line-break: anywhere !important;
+}
+
+.form_criteria_rmc{padding:12px;}
+
+.rmc_search_criteria {
+    justify-content: unset !important;
+    width: 100%;
+}
+
+.rmc_criteria_form_text input{width:100%;}
+.search_variable_id_thesaurus {
+  display: inline-flex;
+  align-items: baseline;
+  gap:8px;
+}
+
+#field_2_f_11_lib_2 {width:100%;}
+.form_criteria_rmc > div:last-child{float:unset!important; display:flex; justify-content: center; height:unset; margin-top:40px;gap:1rem;}
+
+.bouton_add_criterie_rmc.bouton {
+  bottom: -40px !important;
+}
+
+.form_criteria_rmc select {padding-left:12px; height : 40px !important;}
+.rmc_criteria_form_container{width:79%;}
+.rmc_criteria_form_authority .rmc_search_authority_container{width:100%;}
+.rmc_criteria_form_authority .rmc_search_authority_container>input{width:100%;}
+
+.search_variable_id_thesaurus {
+  display: flex !important;
+  gap:8px !important;
+  height: 54px !important;
+  width: 200px;
+}
+
+.rmc_search_sub_fields{width:54% !important;}
+
+.search_variable_id_thesaurus .search_value select {width:100% !important; margin-block: unset;}
+
+.rmc_search_sub_fields > div {width : 100% !important;}
+
+.rmc_search_sub_fields {display: none;}
+
+.form_criteria_rmc .rmc_row:first-child .rmc_search_criteria > .rmc_container.rmc_inter_container {
+  display: block;
+}
+
+@media screen and (max-width: 960px) {
+
+    span.search_chp_option {
+        width: 37% !important;
+    }
+
+    .rmc_row{height: unset !important;}
+
+    .rmc_criteria_container{min-width:unset !important; width: 100%;}
+
+    .rmc_search_criteria {
+    flex-direction: column;
+    }
+
+    .rmc_criteria_form_container{width:100% ! important;}
+    .rmc_criteria_form_text{
+        flex-direction: column !important;
+        gap:8px !important;
+        width: 100% !important;
+    }
+
+    div #search form select{width:100% !important;}
+
+    .rmc_inter_container{width:40% !important;}
+    .rmc_criteria_form_authority{flex-direction: column; gap:8px; height: 100%;}
+    
+}
+
+.rmc_datalist{width: -webkit-fill-available !important; width: -moz-available !important; width: stretch !important; max-height: 144px !important; }
+#search {margin: 20px 0px 62px !important;}
+
+		</style>
+		<link rel="SHORTCUT ICON" href="./styles/ddd/images/favicon.png">
+	<script type="text/javascript" src="includes/javascript/drag_n_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/handle_drop.js"></script>
+	<script type="text/javascript" src="includes/javascript/popup.js"></script>
+	<script type="text/javascript">
+			// Fonction a utiliser pour l'encodage des URLs en javascript
+			function encode_URL(data){
+				var docCharSet = document.characterSet ? document.characterSet : document.charset;
+				if(docCharSet == "UTF-8"){
+	    			return encodeURIComponent(data);
+	    		}else{
+	    			return escape(data);
+	    		}
+	    	}
+	    </script>
+	<script type="text/javascript">
+	  	if (!document.getElementsByClassName){ // pour ie
+			document.getElementsByClassName =
+			function(nom_class){
+				var items=new Array();
+				var count=0;
+				for (var i=0; i<document.getElementsByTagName('*').length; i++) {
+					if (document.getElementsByTagName('*').item(i).className == nom_class) {
+						items[count++] = document.getElementsByTagName('*').item(i);
+				    }
+				 }
+				return items;
+			 }
+		}
+	</script>
+
+		<link rel="stylesheet" type="text/css" href="./includes/javascript/dojo/dijit/themes/tundra/tundra.css">
+		<script type="text/javascript">
+			var dojoConfig = {
+				parseOnLoad: true,
+				locale: 'fr-fr',
+				isDebug: false,
+				usePlainJson: true,
+				packages: [{
+						name: 'pmbBase',
+						location:'../../../..'
+					},{
+						name: 'd3',
+						location:'../../d3'
+					}],
+				deps: ['apps/pmb/MessagesStore', 'dgrowl/dGrowl', 'dojo/ready', 'apps/pmb/ImagesStore'],
+				callback:function(MessagesStore, dGrowl, ready, ImagesStore){
+					window.pmbDojo = {};
+					pmbDojo.messages = new MessagesStore({url:'./ajax.php?module=ajax&categ=messages', directInit:false, lastModified:'1785216837'});
+					pmbDojo.images = new ImagesStore({url:'./ajax.php?module=ajax&categ=images', directInit:false});
+					ready(function(){
+						new dGrowl({'channels':[{'name':'info','pos':2},{'name':'error', 'pos':1}]});
+					});
+
+				},
+			};
+		</script>
+		<script type="text/javascript" src="./includes/javascript/dojo/dojo/dojo.js"></script>
+		<script type="text/javascript">
+		dojo.addOnLoad(function () {
+			// Ajout du theme Dojo
+			dojo.addClass(dojo.body(),'tundra');
+		})
+		</script>
+		<script type="text/javascript">
+	var pmb_img_patience = './images/patience.gif';
+</script><script type="text/javascript">
+			var opac_show_social_network =0;
+		</script>
+	<script type="text/javascript" src="./includes/javascript/http_request.js"></script>
+	<script type="text/javascript" src="./includes/javascript/track_clicks.js"></script>
+	
+<script>
+				dojo.addOnLoad(function (){
+					//on balance un evenement pour les initialiser les modules si besoin...
+					dojo.publish('init',['cms_dojo_init',{}]);
+				});
+			</script>
+
+		<script>
+			function cms_module_search_22_change_dest(){
+				var page = 0;
+                var universe = 0;
+                var default_segment = 0;
+				if(document.forms['cms_module_search_22_searchbox'].dest) {
+					var dests = document.forms['cms_module_search_22_searchbox'].dest;
+					for(var i = 0; i < dests.length; i++){
+    					if(dests[i].checked || dests[i].selected ){
+    						page = dests[i].getAttribute('page');
+	                        universe = dests[i].getAttribute('universe');
+	                        default_segment = dests[i].getAttribute('default_segment');
+							break;
+						}
+					}
+				}
+                if(universe > 0){
+                    if(default_segment > 0){
+                        document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=search_segment&action=segment_results&id='+default_segment;
+                    } else {
+                        document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=search_universe&id='+universe;
+                    }
+                } else if(page>0){
+					document.forms['cms_module_search_22_searchbox'].action = './index.php?lvl=cmspage&pageid='+page;
+				}
+                if (page.toString().indexOf('view_') != -1) {
+					var view_id = page.substr(5);
+				    document.forms['cms_module_search_22_searchbox'].action += '&opac_view='+view_id;
+				}
+			}
+		</script><title>Manifestation Catalogue en ligne</title><meta http-equiv="Content-Type" content="charset=utf-8"></head>
+
+<body onload="window.defaultStatus='PMB : Accès public';" id="pmbopac">
+		<script type="text/javascript">
+		function findNoticeElement(id){
+			var ul=null;
+			//cas des notices classiques
+			var domNotice = document.getElementById('el'+id+'Child');
+			//notice_display
+			if(!domNotice) domNotice = document.getElementById('notice');
+			if(domNotice){
+				var uls = domNotice.getElementsByTagName('ul');
+				for (var i=0 ; i<uls.length ; i++){
+					if(uls[i].getAttribute('id') == 'onglets_isbd_public'+id){
+						var ul = uls[i];
+						break;
+					}
+				}
+			} else{
+				var li = document.getElementById('onglet_isbd'+id);
+				if(!li) var li = document.getElementById('onglet_public'+id);
+				if(!li) var li = document.getElementById('onglet_detail'+id);
+				if(li) var ul = li.parentNode;
+			}
+			return ul;
+		}
+		function show_what(quoi, id) {
+			switch(quoi){
+				case 'EXPL_LOC' :
+					document.getElementById('div_expl_loc' + id).style.display = 'block';
+					document.getElementById('div_expl' + id).style.display = 'none';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_inactive';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_active';
+					break;
+				case 'EXPL' :
+					document.getElementById('div_expl_loc' + id).style.display = 'none';
+					document.getElementById('div_expl' + id).style.display = 'block';
+					document.getElementById('onglet_expl' + id).className = 'isbd_public_active';
+					document.getElementById('onglet_expl_loc' + id).className = 'isbd_public_inactive';
+					break;
+				default :
+					quoi= quoi.toLowerCase();
+					var ul = findNoticeElement(id);
+					if (ul) {
+						var items  = ul.getElementsByTagName('li');
+						for (var i=0 ; i<items.length ; i++){
+							if(items[i].getAttribute('id')){
+								if(items[i].getAttribute('id') == 'onglet_'+quoi+id){
+									items[i].className = 'isbd_public_active';
+									document.getElementById('div_'+quoi+id).style.display = 'block';
+								}else{
+									if(items[i].className != 'onglet_tags' && items[i].className != 'onglet_avis' && items[i].className != 'onglet_sugg' && items[i].className != 'onglet_basket' && items[i].className != 'onglet_liste_lecture'){
+										items[i].className = 'isbd_public_inactive';
+										document.getElementById(items[i].getAttribute('id').replace('onglet','div')).style.display = 'none';
+									}
+								}
+							}
+						}
+					}
+					break;
+			}
+		}
+		</script>
+	<script type="text/javascript" src="./includes/javascript/tablist_ajax.js"></script>
+<script type="text/javascript" src="./includes/javascript/tablist.js"></script>
+<script type="text/javascript" src="./includes/javascript/misc.js"></script>
+	<div id="att" style="z-Index:1000"></div>
+	<div id="container"><div id="intro" fixed="yes">
+<div id="intro_bibli" fixed="yes">
+			<h3>Documentation du Défenseur des droits</h3>
+			<div class="p1"></div>
+			<div class="p2"></div>
+			</div>
+		<div id="cms_module_section_125" class="cms_module_section cms_module uk-width-large-1-1 uk-width-medium-1-1 uk-width-1-1"><div id="logo-city">
+	<a href="https://www.defenseurdesdroits.fr/" title="Défenseur des droits" target="_blank"><img src="https://juridique.defenseurdesdroits.fr/cms_vign.php?type=section&amp;id=79&amp;database=ddd&amp;mode=custom_175" alt="Défenseur des droits"></a>
+</div></div><div id="cms_module_htmlcode_185" class="cms_module_htmlcode cms_module"><script>
+$(document).ready( function() {
+    if ($('html').hasClass('uk-touch') ) {
+ $(document.getElementById('cms_module_shelveslist_182')).insertAfter($(document.getElementById('cms_module_recordslist_146')));
+    }
+}); 
+</script></div><div id="connexion" fixed="yes">
+
+			<h3 class="login_invite">Se connecter</h3><div id="login_form"><form action="index.php?lvl=categ_see&amp;id=3875" method="post" name="myform"><label>accéder à votre compte de lecteur</label><br>
+				<input type="text" name="login" class="login" size="14" placeholder="identifiant"><br>
+                <div class="myform-password-text-visually">
+                    <input type="password" id="myform-password" name="password" class="password" size="8" placeholder="Mot de passe" value="">
+                    <button type="button" class="fa fa-eye" id="myform-password-visually" onclick='toggle_password(this, "myform-password");' title="Afficher ou masquer le mot de passe"></button>
+                </div>
+                <input type="hidden" name="force_login" value="1">
+				<input type="submit" name="ok" value="ok" class="bouton"><input type="hidden" name="csrf_token" value="9fd44763997a44e8f295a99bcb7383a0b542c3ee"></form><br><a class="subs_not_yet_subscriber" href="./subscribe.php">Pas encore inscrit ?</a></div>
+
+			</div><div id="cms_module_htmlcode_137" class="cms_module_htmlcode cms_module"><div class="clear"></div>
+<script>
+$('#connexion').addClass('uk-hidden');
+</script></div><div id="accessibility" fixed="yes">
+    	<input type="hidden" id="opacAccessibility" name="opacAccessibility" value="1">
+			<ul class="accessibility_font_size">
+			<li class="accessibility_font_size_small">
+				<a href="javascript:accessibilityFontSize(1);" title="Réduire le texte">A-</a>
+			</li>
+			<li class="accessibility_font_size_normal">
+				<a href="javascript:accessibilityFontSize(0);" title="Réinitialiser le texte">A</a>
+			</li>
+			<li class="accessibility_font_size_big">
+				<a href="javascript:accessibilityFontSize(2);" title="Agrandir le texte">A+</a>
+			</li>
+		</ul>
+	
+			<script src="./includes/javascript/accessibility.js"></script>
+		
+			</div><div id="cms_module_htmlcode_172" class="cms_module_htmlcode cms_module wl-tgl-login uk-width-1-1"><div class="searchResp">
+    <div id="TglSearchResp" class="TglUser">
+        <a class="Tgllogin" data-uk-toggle="{target:'#cms_module_search_22'}">
+            <img src="./styles/ddd/images/loupe.png" alt="Rechercher" title="Rechercher">      
+        </a>
+    </div>
+</div>
+
+<div id="TglUser" class="TglUser uk-hidden">
+    <a class="Tgllogin" data-uk-toggle="{target:'#connexion'}">
+        <span class="user">
+			
+				Se connecter
+			
+		</span>        
+    </a>
+</div>
+</div><div id="cms_module_htmlcode_174" class="cms_module_htmlcode cms_module uk-hidden-large wl-tgl-nav"><div id="btnMenu" class="uk-navbar">
+    <ul class="uk-navbar-nav">
+        <li class="tgLbtnMenu">
+            <a class="MenuCanvas uk-button" href="#cms_module_sectionslist_173" data-uk-offcanvas="{mode:'slide'}"><i class="fa fa-bars"></i></a>
+        </li>
+        <li class="tgLbtnMenu uk-hidden" id="tgle-facette">
+            <a class="MenuCanvas filter-canvas uk-button" href="#facette" data-uk-offcanvas="{mode:'slide'}"><i class="fa fa-search-plus" aria-hidden="true"></i></a>
+        </li>
+    </ul>
+</div></div><div id="resume_panier" class="empty" fixed="yes"></div><div id="cms_module_sectionslist_173" class="cms_module_sectionslist cms_module uk-offcanvas">	<div class="uk-offcanvas-bar uk-offcanvas-bar-custom">
+			<div class="MenuVertResp uk-panel uk-panel-box">
+			<ul class="NavResponsive uk-nav uk-nav-side">
+
+			
+							<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=36&amp;opac_view=9" title="Décisions">Décisions</a>
+											<ul class="SousNavResponsive">
+				
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=213&amp;opac_view=16" title="Recommandations">Recommandations</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=214&amp;opac_view=16" title="Observations en justice">Observations en justice</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=215&amp;opac_view=16" title="Transactions">Transactions</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=225&amp;opac_view=9" title="Prises d'acte">Prises d'acte</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=212&amp;opac_view=9" title="Décisions des précédentes AAI">Décisions des précédentes AAI</a>
+								</li>
+													</ul>
+									</li>
+							<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=91&amp;opac_view=12" title="Avis et Réformes">Avis et Réformes</a>
+											<ul class="SousNavResponsive">
+				
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=106&amp;opac_view=11" title="Avis au Parlement">Avis au Parlement</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=0&amp;=208&amp;opac_view=38" title="Propositions de réforme ">Propositions de réforme </a>
+								</li>
+													</ul>
+									</li>
+							<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=227&amp;opac_view=43" title="Rappels à la loi">Rappels à la loi</a>
+									</li>
+							<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=92&amp;opac_view=10" title="Règlements amiables">Règlements amiables</a>
+									</li>
+							<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=103&amp;opac_view=13" title="Publications">Publications</a>
+											<ul class="SousNavResponsive">
+				
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=120&amp;opac_view=21" title="Rapports et études thématiques">Rapports et études thématiques</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=115&amp;opac_view=19" title="Rapports annuels d'activité">Rapports annuels d'activité</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=116&amp;opac_view=20" title="Rapports droits de l'enfant">Rapports droits de l'enfant</a>
+								</li>
+													</ul>
+									</li>
+							<li>
+				    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=93&amp;opac_view=14" title="International">International</a>
+											<ul class="SousNavResponsive">
+				
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=100&amp;opac_view=23" title="Veille jurisprudentielle et législative">Veille jurisprudentielle et législative</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=98&amp;opac_view=15" title="Le Défenseur des droits et l’ONU">Le Défenseur des droits et l’ONU</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=104&amp;opac_view=24" title="Le Défenseur des droits et le Conseil de l’Europe">Le Défenseur des droits et le Conseil de l’Europe</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=99&amp;opac_view=25" title="Le Défenseur des droits et les institutions de l’UE">Le Défenseur des droits et les institutions de l’UE</a>
+								</li>
+															<li>
+									<a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=96&amp;opac_view=32" title="Les réseaux internationaux">Les réseaux internationaux</a>
+								</li>
+													</ul>
+									</li>
+						</ul>
+		</div>
+		</div></div><div id="cms_module_sectionslist_120" class="cms_module_sectionslist cms_module">    <div class="uk-visible-large">
+		<div class="MenuHoriz uk-navbar uk-container" id="wyr-justify-nav">
+            <ul class="Nav uk-navbar-nav">
+<li id="TglSearch" class="TglUser">
+    <a class="Tgllogin" data-uk-toggle="{target:'#cms_module_search_22', animation:'uk-animation-slide-top, uk-animation-slide-top', cls:'hide'}">
+        <img src="./styles/ddd/images/loupe.png" alt="Rechercher" title="Rechercher">      
+    </a>
+</li>
+<li class="uk-parent home" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+	<a href="./index.php?opac_view=-1" title="Accueil Espace juridique"><img src="./styles/ddd/images/home_picto.png" alt="Accueil"></a>
+</li>
+            
+                            <li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+                    
+                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=36&amp;opac_view=9" title="Décisions">Décisions</a>
+                                        <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-bottom">
+                        <ul class="SousNav uk-nav uk-nav-navbar">
+                
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=213&amp;opac_view=16" title="Recommandations">Recommandations</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=214&amp;opac_view=16" title="Observations en justice">Observations en justice</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=215&amp;opac_view=16" title="Transactions">Transactions</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=225&amp;opac_view=9" title="Prises d'acte">Prises d'acte</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=212&amp;opac_view=9" title="Décisions des précédentes AAI">Décisions des précédentes AAI</a>
+                                </li>
+                                                    </ul>
+                     </div>   
+                                    </li>
+                            <li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+                    
+                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=91&amp;opac_view=12" title="Avis et Réformes">Avis et Réformes</a>
+                                        <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-bottom">
+                        <ul class="SousNav uk-nav uk-nav-navbar">
+                
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=106&amp;opac_view=11" title="Avis au Parlement">Avis au Parlement</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=208&amp;opac_view=38" title="Propositions de réforme ">Propositions de réforme </a>
+                                </li>
+                                                    </ul>
+                     </div>   
+                                    </li>
+                            <li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+                    
+                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=227&amp;opac_view=43" title="Rappels à la loi">Rappels à la loi</a>
+                                    </li>
+                            <li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+                    
+                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=92&amp;opac_view=10" title="Règlements amiables">Règlements amiables</a>
+                                    </li>
+                            <li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+                    
+                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=103&amp;opac_view=13" title="Publications">Publications</a>
+                                        <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-bottom">
+                        <ul class="SousNav uk-nav uk-nav-navbar">
+                
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=120&amp;opac_view=21" title="Rapports et études thématiques">Rapports et études thématiques</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=115&amp;opac_view=19" title="Rapports annuels d'activité">Rapports annuels d'activité</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=116&amp;opac_view=20" title="Rapports droits de l'enfant">Rapports droits de l'enfant</a>
+                                </li>
+                                                    </ul>
+                     </div>   
+                                    </li>
+                            <li class="uk-parent" data-uk-dropdown="{remaintime:'800', hoverDelayIdle:'0'}">
+                    
+                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=93&amp;opac_view=14" title="International">International</a>
+                                        <div class="uk-dropdown uk-dropdown-navbar uk-dropdown-bottom">
+                        <ul class="SousNav uk-nav uk-nav-navbar">
+                
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=100&amp;opac_view=23" title="Veille jurisprudentielle et législative">Veille jurisprudentielle et législative</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=98&amp;opac_view=15" title="Le Défenseur des droits et l’ONU">Le Défenseur des droits et l’ONU</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=104&amp;opac_view=24" title="Le Défenseur des droits et le Conseil de l’Europe">Le Défenseur des droits et le Conseil de l’Europe</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=99&amp;opac_view=25" title="Le Défenseur des droits et les institutions de l’UE">Le Défenseur des droits et les institutions de l’UE</a>
+                                </li>
+                                                            <li>
+                                    
+                                    <a href="./index.php?lvl=cmspage&amp;pageid=12&amp;id_rubrique=96&amp;opac_view=32" title="Les réseaux internationaux">Les réseaux internationaux</a>
+                                </li>
+                                                    </ul>
+                     </div>   
+                                    </li>
+                        </ul>
+   		</div>            
+    </div>
+</div><div id="cms_module_search_22" class="cms_module_search cms_module" style="position: absolute;">
+			<form method="post" class="searchbox " action="./index.php?lvl=more_results&amp;autolevel1=1" name="cms_module_search_22_searchbox" onsubmit="if (cms_module_search_22_searchbox.user_query.value.length == 0) { cms_module_search_22_searchbox.user_query.value='*';}if (typeof cms_module_search_22_change_dest == 'function') { cms_module_search_22_change_dest(); }">
+				
+				<input type="hidden" value="1" name="look_TITLE">
+				<input type="hidden" value="1" name="look_ALL"><input type="hidden" name="look_AUTHPERSO_1#" id="look_AUTHPERSO_1#" value="1"><input type="hidden" name="look_AUTHPERSO_2#" id="look_AUTHPERSO_2#" value="1"><span class="research_inputs">
+					<input type="text" name="user_query" value="" placeholder="Entrez votre recherche ici ...">
+				<input class="bouton" type="submit" value="Rechercher"></span>
+			<input type="hidden" name="csrf_token" value="a85f4c2929098e7a8d107ec75619d3baa3275d4d"></form></div><div id="cms_module_htmlcode_184" class="cms_module_htmlcode cms_module"><div class="change_langue">
+    <form method="post" name="form_hidden_lang_selection" action="index.php?lvl=categ_see&amp;id=3875"><input type="hidden" name="lang_sel" value=""><input type="hidden" name="csrf_token" value="4a880b5d9e50bfed159e59397d04cfa950f1d5d4"></form>
+    <div data-uk-dropdown="{mode:'click'}">
+        <div class="langue_selected">
+            <span>FR</span><i class="fa fa-angle-down" aria-hidden="true"></i>
+        </div>
+        <div class="uk-dropdown">   
+           <ul>
+                <li>
+					<a onclick="document.forms['form_hidden_lang_selection'].elements['lang_sel'].value = 'en_UK';document.forms['form_hidden_lang_selection'].submit();">
+                        EN
+                    </a>
+                </li>
+				<li>
+					<a onclick="document.forms['form_hidden_lang_selection'].elements['lang_sel'].value = 'es_ES';document.forms['form_hidden_lang_selection'].submit();">
+                        SP
+                    </a>
+                </li>
+				<li>
+					<a onclick="document.forms['form_hidden_lang_selection'].elements['lang_sel'].value = 'de_DE';document.forms['form_hidden_lang_selection'].submit();">
+                        DE
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>     
+</div></div></div><div id="main" fixed="yes"><div id="main_header"></div><div id="main_hors_footer">
+						
+
+<script type="text/javascript" src="./includes/javascript/auth_popup.js"></script>
+<script type="text/javascript" src="./includes/javascript/pnb.js"></script><div id="cms_module_metadatas_157" class="cms_module_metadatas cms_module"></div><div id="navigator" fixed="yes">
+<table style="width:100%"><tr><td class="navig_actions_first_screen"><a href="./index.php?lvl=index" class="avec_recherches"><span>Nouvelle recherche</span></a></td>
+</tr></table></div><div id="intro_message"><div class="p2"></div></div><div id="aut_details">
+		<h3><span>Mots-clés</span></h3>
+	<div id="aut_details_container">
+		<div id="aut_see" class="aut_see">
+			<table class="table_aut_see">
+				<tr id="authority_container">
+					<td>
+						<div id="authority_display_table" class="aut_display_table">
+																																		<span class="fil_ariane"><a href="./index.php?lvl=categ_see&amp;id=3716">Mots-clés</a> &gt; <a href="./index.php?lvl=categ_see&amp;id=3846">Relation avec les professionnels de la sécurité</a> &gt; <a href="./index.php?lvl=categ_see&amp;id=3875">Manifestation</a> </span>
+			<h4 class="title_categ"><span>Manifestation</span></h4>
+			
+																																					
+																	<div class="aut_display_row concepts_composed">	
+										
+									</div>
+																																								
+																																	
+													
+																																					</div>
+					</td>
+				</tr>
+			</table>	
+		</div>
+					<div id="aut_details_liste">
+				<h3><span class="aut_details_liste_titre">Documents disponibles dans cette catégorie (<span id="nb_aut_details">190</span>)</span></h3>
+<div id="resultatrech_liste"><span class="espaceResultSearch"> </span><span class="triContainer"><span class="espaceResultSearch"> </span><script type="text/javascript" src="./includes/javascript/select.js"></script>
+						<script>
+							var ajax_get_sort=new http_request();
+
+							function get_sort_content(del_sort, ids) {
+								var url = './ajax.php?module=ajax&categ=sort&sub=get_sort&raz_sort='+(typeof(del_sort) != 'undefined' ? del_sort : '')+'&suppr_ids='+(typeof(ids) != 'undefined' ? ids : '')+'&page_en_cours=lvl%3Dcateg_see%26id%3D3875&sort_name=notices';
+								ajax_get_sort.request(url,0,'',1,show_sort_content,0,0);
+							}
+
+							function show_sort_content(response) {
+								document.getElementById('frame_notice_preview').innerHTML=ajax_get_sort.get_text();
+								var tags = document.getElementById('frame_notice_preview').getElementsByTagName('script');
+					       		for(var i=0;i<tags.length;i++){
+									window.eval(tags[i].text);
+					        	}
+							}
+							function kill_sort_frame() {
+								var sort_view=document.getElementById('frame_notice_preview');
+								if (sort_view) {
+									sort_view.parentNode.removeChild(sort_view);
+								}
+
+								const container = document.getElementById('container');
+								if(container) {
+									container.onmousedown = '';
+								}
+							
+								document.onmousedown = '';
+							}
+						</script>
+					<span class="triSelector">
+							<a onclick="show_layer(); get_sort_content();" title="Tris disponibles" style="cursor : pointer;">
+                                <img src="./images/orderby_az.gif" alt="Tris disponibles" class="align_bottom" hspace="3" style="border:0px" id="sort_icon" loading="lazy">
+						</a>
+					</span><span class="sort">trié(s) par <span class="triDescription"><span class="triLabel"></span> <span class="triDetail">(Pertinence décroissant(e), Date de parution décroissant(e))</span></span><span class="espaceResultSearch"> </span></span></span><form name="mc_values" action="./index.php?lvl=more_results" style="display:none" method="post">
+<input type="hidden" name="search[]" value="s_4"><input type="hidden" name="inter_0_s_4" value=""><input type="hidden" name="op_0_s_4" value="EQ"><input type="hidden" name="field_0_s_4[]" value='a:2:{s:17:"serialized_search";s:25:"a:1:{s:6:"SEARCH";a:0:{}}";s:11:"search_type";s:20:"search_simple_fields";}'><input type="hidden" name="page" value="1">
+			<input type="hidden" name="nb_per_page_custom" value="0">
+<input type="hidden" name="csrf_token" value="c0b9a0b1f100dc5802a8e40e8ee220572610131c"></form><span class="espaceResultSearch">  </span><span class="affiner_recherche"><a href="./index.php?search_type_asked=extended_search&amp;mode_aff=aff_module" title="Affiner la recherche">Affiner la recherche</a></span><div id="autopostageform">Etendre la recherche sur <input name="nb_level_enfants" type="text" size="2" value="*" onchange="document.location='./index.php?lvl=categ_see&amp;id=3875&amp;main=0&amp;nb_level_enfants='+this.value"> niveau(x) vers le bas</div><blockquote>
+
+
+<div id="record_container_60221" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://juridique.defenseurdesdroits.fr/img_cache/ddd_record_60221.png?v=1783523266" title="Couverture de l'ouvrage" loading="lazy">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											Décisions
+									</p>
+			 
+		</div>
+		
+				
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=D%C3%A9cision%202026-158%20du%207%20juillet%202026%20-%20Op%C3%A9rations%20de%20maintien%20de%20l%E2%80%99ordre%20lors%20d%E2%80%99une%20manifestation%20%C3%A0%20Sainte-Soline%20%28Recommandations%20et%20saisine%20de%20l%E2%80%99autorit%C3%A9%20hi%C3%A9rarchique%29&amp;rft.title=D%C3%A9cision%202026-158%20du%207%20juillet%202026%20-%20Op%C3%A9rations%20de%20maintien%20de%20l%E2%80%99ordre%20lors%20d%E2%80%99une%20manifestation%20%C3%A0%20Sainte-Soline%20%28Recommandations%20et%20saisine%20de%20l%E2%80%99autorit%C3%A9%20hi%C3%A9rarchique%29&amp;rft.isbn=2026-158&amp;rft.date=07%2F07%2F2026&amp;rft_id=&amp;rft.au=DDD%20D%C3%A9fenseur%20des%20droits&amp;rft.au=DS%20D%C3%A9ontologie%20de%20la%20s%C3%A9curit%C3%A9&amp;rft.aulast=D%C3%A9fenseur%20des%20droits&amp;rft.aufirst=DDD"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=60221&amp;opac_view=-1">
+																																																				
+																	<span class="tit1_notCourte">Décision 2026-158 du 7 juillet 2026 - Opérations de maintien de l’ordre lors d’une manifestation à Sainte-Soline (Recommandations et saisine de l’autorité hiérarchique)</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=39&amp;opac_view=-1">Défenseur des droits</a>, Auteur																																				 ; 
+																			<a href="./index.php?lvl=author_see&amp;id=4342&amp;opac_view=-1">Déontologie de la sécurité</a>, Auteur																			</span>
+																															
+																													
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">07/07/2026</span>
+																					</div>
+										
+																		<div class="resume_notCourte">
+								<span>La Défenseure des droits s’est saisie d’office de la situation de deux hommes dont le pronostic vital était engagé après avoir été blessés au cours de la manifestation organisée contre le projet de méga-bassine à Sainte-Soline (Deux-Sèvres), le [...]</span>
+							</div>
+															</div>
+									
+					<div class="plusN">
+						<a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=60221&amp;opac_view=-1">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+									
+				
+
+													
+											
+													
+				
+												
+							
+									
+								<script>
+									if(typeof(sendToVisionneuse) == "undefined"){
+										var sendToVisionneuse = function (explnum_id){
+											document.getElementById("visionneuseIframe").src = "visionneuse.php?"+(typeof(explnum_id) != "undefined" ? "explnum_id="+explnum_id : "");
+										}
+									}
+								</script>
+																		
+							<div class="docnumNCourte">
+									<span class="imgDocNum"><img src="./styles/common/images/doc_num_w.png" border="0" alt="Document numeriques" loading="lazy"></span>
+									<span class="docNumN"><a href="https://juridique.defenseurdesdroits.fr/doc_num.php?explnum_id=23301" title="Document numérique">
+									Document numérique
+								</a></span>
+							</div>
+																				</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+												</div>
+		
+					
+	<div class="clear"></div>
+</div>
+
+<div id="record_container_60064" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://juridique.defenseurdesdroits.fr/img_cache/ddd_record_60064.png?v=1783499178" title="Couverture de l'ouvrage" loading="lazy">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											Décisions
+									</p>
+			 
+		</div>
+		
+				
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=D%C3%A9cision%202026-139%20du%2019%20juin%202026%20-%20Usage%20non%20n%C3%A9cessaire%20et%20disproportionn%C3%A9%20d%E2%80%99un%20b%C3%A2ton%20de%20d%C3%A9fense%20en%20marge%20d%E2%80%99une%20manifestation%20%28Recommandations%20et%20saisine%20de%20l%E2%80%99autorit%C3%A9%20hi%C3%A9rarchique%29&amp;rft.title=D%C3%A9cision%202026-139%20du%2019%20juin%202026%20-%20Usage%20non%20n%C3%A9cessaire%20et%20disproportionn%C3%A9%20d%E2%80%99un%20b%C3%A2ton%20de%20d%C3%A9fense%20en%20marge%20d%E2%80%99une%20manifestation%20%28Recommandations%20et%20saisine%20de%20l%E2%80%99autorit%C3%A9%20hi%C3%A9rarchique%29&amp;rft.isbn=2026-139&amp;rft.date=19%2F06%2F2026&amp;rft_id=&amp;rft.au=DDD%20D%C3%A9fenseur%20des%20droits&amp;rft.au=DS%20D%C3%A9ontologie%20de%20la%20s%C3%A9curit%C3%A9&amp;rft.aulast=D%C3%A9fenseur%20des%20droits&amp;rft.aufirst=DDD"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=60064&amp;opac_view=-1">
+																																																				
+																	<span class="tit1_notCourte">Décision 2026-139 du 19 juin 2026 - Usage non nécessaire et disproportionné d’un bâton de défense en marge d’une manifestation (Recommandations et saisine de l’autorité hiérarchique)</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=39&amp;opac_view=-1">Défenseur des droits</a>, Auteur																																				 ; 
+																			<a href="./index.php?lvl=author_see&amp;id=4342&amp;opac_view=-1">Déontologie de la sécurité</a>, Auteur																			</span>
+																															
+																													
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">19/06/2026</span>
+																					</div>
+										
+																		<div class="resume_notCourte">
+								<span>Une réclamante se plaint d’avoir reçu un coup de bâton de la part d’un fonctionnaire de police, lorsqu’elle sortait d’une bibliothèque avec une amie et qu’elle a croisé le cortège d’une manifestation. 
+
+Le Défenseur des droits constate qu’au m[...]</span>
+							</div>
+															</div>
+									
+					<div class="plusN">
+						<a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=60064&amp;opac_view=-1">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+									
+				
+
+													
+											
+													
+				
+												
+							
+									
+								<script>
+									if(typeof(sendToVisionneuse) == "undefined"){
+										var sendToVisionneuse = function (explnum_id){
+											document.getElementById("visionneuseIframe").src = "visionneuse.php?"+(typeof(explnum_id) != "undefined" ? "explnum_id="+explnum_id : "");
+										}
+									}
+								</script>
+																		
+							<div class="docnumNCourte">
+									<span class="imgDocNum"><img src="./styles/common/images/doc_num_w.png" border="0" alt="Document numeriques" loading="lazy"></span>
+									<span class="docNumN"><a href="https://juridique.defenseurdesdroits.fr/doc_num.php?explnum_id=23279" title="Document numérique">
+									Document numérique
+								</a></span>
+							</div>
+																				</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+												</div>
+		
+					
+	<div class="clear"></div>
+</div>
+
+<div id="record_container_59842" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://juridique.defenseurdesdroits.fr/img_cache/ddd_record_59842.png?v=1781182119" title="Couverture de l'ouvrage" loading="lazy">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											Rappels à la loi
+									</p>
+			 
+		</div>
+		
+				
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Rappel%20%C3%A0%20la%20loi%20RAL-2026-037%20du%2011%20juin%202026%20-%20Propos%20d%C3%A9plac%C3%A9s%20lors%20d%E2%80%99un%20encerclement%20par%20les%20forces%20de%20l%E2%80%99ordre%20%C3%A0%20la%20suite%20d%E2%80%99une%20manifestation&amp;rft.title=Rappel%20%C3%A0%20la%20loi%20RAL-2026-037%20du%2011%20juin%202026%20-%20Propos%20d%C3%A9plac%C3%A9s%20lors%20d%E2%80%99un%20encerclement%20par%20les%20forces%20de%20l%E2%80%99ordre%20%C3%A0%20la%20suite%20d%E2%80%99une%20manifestation&amp;rft.isbn=RAL-2026-037&amp;rft.date=11%2F06%2F2026&amp;rft_id=&amp;rft.au=DDD%20D%C3%A9fenseur%20des%20droits&amp;rft.au=DS%20D%C3%A9ontologie%20de%20la%20s%C3%A9curit%C3%A9&amp;rft.aulast=D%C3%A9fenseur%20des%20droits&amp;rft.aufirst=DDD"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=59842&amp;opac_view=-1">
+																																																				
+																	<span class="tit1_notCourte">Rappel à la loi RAL-2026-037 du 11 juin 2026 - Propos déplacés lors d’un encerclement par les forces de l’ordre à la suite d’une manifestation</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=39&amp;opac_view=-1">Défenseur des droits</a>, Auteur																																				 ; 
+																			<a href="./index.php?lvl=author_see&amp;id=4342&amp;opac_view=-1">Déontologie de la sécurité</a>, Auteur																			</span>
+																															
+																													
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">11/06/2026</span>
+																					</div>
+										
+																		<div class="resume_notCourte">
+								<span>Le Défenseur des droits a été saisi par 4 réclamants concernant l’intervention des forces de sécurité à la suite d’une manifestation contre la réforme des retraites. Ils précisent avoir été encerclés par les forces de sécurité sans pouvoir quitt[...]</span>
+							</div>
+															</div>
+									
+					<div class="plusN">
+						<a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=59842&amp;opac_view=-1">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+									
+				
+
+													
+											
+													
+				
+												
+							
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+												</div>
+		
+					
+	<div class="clear"></div>
+</div>
+
+<div id="record_container_59171" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://juridique.defenseurdesdroits.fr/img_cache/ddd_record_59171.png?v=1776848196" title="Couverture de l'ouvrage" loading="lazy">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											Rappels à la loi
+									</p>
+			 
+		</div>
+		
+				
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Rappel%20%C3%A0%20la%20loi%20RAL-2026-010%20du%208%20avril%202026%20-%20Importance%20d%27exercer%20son%20pouvoir%20disciplinaire%20d%C3%A8s%20que%20les%20faits%20sont%20%C3%A9tablis%2C%20sans%20attendre%20l%27issue%20de%20la%20proc%C3%A9dure%20p%C3%A9nale&amp;rft.title=Rappel%20%C3%A0%20la%20loi%20RAL-2026-010%20du%208%20avril%202026%20-%20Importance%20d%27exercer%20son%20pouvoir%20disciplinaire%20d%C3%A8s%20que%20les%20faits%20sont%20%C3%A9tablis%2C%20sans%20attendre%20l%27issue%20de%20la%20proc%C3%A9dure%20p%C3%A9nale&amp;rft.isbn=RAL-2026-010&amp;rft.date=08%2F04%2F2026&amp;rft_id=&amp;rft.au=DDD%20D%C3%A9fenseur%20des%20droits&amp;rft.au=DS%20D%C3%A9ontologie%20de%20la%20s%C3%A9curit%C3%A9&amp;rft.aulast=D%C3%A9fenseur%20des%20droits&amp;rft.aufirst=DDD"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=59171&amp;opac_view=-1">
+																																																				
+																	<span class="tit1_notCourte">Rappel à la loi RAL-2026-010 du 8 avril 2026 - Importance d'exercer son pouvoir disciplinaire dès que les faits sont établis, sans attendre l'issue de la procédure pénale</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=39&amp;opac_view=-1">Défenseur des droits</a>, Auteur																																				 ; 
+																			<a href="./index.php?lvl=author_see&amp;id=4342&amp;opac_view=-1">Déontologie de la sécurité</a>, Auteur																			</span>
+																															
+																													
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">08/04/2026</span>
+																					</div>
+										
+																		<div class="resume_notCourte">
+								<span>Le Défenseur des droits a été saisi par Monsieur X après avoir reçu un coup de matraque sur le crâne par un fonctionnaire de police lors d’une manifestation, lui occasionnant un traumatisme crânien justifiant 3 jours d’ITT. Monsieur X avait dépo[...]</span>
+							</div>
+															</div>
+									
+					<div class="plusN">
+						<a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=59171&amp;opac_view=-1">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+									
+				
+
+													
+											
+													
+				
+												
+							
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+												</div>
+		
+					
+	<div class="clear"></div>
+</div>
+
+<div id="record_container_58887" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://juridique.defenseurdesdroits.fr/img_cache/ddd_record_58887.png?v=1775556490" title="Couverture de l'ouvrage" loading="lazy">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											Décisions
+									</p>
+			 
+		</div>
+		
+				
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=D%C3%A9cision%202026-067%20du%2023%20mars%202026%20-%20Usage%20d%E2%80%99un%20b%C3%A2ton%20de%20d%C3%A9fense%20par%20un%20fonctionnaire%20de%20police%20dans%20le%20cadre%20d%E2%80%99une%20op%C3%A9ration%20de%20maintien%20de%20l%E2%80%99ordre%20r%C3%A9alis%C3%A9e%20sans%20sommation%20pr%C3%A9alable%20%28Saisine%20de%20l%27autorit%C3%A9%20hi%C3%A9rarchique%29&amp;rft.title=D%C3%A9cision%202026-067%20du%2023%20mars%202026%20-%20Usage%20d%E2%80%99un%20b%C3%A2ton%20de%20d%C3%A9fense%20par%20un%20fonctionnaire%20de%20police%20dans%20le%20cadre%20d%E2%80%99une%20op%C3%A9ration%20de%20maintien%20de%20l%E2%80%99ordre%20r%C3%A9alis%C3%A9e%20sans%20sommation%20pr%C3%A9alable%20%28Saisine%20de%20l%27autorit%C3%A9%20hi%C3%A9rarchique%29&amp;rft.isbn=2026-067&amp;rft.date=23%2F03%2F2026&amp;rft_id=&amp;rft.au=DDD%20D%C3%A9fenseur%20des%20droits&amp;rft.au=DS%20D%C3%A9ontologie%20de%20la%20s%C3%A9curit%C3%A9&amp;rft.aulast=D%C3%A9fenseur%20des%20droits&amp;rft.aufirst=DDD"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=58887&amp;opac_view=-1">
+																																																				
+																	<span class="tit1_notCourte">Décision 2026-067 du 23 mars 2026 - Usage d’un bâton de défense par un fonctionnaire de police dans le cadre d’une opération de maintien de l’ordre réalisée sans sommation préalable (Saisine de l'autorité hiérarchique)</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=39&amp;opac_view=-1">Défenseur des droits</a>, Auteur																																				 ; 
+																			<a href="./index.php?lvl=author_see&amp;id=4342&amp;opac_view=-1">Déontologie de la sécurité</a>, Auteur																			</span>
+																															
+																													
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">23/03/2026</span>
+																					</div>
+										
+																		<div class="resume_notCourte">
+								<span>Une femme journaliste indépendante et manifestante se plaint de deux coups de bâton de défense assénés par un policier au cours d’une charge réalisée sans sommation lors d’une manifestation. 
+
+La Défenseure des droits constate que les fonction[...]</span>
+							</div>
+															</div>
+									
+					<div class="plusN">
+						<a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=58887&amp;opac_view=-1">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+									
+				
+
+													
+											
+													
+				
+												
+							
+									
+								<script>
+									if(typeof(sendToVisionneuse) == "undefined"){
+										var sendToVisionneuse = function (explnum_id){
+											document.getElementById("visionneuseIframe").src = "visionneuse.php?"+(typeof(explnum_id) != "undefined" ? "explnum_id="+explnum_id : "");
+										}
+									}
+								</script>
+																		
+							<div class="docnumNCourte">
+									<span class="imgDocNum"><img src="./styles/common/images/doc_num_w.png" border="0" alt="Document numeriques" loading="lazy"></span>
+									<span class="docNumN"><a href="https://juridique.defenseurdesdroits.fr/doc_num.php?explnum_id=23154" title="Document numérique">
+									Document numérique
+								</a></span>
+							</div>
+																				</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+												</div>
+		
+					
+	<div class="clear"></div>
+</div>
+
+<div id="record_container_58888" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://juridique.defenseurdesdroits.fr/img_cache/ddd_record_58888.png?v=1775556518" title="Couverture de l'ouvrage" loading="lazy">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											Décisions
+									</p>
+			 
+		</div>
+		
+				
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=D%C3%A9cision%202026-068%20du%2023%20mars%202026%20-%20Verbalisation%20d%E2%80%99un%20pi%C3%A9ton%20lors%20d%E2%80%99une%20manifestation%20contraire%20aux%20obligations%20de%20discernement%20et%20de%20loyaut%C3%A9%20du%20policier%20%28Saisine%20de%20l%27autorit%C3%A9%20hi%C3%A9rarchique%29&amp;rft.title=D%C3%A9cision%202026-068%20du%2023%20mars%202026%20-%20Verbalisation%20d%E2%80%99un%20pi%C3%A9ton%20lors%20d%E2%80%99une%20manifestation%20contraire%20aux%20obligations%20de%20discernement%20et%20de%20loyaut%C3%A9%20du%20policier%20%28Saisine%20de%20l%27autorit%C3%A9%20hi%C3%A9rarchique%29&amp;rft.isbn=2026-068&amp;rft.date=23%2F03%2F2026&amp;rft_id=&amp;rft.au=DDD%20D%C3%A9fenseur%20des%20droits&amp;rft.au=DS%20D%C3%A9ontologie%20de%20la%20s%C3%A9curit%C3%A9&amp;rft.aulast=D%C3%A9fenseur%20des%20droits&amp;rft.aufirst=DDD"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=58888&amp;opac_view=-1">
+																																																				
+																	<span class="tit1_notCourte">Décision 2026-068 du 23 mars 2026 - Verbalisation d’un piéton lors d’une manifestation contraire aux obligations de discernement et de loyauté du policier (Saisine de l'autorité hiérarchique)</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=39&amp;opac_view=-1">Défenseur des droits</a>, Auteur																																				 ; 
+																			<a href="./index.php?lvl=author_see&amp;id=4342&amp;opac_view=-1">Déontologie de la sécurité</a>, Auteur																			</span>
+																															
+																													
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">23/03/2026</span>
+																					</div>
+										
+																		<div class="resume_notCourte">
+								<span>Un manifestant se plaint de son contrôle par un policier et de sa verbalisation pour « inobservation, par conducteur de véhicule, de l’arrêt imposé par un feu rouge » alors qu’il était piéton.
+
+La Défenseure des droits constate que le gardien [...]</span>
+							</div>
+															</div>
+									
+					<div class="plusN">
+						<a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=58888&amp;opac_view=-1">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+									
+				
+
+													
+											
+													
+				
+												
+							
+									
+								<script>
+									if(typeof(sendToVisionneuse) == "undefined"){
+										var sendToVisionneuse = function (explnum_id){
+											document.getElementById("visionneuseIframe").src = "visionneuse.php?"+(typeof(explnum_id) != "undefined" ? "explnum_id="+explnum_id : "");
+										}
+									}
+								</script>
+																		
+							<div class="docnumNCourte">
+									<span class="imgDocNum"><img src="./styles/common/images/doc_num_w.png" border="0" alt="Document numeriques" loading="lazy"></span>
+									<span class="docNumN"><a href="https://juridique.defenseurdesdroits.fr/doc_num.php?explnum_id=23155" title="Document numérique">
+									Document numérique
+								</a></span>
+							</div>
+																				</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+												</div>
+		
+					
+	<div class="clear"></div>
+</div>
+
+<div id="record_container_58889" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://juridique.defenseurdesdroits.fr/img_cache/ddd_record_58889.png?v=1775556569" title="Couverture de l'ouvrage" loading="lazy">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											Décisions
+									</p>
+			 
+		</div>
+		
+				
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=D%C3%A9cision%202026-070%20du%2023%20mars%202026%20-%20Usage%20non%20n%C3%A9cessaire%20et%20disproportionn%C3%A9%20de%20la%20force%20contre%20des%20manifestants%20mineurs%20%28Recommandations%20et%20saisine%20de%20l%E2%80%99autorit%C3%A9%20hi%C3%A9rarchique%29&amp;rft.title=D%C3%A9cision%202026-070%20du%2023%20mars%202026%20-%20Usage%20non%20n%C3%A9cessaire%20et%20disproportionn%C3%A9%20de%20la%20force%20contre%20des%20manifestants%20mineurs%20%28Recommandations%20et%20saisine%20de%20l%E2%80%99autorit%C3%A9%20hi%C3%A9rarchique%29&amp;rft.isbn=2026-070&amp;rft.date=23%2F03%2F2026&amp;rft_id=&amp;rft.au=DDD%20D%C3%A9fenseur%20des%20droits&amp;rft.au=DS%20D%C3%A9ontologie%20de%20la%20s%C3%A9curit%C3%A9&amp;rft.aulast=D%C3%A9fenseur%20des%20droits&amp;rft.aufirst=DDD"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=58889&amp;opac_view=-1">
+																																																				
+																	<span class="tit1_notCourte">Décision 2026-070 du 23 mars 2026 - Usage non nécessaire et disproportionné de la force contre des manifestants mineurs (Recommandations et saisine de l’autorité hiérarchique)</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=39&amp;opac_view=-1">Défenseur des droits</a>, Auteur																																				 ; 
+																			<a href="./index.php?lvl=author_see&amp;id=4342&amp;opac_view=-1">Déontologie de la sécurité</a>, Auteur																			</span>
+																															
+																													
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">23/03/2026</span>
+																					</div>
+										
+																		<div class="resume_notCourte">
+								<span>Au cours d’une manifestation devant un lycée, le 19 janvier 2023 deux fonctionnaires de police ont fait usage de leur bombe lacrymogène à bout portant sur le visage de plusieurs lycéens manifestants. L’ensemble des policiers portaient un cache-c[...]</span>
+							</div>
+															</div>
+									
+					<div class="plusN">
+						<a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=58889&amp;opac_view=-1">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+									
+				
+
+													
+											
+													
+				
+												
+							
+									
+								<script>
+									if(typeof(sendToVisionneuse) == "undefined"){
+										var sendToVisionneuse = function (explnum_id){
+											document.getElementById("visionneuseIframe").src = "visionneuse.php?"+(typeof(explnum_id) != "undefined" ? "explnum_id="+explnum_id : "");
+										}
+									}
+								</script>
+																		
+							<div class="docnumNCourte">
+									<span class="imgDocNum"><img src="./styles/common/images/doc_num_w.png" border="0" alt="Document numeriques" loading="lazy"></span>
+									<span class="docNumN"><a href="https://juridique.defenseurdesdroits.fr/doc_num.php?explnum_id=23156" title="Document numérique">
+									Document numérique
+								</a></span>
+							</div>
+																				</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+												</div>
+		
+					
+	<div class="clear"></div>
+</div>
+
+<div id="record_container_58774" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://juridique.defenseurdesdroits.fr/img_cache/ddd_record_58774.png?v=1773741425" title="Couverture de l'ouvrage" loading="lazy">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											Jurisprudences
+									</p>
+			 
+		</div>
+		
+				
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Arr%C3%AAt%20relatif%20%C3%A0%20l%27usage%20de%20gaz%20lacrymog%C3%A8ne%20%C3%A0%20bout%20portant%20par%20un%20policier%20sur%20une%20manifestante%20lors%20d%27un%20sit-in%20%3A%20Sungur%20c.%20Turquie&amp;rft.title=Arr%C3%AAt%20relatif%20%C3%A0%20l%27usage%20de%20gaz%20lacrymog%C3%A8ne%20%C3%A0%20bout%20portant%20par%20un%20policier%20sur%20une%20manifestante%20lors%20d%27un%20sit-in%20%3A%20Sungur%20c.%20Turquie&amp;rft.isbn=56462%2F19&amp;rft.date=17%2F03%2F2026&amp;rft_id=https%3A%2F%2Fhudoc.echr.coe.int%2Ffre%3Fi%3D001-248884&amp;rft.au=CEDH%20Cour%20europ%C3%A9enne%20des%20droits%20de%20l%27homme&amp;rft.aulast=Cour%20europ%C3%A9enne%20des%20droits%20de%20l%27homme&amp;rft.aufirst=CEDH"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=58774&amp;opac_view=-1">
+																																																				
+																	<span class="tit1_notCourte">Arrêt relatif à l'usage de gaz lacrymogène à bout portant par un policier sur une manifestante lors d'un sit-in : Sungur c. Turquie</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=1145&amp;opac_view=-1">Cour européenne des droits de l'homme</a>, Auteur																			</span>
+																															
+																													
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">17/03/2026</span>
+																					</div>
+										
+																		<div class="resume_notCourte">
+								<span>La requérante, Ceyda Sungur, est une ressortissante turque née en 1986 et résidant à Paris.
+
+L'affaire concerne un policier qui aspergea Mme Sungur de gaz lacrymogène à bout portant lors d'un sit-in organisé le 28 mai 2013 pour protester contr[...]</span>
+							</div>
+															</div>
+									
+					<div class="plusN">
+						<a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=58774&amp;opac_view=-1">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+									
+				
+
+													
+											
+													
+				
+												
+							
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+												</div>
+		
+					
+	<div class="clear"></div>
+</div>
+
+<div id="record_container_57543" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://juridique.defenseurdesdroits.fr/img_cache/ddd_record_57543.png?v=1770921161" title="Couverture de l'ouvrage" loading="lazy">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											Jurisprudences
+									</p>
+			 
+		</div>
+		
+				
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Arr%C3%AAt%20relatif%20%C3%A0%20un%20recours%20injustifi%C3%A9%20%C3%A0%20la%20force%20et%20au%20tir%20de%20balles%20en%20caoutchouc%20aux%20fins%20de%20la%20dispersion%20d%E2%80%99une%20manifestation%20devant%20le%20Parlement%20g%C3%A9orgien%20%3A%20Tsaava%20et%20autres%20c.%20G%C3%A9orgie&amp;rft.title=Arr%C3%AAt%20relatif%20%C3%A0%20un%20recours%20injustifi%C3%A9%20%C3%A0%20la%20force%20et%20au%20tir%20de%20balles%20en%20caoutchouc%20aux%20fins%20de%20la%20dispersion%20d%E2%80%99une%20manifestation%20devant%20le%20Parlement%20g%C3%A9orgien%20%3A%20Tsaava%20et%20autres%20c.%20G%C3%A9orgie&amp;rft.isbn=13186%2F20&amp;rft.date=11%2F12%2F2025&amp;rft_id=https%3A%2F%2Fhudoc.echr.coe.int%2Ffre%3Fi%3D001-247768&amp;rft.au=CEDH%20Cour%20europ%C3%A9enne%20des%20droits%20de%20l%27homme&amp;rft.aulast=Cour%20europ%C3%A9enne%20des%20droits%20de%20l%27homme&amp;rft.aufirst=CEDH"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=57543&amp;opac_view=-1">
+																																																				
+																	<span class="tit1_notCourte">Arrêt relatif à un recours injustifié à la force et au tir de balles en caoutchouc aux fins de la dispersion d’une manifestation devant le Parlement géorgien : Tsaava et autres c. Géorgie</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=1145&amp;opac_view=-1">Cour européenne des droits de l'homme</a>, Auteur																			</span>
+																															
+																													
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">11/12/2025</span>
+																					</div>
+										
+																		<div class="resume_notCourte">
+								<span>Extrait du communiqué de presse de la Greffière de la Cour : 
+
+Dans son arrêt de Grande Chambre, la Cour européenne des droits de l’homme dit, à la majorité, qu’il y a eu violation de l’article 3 sous ses deux volets (interdiction des traiteme[...]</span>
+							</div>
+															</div>
+									
+					<div class="plusN">
+						<a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=57543&amp;opac_view=-1">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+									
+				
+
+													
+											
+													
+				
+												
+							
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+												</div>
+		
+					
+	<div class="clear"></div>
+</div>
+
+<div id="record_container_57320" class="parentNotCourte uk-clearfix">
+				
+ 			<div class="vignetteimgNot">
+														
+						<div class="vignetteDocNot">
+							<img class="vignetteNot" src="https://juridique.defenseurdesdroits.fr/img_cache/ddd_record_57320.png?v=1770931173" title="Couverture de l'ouvrage" loading="lazy">
+						</div>						
+						
+						
+							<p class="typeDoc_notCourte">
+											Jurisprudences
+									</p>
+			 
+		</div>
+		
+				
+			<div class="notice_corps">
+				<div class="descr_notice_corps">
+											<span class="Z3988" title="ctx_ver=Z39.88-2004&amp;rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook&amp;rft.genre=book&amp;rft.btitle=Arr%C3%AAt%20relatif%20au%20pr%C3%A9judice%20subi%20par%20le%20requ%C3%A9rant%20lors%20de%20l%27intervention%20des%20forces%20de%20s%C3%A9curit%C3%A9%20durant%20les%20manifestations%20de%20la%20f%C3%AAte%20du%20travail%20du%201er%20mai%202013%20%3A%20Akan%20c.%20Turquie&amp;rft.title=Arr%C3%AAt%20relatif%20au%20pr%C3%A9judice%20subi%20par%20le%20requ%C3%A9rant%20lors%20de%20l%27intervention%20des%20forces%20de%20s%C3%A9curit%C3%A9%20durant%20les%20manifestations%20de%20la%20f%C3%AAte%20du%20travail%20du%201er%20mai%202013%20%3A%20Akan%20c.%20Turquie&amp;rft.isbn=62611%2F17&amp;rft.date=25%2F11%2F2025&amp;rft_id=https%3A%2F%2Fhudoc.echr.coe.int%2Ffre%3Fi%3D001-247478&amp;rft.au=CEDH%20Cour%20europ%C3%A9enne%20des%20droits%20de%20l%27homme&amp;rft.aulast=Cour%20europ%C3%A9enne%20des%20droits%20de%20l%27homme&amp;rft.aufirst=CEDH"></span>
+										
+											<div class="title_notCourte">
+							<h3><a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=57320&amp;opac_view=-1">
+																																																				
+																	<span class="tit1_notCourte">Arrêt relatif au préjudice subi par le requérant lors de l'intervention des forces de sécurité durant les manifestations de la fête du travail du 1er mai 2013 : Akan c. Turquie</span>
+															</a></h3>
+						</div>
+										
+											<div class="infoCompl_notCourte">
+																																		<span class="auteur_notCourte">
+																			<a href="./index.php?lvl=author_see&amp;id=1145&amp;opac_view=-1">Cour européenne des droits de l'homme</a>, Auteur																			</span>
+																															
+																													
+																													
+														
+																																		 | 																		 <span class="annee_notCourte">25/11/2025</span>
+																					</div>
+										
+																		<div class="resume_notCourte">
+								<span>Le requérant, İbrahim Akan, est un ressortissant turc né en 1990 et résidant à Istanbul.
+
+L’affaire concerne une blessure que le requérant reçut lors de manifestations organisées à l’occasion de la fête du travail le 1er mai 2013 et le refus d[...]</span>
+							</div>
+															</div>
+									
+					<div class="plusN">
+						<a href="https://juridique.defenseurdesdroits.fr/index.php?lvl=notice_display&amp;id=57320&amp;opac_view=-1">Plus d'information...</a>
+					</div>
+							</div>
+		
+			<div class="panier_avis_notCourte">
+													
+									
+				
+
+													
+											
+													
+				
+												
+							
+									</div>
+		<div class="clear"></div>
+	
+			<div class="footer_notice">
+												</div>
+		
+					
+	<div class="clear"></div>
+</div></blockquote>
+
+</div>
+			</div>	
+			
+	</div>
+</div><div id="navbar"><hr><div style="text-align:center">
+<div class="navbar">
+	
+<script type="text/javascript">
+<!--
+	function test_form(form)
+	{
+
+		if (form.page.value > 19)
+		{
+			alert("Num&eacute;ro de page trop &eacute;lev&eacute; !");
+			form.page.focus();
+			return false;
+		}
+
+		return true;
+	}
+-->
+</script>
+	<form name="form" action="./index.php?lvl=categ_see&amp;id=3875&amp;nbr_lignes=190&amp;l_typdoc=a%2Cb%2Cc%2Cg%2Cl%2Cn%2Co" method="post" onsubmit="return test_form(form)">
+			<img src="./images/first-grey.png" alt="première page" loading="lazy">
+				<img src="./images/prev-grey.png" alt="page précédente" loading="lazy">
+							<strong>1</strong>
+								<a class="navbar_page" href="./index.php?lvl=categ_see&amp;id=3875&amp;page=2&amp;nbr_lignes=190&amp;l_typdoc=a%2Cb%2Cc%2Cg%2Cl%2Cn%2Co">2</a>
+								<a class="navbar_page" href="./index.php?lvl=categ_see&amp;id=3875&amp;page=3&amp;nbr_lignes=190&amp;l_typdoc=a%2Cb%2Cc%2Cg%2Cl%2Cn%2Co">3</a>
+								<a class="navbar_page" href="./index.php?lvl=categ_see&amp;id=3875&amp;page=4&amp;nbr_lignes=190&amp;l_typdoc=a%2Cb%2Cc%2Cg%2Cl%2Cn%2Co">4</a>
+								<a class="navbar_page" href="./index.php?lvl=categ_see&amp;id=3875&amp;page=5&amp;nbr_lignes=190&amp;l_typdoc=a%2Cb%2Cc%2Cg%2Cl%2Cn%2Co">5</a>
+								<a class="navbar_page" href="./index.php?lvl=categ_see&amp;id=3875&amp;page=6&amp;nbr_lignes=190&amp;l_typdoc=a%2Cb%2Cc%2Cg%2Cl%2Cn%2Co">6</a>
+					
+		<a class="navbar_next" href="./index.php?lvl=categ_see&amp;id=3875&amp;page=2&amp;nbr_lignes=190&amp;l_typdoc=a%2Cb%2Cc%2Cg%2Cl%2Cn%2Co"><img src="./images/next.png" alt="page suivante" style="border:0px" title="page suivante" loading="lazy"></a>
+			
+		<a class="navbar_last" href="./index.php?lvl=categ_see&amp;id=3875&amp;page=19&amp;nbr_lignes=190&amp;l_typdoc=a%2Cb%2Cc%2Cg%2Cl%2Cn%2Co"><img src="./images/last.png" alt="dernière page" style="border:0px" title="dernière page" loading="lazy"></a>
+		(1 - 10 / 190)
+	
+				
+<span style="float:right;">Par page :
+						<a class="navbar_custom" href="javascript:document.location=%22./index.php?lvl=categ_see&amp;id=3875&amp;page=1&amp;nbr_lignes=190&amp;l_typdoc=a%2Cb%2Cc%2Cg%2Cl%2Cn%2Co&amp;nb_per_page_custom=25%22">25</a>
+								<a class="navbar_custom" href="javascript:document.location=%22./index.php?lvl=categ_see&amp;id=3875&amp;page=1&amp;nbr_lignes=190&amp;l_typdoc=a%2Cb%2Cc%2Cg%2Cl%2Cn%2Co&amp;nb_per_page_custom=50%22">50</a>
+								<a class="navbar_custom" href="javascript:document.location=%22./index.php?lvl=categ_see&amp;id=3875&amp;page=1&amp;nbr_lignes=190&amp;l_typdoc=a%2Cb%2Cc%2Cg%2Cl%2Cn%2Co&amp;nb_per_page_custom=100%22">100</a>
+								<a class="navbar_custom" href="javascript:document.location=%22./index.php?lvl=categ_see&amp;id=3875&amp;page=1&amp;nbr_lignes=190&amp;l_typdoc=a%2Cb%2Cc%2Cg%2Cl%2Cn%2Co&amp;nb_per_page_custom=200%22">200</a>
+			</span>
+	
+
+
+
+
+
+		
+			<input type="hidden" name="csrf_token" value="1b26c1cf4b9ca98937f796ef5573a293fc1d5722"></form>
+</div></div></div>
+
+
+
+		</div> 
+
+		</div>
+
+		
+		<div id="bandeau" fixed="yes">
+
+
+<div id="accueil" fixed="yes">
+
+<h3><span onclick='document.location="./index.php?"' style="cursor: pointer;">Accueil</span></h3>
+<p class="centered"><a href="./index.php?"><img src="./images/home.jpg" alt="Accueil" style="border:0px" class="center" loading="lazy"></a></p>
+<div id="lang_select"><h3><span>Sélection de la langue</span></h3><form method="post" action="index.php?lvl=categ_see&amp;id=3875"><select name="lang_sel" onchange="this.form.submit();"><option value="fr_FR" selected>Français </option><option value="en_UK">English (UK)</option><option value="es_ES">Español</option><option value="de_DE">Deutsch</option></select><input type="hidden" name="csrf_token" value="af7ea096e25d92f7d13a6950c8f22f1c9025f42a"></form></div>
+
+					</div>
+
+<div id="adresse" fixed="yes">
+
+		<h3>Adresse</h3>
+
+		<span>
+			Documentation du Défenseur des droits<br>
+			<br>
+			 <br>
+			 <br>
+			<br><span id="opac_biblio_email">
+			<a href="mailto:documentation@defenseurdesdroits.fr" title="documentation@defenseurdesdroits.fr">contact</a></span></span>
+	    </div><div id="facette" fixed="yes">
+				
+				
+		<script src="./includes/javascript/select.js" type="text/javascript"></script>
+		<script type="text/javascript"> 		
+			function test(elmt_id){
+				var elmt_list=document.getElementById(elmt_id);
+
+                if(elmt_list.className.includes('facette_expande')){
+                    elmt_list.setAttribute('class', 'facette_collapsed');
+                } else {
+                    elmt_list.setAttribute('class', 'facette_expande');
+                }
+
+				for(i in elmt_list.rows){
+					if(elmt_list.rows[i].firstElementChild && elmt_list.rows[i].firstElementChild.nodeName!='TH'){
+						if(elmt_list.rows[i].style.display == 'none'){
+							elmt_list.rows[i].style.display = 'block';
+                            elmt_list.rows[i].setAttribute('class', 'facette_tr'); 
+						}else{
+							elmt_list.rows[i].style.display = 'none';
+                            elmt_list.rows[i].setAttribute('class', 'facette_tr_hidden uk-hidden'); 
+						}
+					}
+				}
+			}
+			
+			function facette_see_more(id, json_facette_plus) {
+				
+				const usingModal = '0' == 1;
+				var myTable = document.getElementById('facette_list_'+id);
+				
+				if (json_facette_plus == null) {
+
+                    if (usingModal) {
+                        if (typeof openModal == 'function') {
+                            return openModal(id);
+                        } else {
+                            console.error('[facettes_modal] : openModal is not a function !')
+                            return false;
+                        } 
+                    }
+
+					var childs = myTable.childNodes;
+					var nb_childs = childs.length;
+					
+					for(var i = 0; i < nb_childs; i++){
+						if (childs[i].getAttribute('facette_ajax_loaded')!=null) {
+							if (childs[i].getAttribute('style')=='display:block') {
+								childs[i].setAttribute('style','display:none');
+								childs[i].setAttribute('expanded','false');
+							} else {
+								childs[i].setAttribute('style','display:block');
+								childs[i].setAttribute('expanded','true');
+							}
+						}
+					}
+				
+					var see_more_less = document.getElementById('facette_see_more_less_'+id);
+					see_more_less.innerHTML='';
+					var span = document.createElement('span');
+					if (see_more_less.getAttribute('etat')=='plus') {
+						span.className='facette_moins_link';
+						span.innerHTML='[-]';
+						see_more_less.setAttribute('etat','moins');
+					} else {
+						span.className='facette_plus_link';
+						span.innerHTML='<span class="facette_plus">Plus';
+						see_more_less.setAttribute('etat','plus');		
+					}
+					see_more_less.appendChild(span);
+					
+				} else {
+					var req = new http_request();
+					var sended_datas = {'json_facette_plus': json_facette_plus };
+					req.request("./ajax.php?module=ajax&categ=facettes&sub=see_more", true, 'sended_datas='+encodeURIComponent(JSON.stringify(sended_datas)), true, function(response) {
+                        if (usingModal) {
+                            if (typeof callback_see_more_modal == 'function') {
+                                callback_see_more_modal(id, myTable, response)
+                            } else {
+                                console.error('[facettes_modal] : callback_see_more_modal is not a function !')
+                            } 
+                        } else {
+                            callback_see_more(id, myTable, response);
+                        }
+                    });
+				}
+			}
+
+            function callback_see_more(id, myTable, data) {
+    			var jsonArray = JSON.parse(data);
+    			//on supprime la ligne '+'
+    			myTable.tBodies[0].removeChild(myTable.rows[myTable.rows.length-1]);
+    			//on ajoute les lignes au tableau
+    			for(var i=0;i<jsonArray.length;i++) {
+    				var tr = document.createElement('tr');
+    				tr.setAttribute('style','display:block');
+    				tr.setAttribute('class', 'facette_tr');
+    				tr.setAttribute('expanded','true');
+    				tr.setAttribute('facette_ajax_loaded','1');
+    	        	var td = tr.appendChild(document.createElement('td'));
+    				td.setAttribute('class','facette_col_coche');
+    	        	td.innerHTML = "<span class='facette_coche'><input type='checkbox' name='check_facette[]' value='" + jsonArray[i]['facette_value'] + "'>";
+    	        	var td2 = tr.appendChild(document.createElement('td'));
+    				td2.setAttribute('class','facette_col_info');
+                    var aonclick = td2.appendChild(document.createElement('a'));
+                    aonclick.setAttribute('style', 'cursor:pointer;');
+                    aonclick.setAttribute('rel', 'nofollow');
+                    aonclick.setAttribute('class', 'facet-link');
+                    if (jsonArray[i]['facette_link']) {
+                        aonclick.setAttribute('onclick', jsonArray[i]['facette_link']);
+                    } else {
+                        //Evt vers SearchSegmentController pour l'initialisation du clic
+                        require(['dojo/topic'], function(topic){
+    						topic.publish('FacettesRoot', 'FacettesRoot', 'initFacetLink', {elem: aonclick}); 
+    					}); 
+                    }
+                    var span_facette_link = aonclick.appendChild(document.createElement('span'));
+                    span_facette_link.setAttribute('class', 'facette_libelle');
+    	        	span_facette_link.innerHTML = jsonArray[i]['facette_libelle'];
+    				aonclick.appendChild(document.createTextNode(' '));
+                    var span_facette_number = aonclick.appendChild(document.createElement('span'));
+                    span_facette_number.setAttribute('class', 'facette_number');
+                    span_facette_number.innerHTML = "[" + jsonArray[i]['facette_number'] + "]";
+    	        	myTable.appendChild(tr);
+    			}
+
+                add_see_less(myTable, id);
+    		}
+            
+            function add_see_less(myTable, id) {
+    			//Ajout du see_less
+    			var tr = document.createElement('tr');
+    			tr.setAttribute('style','display:block');
+    			tr.setAttribute('see_less','1');
+    			tr.setAttribute('class','facette_tr_see_more');
+    				
+    			var td = tr.appendChild(document.createElement('td'));
+    			td.setAttribute('colspan','3');
+    				
+    			var ahref = td.appendChild(document.createElement('a'));
+    			ahref.setAttribute('id','facette_see_more_less_'+id);
+    			ahref.setAttribute('etat','moins');
+    			ahref.setAttribute('onclick','javascript:facette_see_more(' + id + ',null);');
+    			ahref.setAttribute('style','cursor:pointer');
+    			ahref.innerHTML='';
+    				
+    			var span = document.createElement('span');
+    			span.className='facette_moins_link';
+    			span.innerHTML='[-]';
+    			ahref.appendChild(span);
+				
+    			myTable.appendChild(tr);
+            }</script>
+		<script type="text/javascript">
+			function valid_facettes_multi(){
+				//on bloque si aucune case coch?e
+				var form = document.facettes_multi;
+				for (i=0, n=form.elements.length; i<n; i++){
+					if ((form.elements[i].checked == true)) {
+						if(document.getElementById('filtre_compare_facette')) {
+							document.getElementById('filtre_compare_facette').value='filter';
+						}
+						if(document.getElementById('filtre_compare_form_values')) {
+							document.getElementById('filtre_compare_form_values').value='filter';
+						}
+						form.submit();
+						return true;
+					}
+				}
+				return false;
+			}
+		</script>
+				<div id="facette_wrapper">
+					<img src="./images/patience.gif" loading="lazy">
+					<script type="text/javascript">
+                        document.addEventListener('DOMContentLoaded', () => {
+    						var req = new http_request();
+    						req.request("./ajax.php?module=ajax&categ=facettes&sub=get_data&facet_type=notices",false,null,true,function(data){
+    							var response = JSON.parse(data);
+    							document.getElementById('facette_wrapper').innerHTML=response.display;
+    						    require(['dojo/query', 'dojo/dom-construct'], function(query, domConstruct){
+        						    query('#facette_wrapper script').forEach(function(node) {
+                    					domConstruct.create('script', {
+                    						innerHTML: node.innerHTML,
+                    						type: 'text/javascript'
+                    					}, node, 'replace');
+                    				});
+    						    });
+    							if(!response.exists_with_results) {
+    								require(['dojo/ready', 'dojo/dom-construct'], function(ready, domConstruct){
+    									ready(function(){
+    						                if (document.getElementById('segment_searches')) {
+    										    domConstruct.destroy('facette_wrapper');
+    						                } else {
+    						                    domConstruct.destroy('facette');
+    						                }
+    						    
+    									});
+    								});
+    							}
+    							if(response.map_location) {
+    								if(document.getElementById('map_location_search')) {
+    									document.getElementById('map_location_search').innerHTML=response.map_location;
+    									if(typeof(dojo) == 'object'){
+    										dojo.require('dojo.parser');
+    										dojo.parser.parse(document.getElementById('map_location_search'));
+    									}
+    								}
+    							}
+                                hide_element_by_its_hidden_children('bandeau');
+    						}, '', '', true);
+                        });
+					</script>
+				</div>
+			<form name="form_values" style="display:none;" method="post" action="./index.php?lvl=more_results&amp;mode=extended">
+				<input type="hidden" name="from_see" value="1">
+				<input type="hidden" value="" id="filtre_compare_form_values" name="filtre_compare">
+			<input type="hidden" name="csrf_token" value="5ab8fe600be554f528c01aa5b490316b2a3d809f"></form>
+			</div></div><div id="bandeau_2" fixed="yes">
+			</div><div id="footer" fixed="yes">
+
+<div id="cms_module_sectionslist_122" class="cms_module_sectionslist cms_module uk-width-large-3-4 uk-width-medium-1-1 uk-width-1-1">    <div class="logosFooter">
+
+        <ul class="uk-thumbnav uk-grid-width-1-3">
+
+ 
+
+	<h3><span>Autres sites des partenaires du DDD</span></h3>
+
+                        
+            <li class="imgS uk-active">
+                <a href="https://www.antidiscriminations.fr/" target="_blank" title="Agir contre les discriminations">
+                    <img src="https://juridique.defenseurdesdroits.fr/temp/cms_vign/ddd/vign/section218.jpeg" alt="Agir contre les discriminations">
+                    <p class="titleLogosFooter">Agir contre les discriminations</p>
+                </a>
+            </li>
+                        
+            <li class="imgS uk-active">
+                <a href="http://egalitecontreracisme.fr/" target="_blank" title="Egalité contre le racisme">
+                    <img src="https://juridique.defenseurdesdroits.fr/temp/cms_vign/ddd/vign/section53.jpeg" alt="Egalité contre le racisme">
+                    <p class="titleLogosFooter">Egalité contre le racisme</p>
+                </a>
+            </li>
+                        
+            <li class="imgS uk-active">
+                <a href="https://educadroit.fr/" target="_blank" title="Educadroit">
+                    <img src="https://juridique.defenseurdesdroits.fr/temp/cms_vign/ddd/vign/section80.jpeg" alt="Educadroit">
+                    <p class="titleLogosFooter">Educadroit</p>
+                </a>
+            </li>
+                    </ul>    
+    </div>
+    
+</div><div id="cms_module_section_179" class="cms_module_section cms_module uk-width-large-1-4 uk-width-medium-1-1 uk-width-1-1"><div class="rubFooter">
+                  <div class="imgL">
+            <a href="https://www.defenseurdesdroits.fr/" target="_blank"><img src="https://juridique.defenseurdesdroits.fr/cms_vign.php?type=section&amp;id=77&amp;database=ddd&amp;mode=custom_300" alt="Retour au site du Défenseur des droit" title="Retour au site du Défenseur des droit"></a>
+        </div>
+              <div class="resume">
+	<p>Défenseur des droits<br>Libre réponse 71120<br>75342 Paris CEDEX 07<br><br>09 69 39 00 00<br><span style="font-size: 8pt;">* du lundi au vendredi de 8h00 à 20h00</span><br><span style="font-size: 8pt;">(coût d'un appel local)</span><br><br><a title="Nous contacter" href="http://www.defenseurdesdroits.fr/nous-contacter" target="_blank">Nous contacter</a></p>
+    </div>
+</div>
+</div><div id="cms_module_sectionslist_178" class="cms_module_sectionslist cms_module uk-width-large-1-1 uk-width-medium-1-1 uk-width-small-1-1">    <div class="logosSoc">
+
+        <ul>    
+                    
+            <li class="imgSoc">
+                <a href="https://www.facebook.com/Defenseurdesdroits" target="_blank" title="Facebook">
+                <img src="https://juridique.defenseurdesdroits.fr/cms_vign.php?type=section&amp;id=58&amp;database=ddd&amp;mode=custom_60" alt="Facebook">
+               </a>
+           </li>
+    	            
+            <li class="imgSoc">
+                <a href="https://twitter.com/Defenseurdroits" target="_blank" title="Twitter">
+                <img src="https://juridique.defenseurdesdroits.fr/cms_vign.php?type=section&amp;id=59&amp;database=ddd&amp;mode=custom_60" alt="Twitter">
+               </a>
+           </li>
+    			</ul>
+</div>
+</div><div id="cms_module_sectionslist_121" class="cms_module_sectionslist cms_module uk-width-1-1 bottom-nav uk-grid-margin"><div class="liensFooter">
+	<div class="uk-flex uk-flex-left">
+        <ul class="navFooter">
+                          
+			 			 <li class="txtLinkFooter">
+				© Défenseur des droits 2016
+            </li>
+			                           
+			             <li>
+				<a href="./index.php?lvl=cmspage&amp;pageid=6&amp;id_rubrique=50" title="Accessibilité">Accessibilité</a>
+            </li>
+			                          
+			             <li>
+				<a href="https://www.defenseurdesdroits.fr/fr/nous-rejoindre" target="_blank" title="Nous rejoindre">Nous rejoindre</a>
+            </li>
+			                          
+			             <li>
+				<a href="https://www.defenseurdesdroits.fr/fr/mentions-legales" target="_blank" title="Mentions légales">Mentions légales</a>
+            </li>
+			                          
+			             <li>
+				<a href="https://www.defenseurdesdroits.fr/fr/presse" target="_blank" title="Presse">Presse</a>
+            </li>
+			                          
+			             <li>
+				<a href="https://www.defenseurdesdroits.fr/fr/faq" target="_blank" title="Besoin d'aide ?">Besoin d'aide ?</a>
+            </li>
+			                          
+			             <li>
+				<a href="https://www.defenseurdesdroits.fr/fr/contactez-nous" target="_blank" title="Contact">Contact</a>
+            </li>
+			                     </ul>
+    </div>
+</div>
+</div><div id="cms_module_htmlcode_134" class="cms_module_htmlcode cms_module"><div class="Ancre">
+	<a href="#logo" title="Top" data-uk-smooth-scroll>Λ</a>
+</div></div><span id="footer_rss" fixed="yes">
+	
+</span>
+<span id="footer_link_sup" fixed="yes">
+		  
+</span>
+
+<span id="footer_link_website" fixed="yes">
+	<a class="footer_biblio_name" href="https://juridique.defenseurdesdroits.fr/" title="Documentation du Défenseur des droits">Documentation du Défenseur des droits</a>  
+</span>
+
+<span id="footer_link_pmb" fixed="yes">
+  
+		<a class="lien_pmb_footer" href="https://www.sigb.net" title="...une solution libre pour la médiathèque..." target="_blank">pmb</a>
+</span>
+
+</div></div>
+		
+		<script type="text/javascript">init_drag();	//rechercher!!</script>
+		
+			<script type="text/javascript">
+				var tarteaucitron_messages = pmbDojo.messages.getMessages("tarteaucitron");
+				if(tarteaucitron_messages.length) {
+					tarteaucitronCustomText = {};
+					tarteaucitron_messages.forEach(function(message) {
+						if(parseInt(message.code.indexOf(":")) !== -1) {
+							let tarteaucitron_messages_group = message.code.split(":");
+							if(typeof tarteaucitronCustomText[tarteaucitron_messages_group[0]] == "undefined") {
+								tarteaucitronCustomText[tarteaucitron_messages_group[0]] = {};
+							}
+							tarteaucitronCustomText[tarteaucitron_messages_group[0]][tarteaucitron_messages_group[1]] = message.message;
+						} else {
+							tarteaucitronCustomText[message.code] = message.message;
+						}
+					});
+				}
+			</script>
+			<script type="text/javascript" src="./includes/javascript/tarteaucitron/tarteaucitron.js"></script>
+		<script type="text/javascript">
+	        tarteaucitron.init({
+	    	  "privacyUrl": "", /* Privacy policy url */
+	
+	    	  "hashtag": "#PhpMyBibli-COOKIECONSENT", /* Open the panel with this hashtag */
+	    	  "cookieName": "PhpMyBibli-COOKIECONSENT", /* Cookie name */
+	    
+	    	  "orientation": "bottom", /* Banner position (top - bottom - popup) */
+	       
+	          "groupServices": true, /* Group services by category */
+	                           
+	    	  "showAlertSmall": false, /* Show the small banner on bottom right */
+	    	  "cookieslist": false, /* Show the cookie list */
+				                           
+	          "closePopup": false, /* Show a close X on the banner */
+	
+	          "showIcon": false, /* Show cookie icon to manage cookies */
+	          "iconSrc": "./images/cookie.png", /* Optionnal: URL or base64 encoded image */
+	          "iconPosition": "BottomRight", /* BottomRight, BottomLeft, TopRight and TopLeft */
+	
+	    	  "adblocker": false, /* Show a Warning if an adblocker is detected */
+	                           
+	          "DenyAllCta" : true, /* Show the deny all button */
+	          "AcceptAllCta" : true, /* Show the accept all button when highPrivacy on */
+	          "highPrivacy": true, /* HIGHLY RECOMMANDED Disable auto consent */
+	                           
+	    	  "handleBrowserDNTRequest": false, /* If Do Not Track == 1, disallow all */
+	
+	    	  "removeCredit": true, /* Remove credit link */
+	    	  "moreInfoLink": true, /* Show more info link */
+	
+	          "useExternalCss": false, /* If false, the tarteaucitron.css file will be loaded */
+	          "useExternalJs": false, /* If false, the tarteaucitron.js file will be loaded */
+				
+	    	  //"cookieDomain": ".my-multisite-domaine.fr", /* Shared cookie for multisite */
+	                          
+	          "readmoreLink": "https://www.defenseurdesdroits.fr/fr/mentions-legales", /* Change the default readmore link */
+	
+	          "mandatory": true, /* Show a message about mandatory cookies */
+	        });
+ 
+        </script>
+		<script type="text/javascript">
+		tarteaucitron.services.pmbstatopac = {
+		  	"key": "pmbstatopac",
+			"type": "analytic",
+			"name": "PMB (Statistiques)",
+			"needConsent": true,
+			"cookies": [],
+			"uri": "https://juridique.defenseurdesdroits.fr/",
+			"readmoreLink": "https://www.defenseurdesdroits.fr/fr/mentions-legales", // If you want to change readmore link
+			"js": function () {
+			    "use strict";
+			    // When user allow cookie
+		  	},
+		  	"fallback": function () {
+		    	"use strict";
+		    	// when use deny cookie
+		  	}
+		};
+		</script>
+		<script type="text/javascript">
+        	(tarteaucitron.job = tarteaucitron.job || []).push("pmbstatopac");
+        </script>
+<script>
+var _paq = window._paq = window._paq || [];
+/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+_paq.push(['trackPageView']);
+_paq.push(['enableLinkTracking']);
+(function() {
+var u="https://matomo.defenseurdesdroits.fr/";
+_paq.push(['setTrackerUrl', u+'piwik.php']);
+_paq.push(['setSiteId', '8']);
+var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+g.async=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+})();
+</script>
+<script type="text/javascript">
+	        tarteaucitron.user.matomoId = 8;
+                tarteaucitron.user.matomoHost = 'https://matomo.defenseurdesdroits.fr/';
+	        (tarteaucitron.job = tarteaucitron.job || []).push('matomo');
+        </script>
+		</body>
+		</html>

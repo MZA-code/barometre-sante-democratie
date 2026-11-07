@@ -312,6 +312,20 @@ def main(argv=None) -> int:
                 " WHERE fact_type = 'declaration_onu' ORDER BY occurred_on DESC, id"
             )
         ],
+        "interpellations": [
+            {"date": d, **json.loads(a)}
+            for d, a in conn.execute(
+                "SELECT occurred_on, attributes FROM facts"
+                " WHERE fact_type = 'interpellations_journee' ORDER BY occurred_on, id"
+            )
+        ],
+        "defenseur_droits": [
+            {"date": d, "titre": t, **json.loads(a)}
+            for d, t, a in conn.execute(
+                "SELECT occurred_on, title, attributes FROM facts"
+                " WHERE fact_type = 'decision_ddd_manifestation' ORDER BY occurred_on DESC, id"
+            )
+        ],
         "mobilisations": [
             {"date": d, **json.loads(a)}
             for d, a in conn.execute(

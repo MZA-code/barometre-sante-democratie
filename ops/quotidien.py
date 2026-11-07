@@ -64,6 +64,8 @@ COLLECTES = (
     ("collect-datagouv", ()),
     # GDELT : hier, puis rattrapage de l'historique (≈ 2 min par jour, 5 jours par passage)
     ("collect-gdelt", ("GDELT_JOURS=5",)),
+    # Défenseur des droits : nouvelles fiches seulement (30 s entre deux requêtes, robots.txt)
+    ("collect-ddd", ()),
 )
 # Sources interrogées pour savoir si le réseau répond (une seule suffit).
 HOTES_TEST = ("echanges.dila.gouv.fr", "www.data.gouv.fr")
