@@ -307,11 +307,19 @@ def load_events(conn: sqlite3.Connection, indicator: Indicator) -> list[Event]:
 
 
 def data_end(conn: sqlite3.Connection) -> dt.date | None:
-    """Veille de la plus ancienne des dernières collectes des sources automatiques."""
+    """Veille de la plus ancienne des dernières mises à jour des sources automatiques.
+
+    Une source est à jour à la date de son dernier document collecté ou de sa dernière
+    vérification complète réussie (table source_checks), la plus récente des deux : une
+    source qui n'a rien publié de nouveau n'est pas en retard pour autant.
+    """
     placeholders = ",".join("?" * len(COVERAGE_SOURCES))
     rows = conn.execute(
-        f"SELECT source_id, max(fetched_at) AS last FROM raw_documents"
-        f" WHERE source_id IN ({placeholders}) GROUP BY source_id",
+        f"SELECT source_id, max(t) AS last FROM ("
+        f"  SELECT source_id, fetched_at AS t FROM raw_documents"
+        f"  UNION ALL SELECT source_id, checked_at FROM source_checks"
+        f") WHERE source_id IN ({placeholders})"
+        f" AND source_id IN (SELECT source_id FROM raw_documents) GROUP BY source_id",
         COVERAGE_SOURCES,
     ).fetchall()
     if len(rows) < len(COVERAGE_SOURCES):

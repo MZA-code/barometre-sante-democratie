@@ -41,6 +41,7 @@ def test_init_creates_all_tables(conn):
     assert table_names(conn) == {
         "sources",
         "raw_documents",
+        "source_checks",
         "facts",
         "fact_sources",
         "metrics",

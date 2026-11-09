@@ -88,6 +88,37 @@ def test_dila_max_limits_downloads(conn, tmp_path):
     assert len(dila.collect(conn, tmp_path / "raw", LEGI, opener=dila_web(), max_archives=1)) == 1
 
 
+def checks(conn, source_id):
+    rows = conn.execute("SELECT checked_at FROM source_checks WHERE source_id = ?", (source_id,))
+    return [r[0] for r in rows]
+
+
+def test_dila_records_a_check_even_without_new_archive(conn, tmp_path):
+    dila.collect(conn, tmp_path / "raw", LEGI, opener=dila_web())
+    dila.collect(conn, tmp_path / "raw", LEGI, opener=dila_web())
+    assert len(checks(conn, LEGI.source_id)) >= 1
+    assert (tmp_path / "raw" / LEGI.source_id / "controles.jsonl").exists()
+
+
+def test_dila_partial_run_records_no_check(conn, tmp_path):
+    dila.collect(conn, tmp_path / "raw", LEGI, opener=dila_web(), max_archives=1)
+    assert checks(conn, LEGI.source_id) == []
+
+
+def test_dila_failed_download_records_no_check(conn, tmp_path):
+    web = dila_web()
+    del web.pages[LEGI.parse_listing(LISTING)[-1].url]
+    with pytest.raises(urllib.error.HTTPError):
+        dila.collect(conn, tmp_path / "raw", LEGI, opener=web)
+    assert checks(conn, LEGI.source_id) == []
+
+
+def test_an_records_a_check_when_content_is_unchanged(conn, tmp_path):
+    an_opendata.collect(conn, tmp_path / "raw", (17,), opener=an_web())
+    an_opendata.collect(conn, tmp_path / "raw", (17,), opener=an_web())
+    assert len(checks(conn, an_opendata.SOURCE_ID)) >= 1
+
+
 def an_web(content=b"zip L17"):
     return FakeWeb(
         {

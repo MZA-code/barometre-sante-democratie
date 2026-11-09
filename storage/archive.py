@@ -11,6 +11,10 @@ le seul disque.
 
 Un même document (source, external_id) dont le contenu change est archivé comme une
 nouvelle version (nouveau sha256) ; une version déjà connue n'est jamais réécrite.
+
+Chaque vérification complète et réussie d'une source, même sans document nouveau, est
+journalisée dans data/raw/<source_id>/controles.jsonl (une ligne JSON par vérification)
+et dans la table `source_checks`, que `reindex` restaure depuis ces journaux.
 """
 
 from __future__ import annotations
@@ -30,6 +34,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_RAW_DIR = ROOT / "data" / "raw"
 META_SUFFIX = ".meta.json"
+CHECKS_FILE = "controles.jsonl"
 SAFE_ID = re.compile(r"[^A-Za-z0-9._-]")
 
 
@@ -188,12 +193,46 @@ def archived_urls(conn: sqlite3.Connection, source_id: str, external_id: str) ->
     return {row["url"] for row in rows}
 
 
+def record_check(conn: sqlite3.Connection, raw_dir: Path, source_id: str, checked_at: str) -> None:
+    """Note qu'une source a été entièrement vérifiée (disque puis base). Idempotent."""
+    known = conn.execute(
+        "SELECT 1 FROM source_checks WHERE source_id = ? AND checked_at = ?",
+        (source_id, checked_at),
+    ).fetchone()
+    if known:
+        return
+    log = raw_dir / source_id / CHECKS_FILE
+    log.parent.mkdir(parents=True, exist_ok=True)
+    with log.open("a", encoding="utf-8") as f:
+        f.write(json.dumps({"source_id": source_id, "checked_at": checked_at}) + "\n")
+    _insert_check(conn, source_id, checked_at)
+
+
+def _insert_check(conn: sqlite3.Connection, source_id: str, checked_at: str) -> None:
+    with conn:
+        conn.execute(
+            "INSERT OR IGNORE INTO source_checks (source_id, checked_at) VALUES (?, ?)",
+            (source_id, checked_at),
+        )
+
+
+def last_checks(conn: sqlite3.Connection) -> dict[str, str]:
+    rows = conn.execute("SELECT source_id, max(checked_at) FROM source_checks GROUP BY source_id")
+    return {source_id: last for source_id, last in rows}
+
+
 def reindex(conn: sqlite3.Connection, raw_dir: Path = DEFAULT_RAW_DIR) -> int:
     """Ajoute à `raw_documents` les documents présents sur disque mais absents de l'index.
 
     Parcours trié (date de collecte, chemin) pour que les identifiants attribués soient
     les mêmes à chaque reconstruction depuis une base vide. Retourne le nombre ajouté.
+    Restaure aussi `source_checks` depuis les journaux de vérification.
     """
+    for log in sorted(raw_dir.glob(f"*/{CHECKS_FILE}")):
+        for line in log.read_text("utf-8").splitlines():
+            if line.strip():
+                check = json.loads(line)
+                _insert_check(conn, check["source_id"], check["checked_at"])
     metas = [json.loads(p.read_text("utf-8")) for p in raw_dir.glob(f"*/*/*{META_SUFFIX}")]
     metas.sort(key=lambda m: (m["fetched_at"], m["path"]))
     added = 0

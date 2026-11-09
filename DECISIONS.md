@@ -962,3 +962,17 @@ métriques de contexte (aucune ne change la métrique notée de la grille v0) :
   4. les révisions d'une édition à l'autre (dernière édition retenue).
   En l'état, intégré à l'indice, il le ferait baisser : 2024 est l'année la plus basse de la
   série depuis 2017.
+
+## 2026-11-09 — « Données au » : une source vérifiée sans nouveauté est à jour
+
+- **Constat** : la fin des données était la veille de la plus ancienne *dernière collecte*
+  (document nouveau) parmi l'Assemblée nationale et les fonds DILA LEGI, JORF et CONSTIT.
+  Une source qui ne publie rien un jour donné (fréquent pour CONSTIT et l'AN) faisait
+  reculer la date affichée alors que le passage quotidien l'avait bien vérifiée
+  (« données au 4 novembre » le 8, « au 7 » le 9).
+- **Choix** : chaque vérification complète et réussie est enregistrée (`source_checks`,
+  journal `data/raw/<source>/controles.jsonl` restauré par `reindex`). Une source est à jour
+  à la date de son dernier document ou de sa dernière vérification, la plus récente des deux.
+  Une collecte DILA interrompue ou limitée par `--max` n'est pas une vérification.
+- **Limite** : la DILA publie le Journal officiel du jour vers 21 h ; au passage de 6 h 30,
+  les données vont donc au mieux jusqu'à la veille.

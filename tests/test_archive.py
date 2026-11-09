@@ -2,7 +2,16 @@ import json
 
 import pytest
 
-from storage.archive import is_archived, reindex, sha256_file, store, verify
+from storage.archive import (
+    CHECKS_FILE,
+    is_archived,
+    last_checks,
+    record_check,
+    reindex,
+    sha256_file,
+    store,
+    verify,
+)
 from storage.db import connect, init_db
 
 
@@ -86,3 +95,21 @@ def test_verify_detects_tampering(conn, tmp_path):
     doc.path.chmod(0o644)
     doc.path.write_bytes(b"modifie")
     assert len(verify(conn, raw)) == 1
+
+
+def test_record_check_is_logged_on_disk_and_restored_by_reindex(tmp_path):
+    raw = tmp_path / "raw"
+    with connect(tmp_path / "a.sqlite") as conn:
+        init_db(conn)
+        record_check(conn, raw, "dila_legi", "2026-11-09T06:31:00Z")
+        record_check(conn, raw, "dila_legi", "2026-11-09T06:31:00Z")  # rejoué : ignoré
+        record_check(conn, raw, "dila_legi", "2026-11-10T06:31:00Z")
+        assert last_checks(conn) == {"dila_legi": "2026-11-10T06:31:00Z"}
+    lines = (raw / "dila_legi" / CHECKS_FILE).read_text("utf-8").splitlines()
+    assert len(lines) == 2
+
+    with connect(tmp_path / "fresh.sqlite") as fresh:
+        init_db(fresh)
+        reindex(fresh, raw)
+        rows = fresh.execute("SELECT checked_at FROM source_checks ORDER BY 1").fetchall()
+        assert [r[0] for r in rows] == ["2026-11-09T06:31:00Z", "2026-11-10T06:31:00Z"]

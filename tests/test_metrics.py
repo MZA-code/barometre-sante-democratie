@@ -6,7 +6,7 @@ import pytest
 from extract.common import FactDraft, write_facts
 from scoring import metrics
 from scoring.grid import load_grid
-from storage.archive import store
+from storage.archive import record_check, store
 from storage.db import connect, fingerprint, init_db
 
 D = dt.date
@@ -57,6 +57,19 @@ def values_on(rows, day, window="glissante_365j"):
 
 
 def test_data_end_is_eve_of_oldest_last_collection(conn):
+    assert metrics.data_end(conn) == D(1960, 12, 31)
+
+
+def test_data_end_counts_checks_without_new_document(conn, tmp_path):
+    for source in metrics.COVERAGE_SOURCES:
+        record_check(conn, tmp_path / "raw", source, "1961-03-10T06:30:00Z")
+    record_check(conn, tmp_path / "raw", "dila_constit", "1961-02-01T06:30:00Z")
+    assert metrics.data_end(conn) == D(1961, 3, 9)
+
+
+def test_data_end_never_goes_back_with_an_old_check(conn, tmp_path):
+    for source in metrics.COVERAGE_SOURCES:
+        record_check(conn, tmp_path / "raw", source, "1960-06-01T06:30:00Z")
     assert metrics.data_end(conn) == D(1960, 12, 31)
 
 

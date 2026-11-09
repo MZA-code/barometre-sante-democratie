@@ -2,7 +2,7 @@
 
 Chaque étape est une cible du Makefile, lancée séparément : une source en panne
 n'empêche ni les autres collectes ni la reconstruction (la fin des données est alors
-simplement bornée par la source la moins à jour, voir scoring/metrics.py:data_end).
+simplement bornée par la source vérifiée le moins récemment, voir scoring/metrics.py:data_end).
 Le dimanche, l'empreinte de toute l'archive brute est recontrôlée (`verify-raw`).
 
 Sorties :

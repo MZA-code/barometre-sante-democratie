@@ -5,7 +5,8 @@
 -- sont propres à SQLite et devront être réécrits en PL/pgSQL lors d'une migration.
 --
 -- Deux familles de tables :
---   * archive : sources, raw_documents — jamais modifiées, seulement complétées ;
+--   * archive : sources, raw_documents, source_checks — jamais modifiées, seulement
+--     complétées ;
 --   * dérivées : facts, fact_sources, metrics, scores, score_facts — vidées et
 --     recalculées intégralement par `make rebuild`.
 
@@ -25,6 +26,16 @@ CREATE TABLE IF NOT EXISTS raw_documents (
   sha256 TEXT NOT NULL CHECK (length(sha256) = 64),
   path TEXT NOT NULL,             -- chemin relatif dans data/raw/
   UNIQUE (source_id, external_id, sha256)
+);
+
+-- Vérifications complètes et réussies d'une source, qu'elles aient apporté un document
+-- nouveau ou non (une source qui ne publie rien un jour donné est quand même à jour).
+-- Bornent la fin des données : scoring/metrics.py:data_end. Journalisées aussi sur disque
+-- (data/raw/<source_id>/controles.jsonl) et restaurées par `reindex`.
+CREATE TABLE IF NOT EXISTS source_checks (
+  source_id TEXT NOT NULL REFERENCES sources(id),
+  checked_at TEXT NOT NULL,       -- ISO 8601
+  PRIMARY KEY (source_id, checked_at)
 );
 
 CREATE TABLE IF NOT EXISTS facts (

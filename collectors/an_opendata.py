@@ -27,7 +27,12 @@ import urllib.error
 from pathlib import Path
 
 from collectors.http import Opener, now_iso, urlopen
-from storage.archive import DEFAULT_RAW_DIR, StoredDocument, store_if_content_changed
+from storage.archive import (
+    DEFAULT_RAW_DIR,
+    StoredDocument,
+    record_check,
+    store_if_content_changed,
+)
 from storage.db import DEFAULT_DB_PATH, connect, init_db
 
 SOURCE_ID = "an_opendata"
@@ -59,6 +64,7 @@ def collect(
     opener: Opener = urlopen,
 ) -> dict[int, StoredDocument | None]:
     """Archive le fichier de chaque législature. None si la source ne le publie pas."""
+    checked_at = now_iso()
     results: dict[int, StoredDocument | None] = {}
     for legislature in legislatures:
         url = url_for(legislature)
@@ -84,6 +90,7 @@ def collect(
         state = "nouvelle version" if doc.created else "contenu inchangé"
         print(f"[an_opendata] L{legislature} : {state} ({doc.sha256[:12]})")
         results[legislature] = doc
+    record_check(conn, raw_dir, SOURCE_ID, checked_at)
     return results
 
 

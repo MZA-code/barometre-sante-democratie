@@ -31,7 +31,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from collectors.http import Opener, iter_chunks, now_iso, urlopen
-from storage.archive import DEFAULT_RAW_DIR, is_archived, store
+from storage.archive import DEFAULT_RAW_DIR, is_archived, record_check, store
 from storage.db import DEFAULT_DB_PATH, connect, init_db
 
 
@@ -122,7 +122,9 @@ def collect(
     """Télécharge et archive les archives manquantes. Retourne leurs noms."""
     with opener(fund.base_url) as response:
         listing = response.read().decode("utf-8", errors="replace")
-    todo = plan(conn, fund, fund.parse_listing(listing))[:max_archives]
+    checked_at = now_iso()
+    pending = plan(conn, fund, fund.parse_listing(listing))
+    todo = pending[:max_archives]
 
     collected = []
     for archive in todo:
@@ -139,6 +141,8 @@ def collect(
                 suffix=".tar.gz",
             )
         collected.append(archive.name)
+    if len(todo) == len(pending):  # rien ne reste à télécharger : la source est à jour
+        record_check(conn, raw_dir, fund.source_id, checked_at)
     return collected
 
 
