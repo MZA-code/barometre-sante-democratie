@@ -24,3 +24,4 @@ front/publication/web/
 config/deploiement.local
 config/deploiement.intermediaires.pem
 .outils/
+.openidea/
