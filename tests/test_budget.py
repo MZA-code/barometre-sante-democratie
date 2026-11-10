@@ -1,3 +1,4 @@
+# ruff: noqa: E501  (phrases réelles du Journal officiel : lignes longues voulues)
 """D2.4 : crédits votés annulés par décret (Journal officiel)."""
 
 import datetime as dt
