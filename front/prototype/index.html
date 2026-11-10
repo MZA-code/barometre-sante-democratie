@@ -73,15 +73,24 @@
     a { text-underline-offset: 3px; }
     main h2[id] { scroll-margin-top: 4.5rem; }
     @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
-    .toc-link { display: block; border-left: 2px solid transparent; padding: .15rem 0 .15rem .75rem; color: var(--ink-2); line-height: 1.3; }
-    #toc-panel .toc-link { padding-top: .4rem; padding-bottom: .4rem; }
+    /* Sommaire : hiérarchie par la typographie et des filets, sans couleur (esprit revue). */
+    .toc-group { margin-top: 1.1rem; padding-top: .8rem; border-top: 1px solid var(--rule); }
+    .toc-group-titre { display: flex; align-items: baseline; gap: .5rem; font-size: .75rem; font-weight: 600;
+      letter-spacing: .06em; text-transform: uppercase; color: var(--ink); line-height: 1.35; }
+    .toc-group-titre .code { font-variant-numeric: tabular-nums; min-width: 1.6rem; }
+    .toc-group-note { display: block; margin: .15rem 0 0 2.1rem; font-size: .75rem; font-style: italic;
+      color: var(--muted); letter-spacing: 0; text-transform: none; font-weight: 400; }
+    .toc-items { margin: .45rem 0 0 .8rem; border-left: 1px solid var(--rule); }
+    .toc-link { display: flex; gap: .55rem; align-items: baseline; margin-left: -1px; border-left: 2px solid transparent;
+      padding: .28rem .25rem .28rem .8rem; color: var(--ink-2); line-height: 1.35; font-size: .875rem; }
+    .toc-link .code { flex: none; min-width: 2.4rem; font-size: .75rem; font-variant-numeric: tabular-nums; color: var(--muted); }
+    .toc-link.toc-sub { padding-left: calc(.8rem + 2.4rem + .55rem); font-size: .8125rem; padding-top: .18rem; padding-bottom: .18rem; }
+    .toc-link .code:has(+ span) { white-space: nowrap; }
+    #toc-panel .toc-link { padding-top: .45rem; padding-bottom: .45rem; }
     .toc-link:hover { color: var(--ink); }
-    .toc-link[aria-current] { border-left-color: var(--series-1); color: var(--ink); font-weight: 600; }
-    .toc-group { margin-top: .7rem; padding-left: .75rem; font-size: .6875rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-    .toc-link { display: flex; gap: .5rem; align-items: baseline; }
-    .toc-link > i, .toc-group > i { flex: none; width: 1.1em; text-align: center; color: var(--muted); }
-    .toc-group > i { margin-right: .4rem; }
-    .toc-link[aria-current] > i { color: var(--series-1); }
+    .toc-link:hover .code { color: var(--ink-2); }
+    .toc-link[aria-current] { border-left-color: var(--ink); color: var(--ink); font-weight: 600; }
+    .toc-link[aria-current] .code { color: var(--ink); }
     /* Icône devant les titres : caractère Font Awesome posé par le script (data-ic), en pseudo-
        élément pour survivre aux textes de titre réécrits par le script. */
     h2[data-ic]::before { content: attr(data-ic); content: attr(data-ic) / ""; font-family: "Font Awesome 6 Free"; font-weight: 900; font-size: .62em; color: var(--series-1); margin-right: .55em; vertical-align: .18em; }
@@ -123,7 +132,7 @@
     </div>
   </div>
 
-  <div class="mx-auto max-w-[120rem] px-4 sm:px-6 lg:px-10 lg:grid lg:grid-cols-[16rem,minmax(0,1fr)] lg:gap-10">
+  <div class="mx-auto max-w-[120rem] px-4 sm:px-6 lg:px-10 lg:grid lg:grid-cols-[19rem,minmax(0,1fr)] lg:gap-10">
   <nav aria-label="Sommaire" class="hidden lg:block">
     <div id="toc-side" class="sticky top-0 max-h-screen overflow-y-auto py-6 pr-2 text-sm" style="scrollbar-width: thin"></div>
   </nav>
@@ -915,7 +924,7 @@
   </div>
 
   <footer class="border-t border-rule">
-    <div id="footer" class="mx-auto max-w-[120rem] px-4 sm:px-6 lg:px-10 py-6 text-xs text-muted lg:pl-[calc(16rem+2.5rem+2.5rem)]"></div>
+    <div id="footer" class="mx-auto max-w-[120rem] px-4 sm:px-6 lg:px-10 py-6 text-xs text-muted lg:pl-[calc(19rem+2.5rem+2.5rem)]"></div>
   </footer>
 
   <div id="tip" class="tooltip" role="status" aria-live="polite"></div>
@@ -2579,16 +2588,33 @@
       return c && c !== 'none' && c !== 'normal' ? c.replace(/^["']|["']$/g, '') : '';
     };
     const tocLinks = [];
+    // Rubrique « D2 · Place du Parlement » -> code « D2 » + nom ; « (non noté) » -> note à part.
+    // Entrée « D2.1 · L'essentiel » -> code « D2.1 » + libellé ; sans code, libellé seul.
+    const CODE_RE = /^(D\d(?:\.\d)?\*?(?:–D\d(?:\.\d)?\*?)?)\s*·\s*(.*)$/;
+    const decoupe = texte => { const m = CODE_RE.exec(texte); return m ? [m[1], m[2]] : ['', texte]; };
     const buildToc = host => {
-      for (const [group, ic, items] of TOC) {
-        const h = document.createElement('div'); h.className = 'toc-group'; h.append(icone(ic), group); host.appendChild(h);
-        for (const [id, label, icl] of items) {
-          const a = document.createElement('a'); a.href = `#${id}`; a.className = 'toc-link'; a.dataset.target = id;
-          const t = document.createElement('span'); t.textContent = label; a.append(icone(icl), t);
-          host.appendChild(a); tocLinks.push(a);
+      for (const [group, , items] of TOC) {
+        const g = document.createElement('div'); g.className = 'toc-group';
+        const note = /\(non noté\)/.test(group);
+        const [code, nom] = decoupe(group.replace(/\s*\(non noté\)/, ''));
+        const titre = document.createElement('div'); titre.className = 'toc-group-titre';
+        const c = document.createElement('span'); c.className = 'code'; c.textContent = code;
+        const n = document.createElement('span'); n.textContent = nom;
+        titre.append(...(code ? [c, n] : [n])); g.appendChild(titre);
+        if (note) { const sn = document.createElement('span'); sn.className = 'toc-group-note'; sn.textContent = 'données de contexte, non notées'; if (!code) sn.style.marginLeft = '0'; g.appendChild(sn); }
+        const liste = document.createElement('div'); liste.className = 'toc-items';
+        const codes = items.some(([, l]) => CODE_RE.test(l));
+        for (const [id, label] of items) {
+          const a = document.createElement('a'); a.href = `#${id}`; a.className = 'toc-link'; a.dataset.target = id; a.dataset.label = label;
+          const [cl, texte] = decoupe(label);
+          const t = document.createElement('span'); t.textContent = texte;
+          if (cl) { const sc = document.createElement('span'); sc.className = 'code'; sc.textContent = cl; a.append(sc, t); } else a.append(t);
+          if (!cl && codes) a.classList.add('toc-sub');  // sous-partie de l'entrée codée qui précède
+          liste.appendChild(a); tocLinks.push(a);
         }
+        g.appendChild(liste); host.appendChild(g);
       }
-      host.firstChild.style.marginTop = '0';
+      host.firstChild.style.marginTop = '0'; host.firstChild.style.borderTop = '0'; host.firstChild.style.paddingTop = '0';
     };
     const side = document.getElementById('toc-side'), panel = document.getElementById('toc-panel'), toggle = document.getElementById('toc-toggle');
     buildToc(side); buildToc(panel);
@@ -2615,7 +2641,7 @@
       let label = '';
       for (const a of tocLinks) {
         const on = a.dataset.target === active.id;
-        if (on) { a.setAttribute('aria-current', 'location'); label = label || a.textContent; } else a.removeAttribute('aria-current');
+        if (on) { a.setAttribute('aria-current', 'location'); label = label || a.dataset.label; } else a.removeAttribute('aria-current');
       }
       document.getElementById('toc-current').textContent = label;
       const link = side.querySelector('[aria-current]');
