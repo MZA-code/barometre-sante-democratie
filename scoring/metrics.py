@@ -121,6 +121,9 @@ DAILY_METRICS = {
         "coverage",
         lambda e: e.fact_type == "periode_regime_exception" and e.metropole,
     ),
+    # D2.3 : pétitions citoyennes de 500 000 signatures ou plus, et celles classées sans examen.
+    "nb_petitions_500k": ("count", lambda e: e.fact_type.startswith("petition_500k_")),
+    "nb_petitions_500k_classees": ("count", lambda e: e.fact_type == "petition_500k_classee"),
     # D7 : faits de presse validés sur GitHub, constats d'autorités, et leur somme.
     "nb_faits_presse_valides": ("count", lambda e: e.fact_type == "fait_presse_valide"),
     "nb_constats_institutionnels": ("count", lambda e: e.fact_type == "constat_institutionnel"),

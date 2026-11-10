@@ -356,6 +356,24 @@
     </section>
 
     <!-- 5 bis. Régimes d'exception -->
+    <!-- D2.3. Pétitions citoyennes -->
+    <section id="d2-3" class="py-10 border-b border-rule" aria-labelledby="t-d2-3">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D2 · Place du Parlement</p>
+      <h2 id="t-d2-3" class="mt-2 font-serif text-2xl font-semibold">Les pétitions citoyennes de plus de 500&nbsp;000 signatures</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Le droit de pétition est l'un des rares moyens d'intervention directe des citoyens entre
+        deux élections. Au-delà de 500&nbsp;000 signatures, l'Assemblée nationale peut organiser un
+        débat en séance&nbsp;; mais la commission saisie peut aussi classer la pétition sans
+        l'examiner. On relève ici ce que l'Assemblée a fait de chaque pétition qui a franchi ce
+        seuil, <strong class="text-ink">quel que soit son sujet</strong>&nbsp;: le titre est cité tel
+        quel, il n'entre dans aucun calcul.
+      </p>
+      <div class="mt-6 overflow-x-auto rounded-lg border border-rule bg-surface">
+        <table class="w-full text-left text-sm" id="petitions-table"></table>
+      </div>
+      <p id="petitions-resume" class="mt-4 max-w-3xl text-sm text-ink2"></p>
+    </section>
+
     <section id="d3" class="py-10 border-b border-rule" aria-labelledby="t-d3">
       <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D3 · Contre-pouvoirs et État de droit</p>
       <h2 id="t-d3" class="mt-2 font-serif text-2xl font-semibold">Les régimes d'exception depuis 1958</h2>
@@ -1347,6 +1365,7 @@
       rang_rsf: v => ordinal(Math.round(v)),
       nb_journalistes_mesures: v => `${num(v)} journaliste${v > 1 ? 's' : ''}`,
       nb_atteintes_pratique: v => `${num(v)} fait${v > 1 ? 's' : ''}`,
+      nb_petitions_500k_classees: v => `${num(v)} pétition${v > 1 ? 's' : ''}`,
       personnes_surveillees: v => num(Math.round(v)),
       jours_exception: v => `${num(v)} jour${v > 1 ? 's' : ''}`,
       nb_dissolutions: v => `${num(v)} dissolution${v > 1 ? 's' : ''}`,
@@ -1365,11 +1384,12 @@
       rang_rsf: "rang de la France au classement mondial de la liberté de la presse (RSF)",
       nb_journalistes_mesures: "placés en garde à vue, interpellés, poursuivis ou condamnés (relevé pilote, non exhaustif)",
       nb_atteintes_pratique: "d'atteinte aux libertés par une autorité, constatés ou recoupés par deux groupes de presse et validés",
+      nb_petitions_500k_classees: "de 500 000 signatures ou plus classées par la commission sans examen",
       personnes_surveillees: "personnes surveillées par des techniques de renseignement dans l'année (CNCTR)",
       nb_dissolutions: "d'associations ou de groupements par décret",
     };
-    const ANCHOR = { 'D2.contournement_parlement': '#t-evolution', 'D2.procedure_acceleree': '#d2-2', 'D3.regimes_exception': '#d3', 'D3.lois_censurees': '#d3-2', 'D4.interdictions_manifester_juge': '#d4-2', 'D6.traitements_malgre_reserves': '#d6-2', 'D5.temps_parole_executif': '#d5-1', 'D1.regles_electorales_avant_scrutin': '#d1', 'D1.scrutins_reportes': '#d1-table', 'D5.classement_rsf': '#d5-3', 'D5.journalistes_inquietes': '#d5-2', 'D6.techniques_renseignement': '#d6-1', 'D4.dissolutions_administratives': '#d4', 'D7.libertes_en_pratique': '#d7' };
-    const CODE = { 'D2.contournement_parlement': 'D2.1', 'D2.procedure_acceleree': 'D2.2', 'D3.regimes_exception': 'D3.1', 'D3.lois_censurees': 'D3.2', 'D4.interdictions_manifester_juge': 'D4.2*', 'D6.traitements_malgre_reserves': 'D6.2', 'D5.temps_parole_executif': 'D5.1', 'D1.regles_electorales_avant_scrutin': 'D1.1', 'D1.scrutins_reportes': 'D1.2', 'D5.classement_rsf': 'D5.3', 'D5.journalistes_inquietes': 'D5.2', 'D6.techniques_renseignement': 'D6.1', 'D4.dissolutions_administratives': 'D4.1', 'D7.libertes_en_pratique': 'D7' };
+    const ANCHOR = { 'D2.contournement_parlement': '#t-evolution', 'D2.procedure_acceleree': '#d2-2', 'D3.regimes_exception': '#d3', 'D3.lois_censurees': '#d3-2', 'D4.interdictions_manifester_juge': '#d4-2', 'D6.traitements_malgre_reserves': '#d6-2', 'D5.temps_parole_executif': '#d5-1', 'D1.regles_electorales_avant_scrutin': '#d1', 'D1.scrutins_reportes': '#d1-table', 'D5.classement_rsf': '#d5-3', 'D5.journalistes_inquietes': '#d5-2', 'D6.techniques_renseignement': '#d6-1', 'D4.dissolutions_administratives': '#d4', 'D7.libertes_en_pratique': '#d7', 'D2.petitions_classees': '#d2-3' };
+    const CODE = { 'D2.contournement_parlement': 'D2.1', 'D2.procedure_acceleree': 'D2.2', 'D3.regimes_exception': 'D3.1', 'D3.lois_censurees': 'D3.2', 'D4.interdictions_manifester_juge': 'D4.2*', 'D6.traitements_malgre_reserves': 'D6.2', 'D5.temps_parole_executif': 'D5.1', 'D1.regles_electorales_avant_scrutin': 'D1.1', 'D1.scrutins_reportes': 'D1.2', 'D5.classement_rsf': 'D5.3', 'D5.journalistes_inquietes': 'D5.2', 'D6.techniques_renseignement': 'D6.1', 'D4.dissolutions_administratives': 'D4.1', 'D7.libertes_en_pratique': 'D7', 'D2.petitions_classees': 'D2.3' };
     function drawDims() {
       document.getElementById('t-dims').textContent = `${D.dimensions.length} indicateurs suivis`;
       const host = document.getElementById('dims');
@@ -1719,6 +1739,32 @@
           const td3 = tr.insertCell(); td3.className = 'py-1.5 px-3 border-b border-rule align-top text-ink2'; td3.textContent = d.formules.map(f => LIB[f] || f).join(', ') + (d.confiance === 'faible' ? ' — rapprochement à vérifier, non compté' : '');
         }
       }
+    }
+
+    // ---- D2.3 : pétitions citoyennes --------------------------------------------
+    function drawPetitions() {
+      const P = D.petitions || [], tbl = document.getElementById('petitions-table');
+      if (!tbl || tbl.rows.length) return;
+      const SORT = { classee: 'Classée par la commission sans examen', examinee: 'Acceptée pour examen (rapport, débat)', en_attente: 'En attente de décision' };
+      const head = tbl.createTHead().insertRow();
+      for (const h of ['Pétition', 'Signatures', 'Sort', 'Commission']) {
+        const th = document.createElement('th'); th.className = 'py-2 px-3 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th);
+      }
+      const body = tbl.createTBody();
+      for (const p of P) {
+        const tr = body.insertRow();
+        const c0 = tr.insertCell(); c0.className = 'py-1.5 px-3 border-b border-rule align-top';
+        const a = document.createElement('a'); a.href = p.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'hover:underline'; a.textContent = p.titre; c0.appendChild(a);
+        const c1 = tr.insertCell(); c1.className = 'py-1.5 px-3 border-b border-rule align-top tabnum whitespace-nowrap'; c1.textContent = num(p.signatures);
+        const c2 = tr.insertCell(); c2.className = 'py-1.5 px-3 border-b border-rule align-top';
+        c2.textContent = SORT[p.sort] + (p.date_decision ? ` (${new Date(p.date_decision + 'T12:00:00').toLocaleDateString('fr-FR')})` : '');
+        const c3 = tr.insertCell(); c3.className = 'py-1.5 px-3 border-b border-rule align-top text-ink2'; c3.textContent = p.commission || '—';
+      }
+      if (!P.length) { const tr = body.insertRow(); const c = tr.insertCell(); c.colSpan = 4; c.className = 'py-3 px-3 text-ink2'; c.textContent = 'Collecte en cours.'; }
+      const cl = P.filter(p => p.sort === 'classee').length;
+      document.getElementById('petitions-resume').textContent = P.length
+        ? `${num(P.length)} pétition${P.length > 1 ? 's ont' : ' a'} dépassé 500 000 signatures depuis l'ouverture de la plateforme (octobre 2020) ; ${num(cl)} ${cl > 1 ? 'ont été classées' : 'a été classée'} par la commission sans examen. Petits effectifs : chaque cas pèse lourd dans la série.`
+        : '';
     }
 
     // ---- D7 : libertés en pratique ---------------------------------------------
@@ -2445,7 +2491,7 @@
     const TOC = [
       ["Vue d'ensemble", 'gauge-high', [['t-definition', "Ce qu'est une démocratie", 'book-open-reader'], ['t-indice', "Le baromètre aujourd'hui", 'gauge-high'], ['t-dims', 'Indicateurs suivis', 'list-check']]],
       ['D1 · Élections et alternance', 'check-to-slot', [['t-d1', 'D1.1–D1.2 · Règles électorales et reports', 'check-to-slot']]],
-      ['D2 · Place du Parlement', 'landmark', [['titre', "D2.1 · L'essentiel", 'landmark'], ['t-evolution', 'Depuis 1959', 'chart-line'], ['t-composantes', 'De quoi est fait le chiffre', 'puzzle-piece'], ['t-leg', 'Législature par législature', 'table-columns'], ['t-493', 'Les recours au 49.3', 'forward'], ['t-d2-2', 'D2.2 · Procédure accélérée', 'bolt']]],
+      ['D2 · Place du Parlement', 'landmark', [['titre', "D2.1 · L'essentiel", 'landmark'], ['t-evolution', 'Depuis 1959', 'chart-line'], ['t-composantes', 'De quoi est fait le chiffre', 'puzzle-piece'], ['t-leg', 'Législature par législature', 'table-columns'], ['t-493', 'Les recours au 49.3', 'forward'], ['t-d2-2', 'D2.2 · Procédure accélérée', 'bolt'], ['t-d2-3', 'D2.3 · Pétitions citoyennes', 'file-signature']]],
       ["D3 · Contre-pouvoirs et État de droit", 'gavel', [['t-d3', "D3.1 · Régimes d'exception", 'triangle-exclamation'], ['t-d3-2', 'D3.2 · Lois censurées', 'gavel']]],
       ['D4 · Libertés publiques', 'people-group', [['t-d4-2', 'D4.2* · Interdictions de manifester', 'ban'], ['t-d4', 'D4.1 · Dissolutions', 'users-slash']]],
       ['Regards extérieurs (non noté)', 'binoculars', [['t-onu', "Déclarations de l'ONU", 'globe'], ['t-presse', 'Presse étrangère', 'newspaper']]],
@@ -2513,7 +2559,7 @@
     let spyRaf; addEventListener('scroll', () => { cancelAnimationFrame(spyRaf); spyRaf = requestAnimationFrame(spy); }, { passive: true });
 
     // ---- Rendu -------------------------------------------------------------
-    const render = () => { drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
+    const render = () => { drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawPetitions(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
     render(); spy();
     let raf; addEventListener('resize', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { render(); current = null; spy(); }); });
   })();

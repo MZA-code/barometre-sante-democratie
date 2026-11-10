@@ -102,3 +102,8 @@ sources:
     name: Liste des communes françaises avec leur population (API Découpage administratif, données INSEE)
     url: https://geo.api.gouv.fr/decoupage-administratif/communes
     licence: Licence Ouverte Etalab 2.0
+
+  - id: petitions_an
+    name: Assemblée nationale — plateforme des pétitions (titre, signatures, statut et date de classement de chaque pétition suivie)
+    url: https://petitions.assemblee-nationale.fr/
+    licence: Informations publiques de l'Assemblée nationale ; découverte des pétitions par le jeu data.gouv.fr « Pétitions de l'Assemblée Nationale » (Licence Ouverte 2.0)

@@ -106,3 +106,50 @@ def test_hors_indice_tant_que_la_collecte_du_passe_n_est_pas_remontee():
     assert raison == (
         "reprise depuis juillet 2024 en cours de collecte (remontée au 7 novembre 2026)"
     )
+
+
+def test_export_petitions():
+    lignes = [
+        (
+            "petition_500k_classee",
+            json.dumps(
+                {
+                    "identifiant": 5158,
+                    "titre": "Non à la loi Yadan",
+                    "signatures": 707957,
+                    "statut": "classee",
+                    "date_decision": "2026-04-15",
+                    "date_seuil": "2026-02-18",
+                    "commission": "Commission des lois",
+                    "url": "u1",
+                }
+            ),
+        ),
+        (
+            "petition_500k_examinee",
+            json.dumps(
+                {
+                    "identifiant": 3014,
+                    "titre": "Non à la loi Duplomb",
+                    "signatures": 2131368,
+                    "statut": "examinee",
+                    "date_decision": None,
+                    "date_seuil": "2025-07-10",
+                    "commission": "Commission des affaires économiques",
+                    "url": "u2",
+                }
+            ),
+        ),
+    ]
+    out = export_data.petitions_500k(lignes)
+    assert [p["identifiant"] for p in out] == [3014, 5158]  # par signatures décroissantes
+    assert out[1] == {
+        "identifiant": 5158,
+        "titre": "Non à la loi Yadan",
+        "signatures": 707957,
+        "sort": "classee",
+        "date_decision": "2026-04-15",
+        "date_seuil": "2026-02-18",
+        "commission": "Commission des lois",
+        "url": "u1",
+    }

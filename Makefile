@@ -9,7 +9,7 @@ GRID ?= config/grid.v0.yaml
 AN_LEGISLATURES ?= 17 16 15 14
 RUN  := uv run --frozen
 
-.PHONY: css help install init collect collect-seed collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-an collect-datagouv collect-gdelt collect-gdelt-trad collect-titres collect-rss collect-decisions publier-issues collect-ddd collect-rapports verify-raw extract metrics score \
+.PHONY: css help install init collect collect-seed collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-an collect-datagouv collect-gdelt collect-gdelt-trad collect-titres collect-rss collect-petitions collect-decisions publier-issues collect-ddd collect-rapports verify-raw extract metrics score \
 	rebuild reproducible controle echantillon prototype prototype-data publication publication-web deployer nouveautes quotidien planifier deplanifier etat lint test
 
 help:
@@ -25,7 +25,7 @@ install:
 init:
 	$(RUN) python -m storage.db init --db $(DB)
 
-collect: collect-seed collect-an collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-datagouv collect-gdelt collect-gdelt-trad collect-titres collect-rss collect-ddd collect-rapports
+collect: collect-seed collect-an collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-datagouv collect-gdelt collect-gdelt-trad collect-titres collect-rss collect-petitions collect-ddd collect-rapports
 
 collect-seed: init
 	$(RUN) python -m collectors.seed --db $(DB) --raw-dir $(RAW)
@@ -68,6 +68,10 @@ publier-issues: init
 # D7 : flux RSS de la presse française (et liste des communes, archivée une fois).
 collect-rss: init
 	$(RUN) python -m collectors.rss --db $(DB) --raw-dir $(RAW)
+
+# D2.3 : pétitions de l'Assemblée nationale (découverte par data.gouv, pages relues).
+collect-petitions: init
+	$(RUN) python -m collectors.petitions --db $(DB) --raw-dir $(RAW)
 
 collect-gdelt: init
 	$(RUN) python -m collectors.gdelt --db $(DB) --raw-dir $(RAW) $(if $(GDELT_JOURS),--max-jours $(GDELT_JOURS))

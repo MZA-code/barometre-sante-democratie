@@ -32,6 +32,7 @@ DIMENSIONS = (
     "D1.scrutins_reportes",
     "D2.contournement_parlement",
     "D2.procedure_acceleree",
+    "D2.petitions_classees",
     "D3.regimes_exception",
     "D3.lois_censurees",
     "D4.interdictions_manifester_juge",
@@ -142,6 +143,27 @@ def bloc_d7(conn, raw_dir: Path) -> tuple[dict, str | None]:
         "issues_url": f"https://github.com/{DEPOT_PUBLIC}/issues?q=label%3Ad7",
     }
     return bloc, hors_indice_d7(etat)
+
+
+def petitions_500k(lignes) -> list[dict]:
+    """D2.3 : pétitions de 500 000 signatures ou plus et leur sort, par signatures
+    décroissantes. Ni auteur ni texte : titre, chiffres, dates, commission, lien."""
+    out = []
+    for fact_type, attrs in lignes:
+        a = json.loads(attrs)
+        out.append(
+            {
+                "identifiant": a["identifiant"],
+                "titre": a["titre"],
+                "signatures": a["signatures"],
+                "sort": fact_type.removeprefix("petition_500k_"),
+                "date_decision": a["date_decision"],
+                "date_seuil": a["date_seuil"],
+                "commission": a["commission"],
+                "url": a["url"],
+            }
+        )
+    return sorted(out, key=lambda p: -(p["signatures"] or 0))
 
 
 def metric_rows(conn, window_id, period_ends=None):
@@ -306,6 +328,12 @@ def main(argv=None) -> int:
         "ordonnances_fenetre": ordonnances,
         "dimensions": dimensions,
         "d7": d7,
+        "petitions": petitions_500k(
+            conn.execute(
+                "SELECT fact_type, attributes FROM facts"
+                " WHERE indicator_id = 'D2.petitions_classees'"
+            ).fetchall()
+        ),
         "periodes_exception": periodes,
         "dissolutions": dissolutions,
         "censures": censures,

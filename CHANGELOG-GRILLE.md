@@ -106,6 +106,12 @@ ci-dessous et un recalcul complet de l'historique (`make rebuild GRID=config/gri
   comptage : bloc `rss` (mots-clés, autorités, contextes, communes de 5 000 habitants ou plus,
   regroupement à deux jours) pour le repérage dans les flux RSS de la presse.
 
+- Indicateur **D2.3 — Pétitions citoyennes classées sans examen** (`D2.petitions_classees`),
+  ajouté le 2026-11-10 avant tout gel : `nb_petitions_500k` (pétitions de la plateforme de
+  l'Assemblée ayant recueilli au moins 500 000 signatures) et `nb_petitions_500k_classees`
+  (dont classées par la commission sans examen, datées du classement ; métrique notée).
+  Historique depuis l'ouverture de la plateforme (2020-10-01). Seuils `null`.
+
 ### 2026-11-06 — Extraction (sans changement de grille)
 
 - D4.2\* : décisions sportives, antidopage et nautiques exclues ; issue lue du point de vue du

@@ -94,6 +94,33 @@ indicators:
     thresholds: [null, null, null, null]
     weight: null
 
+  D2.petitions_classees:
+    label: Pétitions citoyennes classées sans examen
+    description: >-
+      Pétitions déposées sur la plateforme de l'Assemblée nationale qui ont recueilli au moins
+      500 000 signatures (seuil à partir duquel la Conférence des présidents peut organiser un
+      débat en séance, article 148 du règlement), et sort que l'Assemblée leur a réservé :
+      classées par la commission sans examen, acceptées pour examen (rapport, débat), ou en
+      attente. Le sujet de la pétition n'entre dans aucune règle. Métrique notée : nombre de
+      pétitions de 500 000 signatures ou plus classées sans examen, datées du jour du
+      classement. Petits effectifs : une poignée de pétitions franchit ce seuil.
+    fact_types:
+      - petition_500k_classee
+      - petition_500k_examinee
+      - petition_500k_en_attente
+    history_start: 2020-10-01   # ouverture de la plateforme des pétitions de l'Assemblée
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - nb_petitions_500k            # pétitions ayant franchi 500 000 signatures (tous sorts)
+      - nb_petitions_500k_classees   # dont classées par la commission sans examen
+    scored_metric: nb_petitions_500k_classees
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
   D3.regimes_exception:
     label: Régimes d'exception
     description: >-

@@ -49,6 +49,7 @@ from extract import (
     manifestations,
     mobilisations,
     onu,
+    petitions,
     rsf,
     scrutins,
     seed,
@@ -207,6 +208,7 @@ def extract_all(conn: sqlite3.Connection, raw_dir: Path) -> list[FactDraft]:
         + interpellations.extract(conn, raw_dir)
         + usage_force.extract(conn, raw_dir)
         + d7.extract(conn, raw_dir)
+        + petitions.extract(conn, raw_dir)
     )
 
 

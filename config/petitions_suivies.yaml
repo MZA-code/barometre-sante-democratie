@@ -1,0 +1,6 @@
+# Pétitions de l'Assemblée nationale relues chaque jour même si le jeu data.gouv.fr ne les
+# contient pas (collectors/petitions.py). Ajouter le numéro qui suit « i- » dans l'adresse
+# https://petitions.assemblee-nationale.fr/initiatives/i-XXXX . Les pétitions de 50 000
+# signatures ou plus du jeu data.gouv sont suivies d'office.
+petitions:
+  - 5820   # « Supprimer CNews de l’audiovisuel français », absente du jeu data.gouv (2026-11-10)

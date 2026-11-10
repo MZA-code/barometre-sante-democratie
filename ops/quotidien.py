@@ -72,6 +72,8 @@ COLLECTES = (
     ("collect-titres", ("TITRES_MAX=1500",)),
     # D7 : flux RSS de la presse française (aussi lus toutes les heures par ops/decisions.py)
     ("collect-rss", ()),
+    # D2.3 : pétitions de l'Assemblée nationale (≈ 1 requête par pétition suivie)
+    ("collect-petitions", ()),
     ("collect-decisions", ()),
     # Défenseur des droits : nouvelles fiches seulement (30 s entre deux requêtes, robots.txt)
     ("collect-ddd", ()),
