@@ -96,6 +96,16 @@ ci-dessous et un recalcul complet de l'historique (`make rebuild GRID=config/gri
   non exhaustif).
 - Seuils de D1.1, D1.2, D2.2, D3.1, D3.2, D4.1, D4.2\*, D5.1, D5.2, D5.3, D6.1 et D6.2 : `null`.
 
+- Indicateur **D7 — Libertés en pratique** (`D7.libertes_en_pratique`), ajouté le 2026-11-10
+  avant tout gel : `nb_faits_presse_valides` (faits rapportés par au moins deux groupes de
+  presse et validés un par un sur GitHub), `nb_constats_institutionnels` (constats d'atteinte
+  du Défenseur des droits), `nb_atteintes_pratique` (somme, métrique notée) ; historique depuis
+  le 2024-07-01. Six catégories et leurs règles de décision figées dans la grille avant tout
+  comptage (bloc `categories`). Seuils `null`. Conception :
+  `docs/superpowers/specs/2026-11-10-libertes-en-pratique-design.md`. Même jour, avant tout
+  comptage : bloc `rss` (mots-clés, autorités, contextes, communes de 5 000 habitants ou plus,
+  regroupement à deux jours) pour le repérage dans les flux RSS de la presse.
+
 ### 2026-11-06 — Extraction (sans changement de grille)
 
 - D4.2\* : décisions sportives, antidopage et nautiques exclues ; issue lue du point de vue du

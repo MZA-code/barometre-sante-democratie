@@ -1,0 +1,119 @@
+# Médias français rattachés à leur groupe de propriétaires (D7, recoupement).
+#
+# Règle D7 : un fait de presse n'est candidat que s'il est rapporté par au moins deux GROUPES
+# distincts. Le groupe se lit sur le propriétaire, pas sur une ligne éditoriale supposée :
+# c'est un fait vérifiable. Un domaine n'apparaît qu'une fois ; un sous-domaine
+# (www., france3-regions.…) suit son domaine parent. Un domaine absent est ignoré.
+# En cas de participation croisée, les titres sont rangés dans le même groupe (règle
+# prudente : le recoupement devient plus exigeant, jamais plus facile).
+#
+# Version : 2026-11-10, établie de mémoire par Claude à partir de la carte ci-dessous ;
+# chaque changement de propriétaire se note ici (date, source). À vérifier par l'utilisateur.
+source: >-
+  « Médias français : qui possède quoi ? », Le Monde diplomatique et Acrimed
+  (https://www.monde-diplomatique.fr/cartes/PPA), édition la plus récente.
+
+groupes:
+  afp:
+    - afp.com
+  groupe_le_monde:
+    - lemonde.fr
+    - courrierinternational.com
+    - telerama.fr
+    - lavie.fr
+    - huffingtonpost.fr
+    - nouvelobs.com
+  njj_niel:
+    - nicematin.com
+    - varmatin.com
+  groupe_figaro_dassault:
+    - lefigaro.fr
+  lvmh:
+    - lesechos.fr
+    - leparisien.fr
+    - parismatch.com
+    - radioclassique.fr
+  bollore:
+    - cnews.fr
+    - europe1.fr
+    - lejdd.fr
+    - canalplus.com
+  liberation:
+    - liberation.fr
+  mediapart:
+    - mediapart.fr
+  france_televisions:
+    - francetvinfo.fr
+    - franceinfo.fr
+    - france.tv
+  radio_france:
+    - radiofrance.fr
+    - franceinter.fr
+    - franceculture.fr
+    - francebleu.fr
+    - ici.fr
+  france_medias_monde:
+    - france24.com
+    - rfi.fr
+  tf1_bouygues:
+    - tf1info.fr
+    - lci.fr
+  groupe_m6:
+    - rtl.fr
+  cma_cgm:
+    - bfmtv.com
+    - laprovence.com
+    - corsematin.com
+  ouest_france:
+    - ouest-france.fr
+    - 20minutes.fr
+    - maville.com
+  ebra_credit_mutuel:
+    - leprogres.fr
+    - estrepublicain.fr
+    - dna.fr
+    - ledauphine.com
+    - lalsace.fr
+    - republicain-lorrain.fr
+    - bienpublic.com
+    - vosgesmatin.fr
+    - lejsl.com
+  la_depeche:
+    - ladepeche.fr
+    - midilibre.fr
+    - lindependant.fr
+    - centrepresseaveyron.fr
+  sud_ouest:
+    - sudouest.fr
+    - charentelibre.fr
+    - larepubliquedespyrenees.fr
+  centre_france:
+    - lamontagne.fr
+    - leberry.fr
+    - lepopulaire.fr
+    - larep.fr
+  rossel_la_voix:
+    - lavoixdunord.fr
+    - courrier-picard.fr
+    - lunion.fr
+  le_telegramme:
+    - letelegramme.fr
+  bayard:
+    - la-croix.com
+  humanite:
+    - humanite.fr
+  artemis_pinault:
+    - lepoint.fr
+  lexpress:
+    - lexpress.fr
+  chaines_parlementaires:
+    - publicsenat.fr
+    - lcp.fr
+  reporterre:
+    - reporterre.net
+  streetpress:
+    - streetpress.com
+  basta:
+    - basta.media
+  la_marseillaise:
+    - lamarseillaise.fr

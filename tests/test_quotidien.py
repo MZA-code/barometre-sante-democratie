@@ -11,7 +11,7 @@ def targets(day):
 
 def test_every_source_is_collected_before_rebuild():
     plan = targets(dt.date(2026, 11, 5))  # jeudi
-    assert plan[-3:] == ["rebuild", "prototype-data", "deployer"]
+    assert plan[-4:] == ["rebuild", "prototype-data", "deployer", "publier-issues"]
     assert {
         "collect-an",
         "collect-legi",
@@ -165,3 +165,15 @@ def test_collections_run_even_without_network(isolated, monkeypatch):
     monkeypatch.setattr(quotidien, "run_step", run_step)
     quotidien.main([])
     assert "collect-an" in ran and "rebuild" in ran
+
+
+def test_d7_titres_apres_gdelt_et_decisions_avant_rebuild():
+    plan = targets(dt.date(2026, 11, 5))
+    assert plan.index("collect-gdelt-trad") < plan.index("collect-titres") < plan.index("rebuild")
+    assert plan.index("collect-decisions") < plan.index("rebuild")
+    assert dict(quotidien.COLLECTES)["collect-gdelt-trad"] == ("GDELT_JOURS=10",)
+
+
+def test_d7_flux_rss_collectes_chaque_jour():
+    plan = targets(dt.date(2026, 11, 5))
+    assert plan.index("collect-rss") < plan.index("rebuild")

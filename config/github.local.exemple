@@ -1,0 +1,5 @@
+# À copier en config/github.local sur le serveur (fichier ignoré par git, chmod 600).
+# Clé « classic » du compte serveur (arnaudmanza, collaborateur Write du dépôt), une seule
+# permission : public_repo. Voir ops/README-d7.md.
+GITHUB_TOKEN=ghp_xxx
+GITHUB_DEPOT=MZA-code/barometre-sante-democratie

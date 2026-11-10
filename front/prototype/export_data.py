@@ -21,6 +21,7 @@ sys.path.insert(0, str(ROOT))
 
 from scoring.grid import load_grid  # noqa: E402
 from scoring.metrics import load_legislatures  # noqa: E402
+from storage.archive import DEFAULT_RAW_DIR  # noqa: E402
 from storage.db import DEFAULT_DB_PATH, connect  # noqa: E402
 
 INDICATOR = "D2.contournement_parlement"
@@ -40,6 +41,23 @@ DIMENSIONS = (
     "D5.classement_rsf",
     "D6.techniques_renseignement",
     "D6.traitements_malgre_reserves",
+    "D7.libertes_en_pratique",
+)
+D7 = "D7.libertes_en_pratique"
+DEPOT_PUBLIC = "MZA-code/barometre-sante-democratie"
+MOIS = (
+    "janvier",
+    "février",
+    "mars",
+    "avril",
+    "mai",
+    "juin",
+    "juillet",
+    "août",
+    "septembre",
+    "octobre",
+    "novembre",
+    "décembre",
 )
 # Début de la comparaison historique quand il diffère du début de la série : avant la
 # réforme du 29 octobre 1974, les lois ordinaires sont rarement déférées (petits effectifs).
@@ -54,6 +72,72 @@ SERIES = (
     "nb_ordonnances_art38",
     "nb_lois_hors_conventions",
 )
+
+
+def date_longue(iso: str) -> str:
+    a, m, j = (int(x) for x in iso.split("-"))
+    return f"{'1er' if j == 1 else j} {MOIS[m - 1]} {a}"
+
+
+def hors_indice_d7(etat: dict) -> str | None:
+    """Raison de laisser D7 hors de l'indice d'ensemble, ou None (spec D7, §7.2)."""
+    if not etat["instantanes"]:
+        return "validation des faits de presse pas encore commencée"
+    if not etat["reprise_complete"]:
+        raison = (
+            "reprise depuis juillet 2024 en cours de relecture : "
+            f"{etat['candidats_sans_decision']} fait(s) candidat(s) sans décision"
+        )
+        if etat["reprise_relue_jusqu_au"]:
+            raison += f" (relue jusqu'au {date_longue(etat['reprise_relue_jusqu_au'])})"
+        return raison
+    return None
+
+
+def faits_d7(lignes, depot: str) -> list[dict]:
+    """Faits D7, du plus récent au plus ancien : date, voie, catégorie, lieu, lien. Aucun nom
+    (ni validateur ni personne citée)."""
+    out = []
+    for day, fact_type, ref, attrs in lignes:
+        a = json.loads(attrs)
+        presse = fact_type == "fait_presse_valide"
+        out.append(
+            {
+                "date": day,
+                "voie": "presse" if presse else "institution",
+                "categorie": a["categorie"],
+                "lieu": a.get("lieu"),
+                "url": f"https://github.com/{depot}/issues/{a['issue']}" if presse else ref,
+            }
+        )
+    return sorted(out, key=lambda f: f["date"], reverse=True)
+
+
+def bloc_d7(conn, raw_dir: Path) -> tuple[dict, str | None]:
+    import datetime as dt
+
+    from extract.d7 import etat_d7
+    from extract.d7_candidats import categories_d7
+
+    etat = etat_d7(conn, raw_dir, dt.date.today())
+    lignes = conn.execute(
+        "SELECT occurred_on, fact_type, official_ref, attributes FROM facts"
+        " WHERE indicator_id = ? AND occurred_on >= '2024-07-01'",
+        (D7,),
+    ).fetchall()
+    faits = faits_d7(lignes, DEPOT_PUBLIC)
+    bloc = {
+        "categories": {k: c["libelle"] for k, c in categories_d7().items()},
+        "faits": faits,
+        "en_attente": etat["en_attente"],
+        "a_corriger": len(etat["a_corriger"]),
+        "validateurs": etat["validateurs"],
+        "reprise_complete": etat["reprise_complete"],
+        "reprise_relue_jusqu_au": etat["reprise_relue_jusqu_au"],
+        "candidats_sans_decision": etat["candidats_sans_decision"],
+        "issues_url": f"https://github.com/{DEPOT_PUBLIC}/issues?q=label%3Ad7",
+    }
+    return bloc, hors_indice_d7(etat)
 
 
 def metric_rows(conn, window_id, period_ends=None):
@@ -72,6 +156,7 @@ def metric_rows(conn, window_id, period_ends=None):
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--db", type=Path, default=DEFAULT_DB_PATH)
+    parser.add_argument("--raw-dir", type=Path, default=DEFAULT_RAW_DIR)
     args = parser.parse_args(argv)
 
     grid = load_grid()
@@ -154,6 +239,9 @@ def main(argv=None) -> int:
 
     ratio = indicator.ratios["ratio_contournement"]
     dimensions = [dimension(conn, grid, ind_id, month_ends) for ind_id in DIMENSIONS]
+    d7, raison_d7 = bloc_d7(conn, args.raw_dir)
+    for d in dimensions:
+        d["hors_indice"] = raison_d7 if d["id"] == D7 else None
     periodes = []
     for day, attrs in conn.execute(
         "SELECT occurred_on, attributes FROM facts"
@@ -213,6 +301,7 @@ def main(argv=None) -> int:
         "engagements": engagements,
         "ordonnances_fenetre": ordonnances,
         "dimensions": dimensions,
+        "d7": d7,
         "periodes_exception": periodes,
         "dissolutions": dissolutions,
         "censures": censures,

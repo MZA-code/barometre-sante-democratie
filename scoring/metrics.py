@@ -121,6 +121,13 @@ DAILY_METRICS = {
         "coverage",
         lambda e: e.fact_type == "periode_regime_exception" and e.metropole,
     ),
+    # D7 : faits de presse validés sur GitHub, constats d'autorités, et leur somme.
+    "nb_faits_presse_valides": ("count", lambda e: e.fact_type == "fait_presse_valide"),
+    "nb_constats_institutionnels": ("count", lambda e: e.fact_type == "constat_institutionnel"),
+    "nb_atteintes_pratique": (
+        "count",
+        lambda e: e.fact_type in ("fait_presse_valide", "constat_institutionnel"),
+    ),
 }
 
 

@@ -1,0 +1,8 @@
+# Comptes GitHub dont les étiquettes `validé`, `rejeté` et `doublon` comptent pour D7.
+# Une étiquette posée par un autre compte rend la fiche « à corriger ».
+# Ajouter un relecteur : ajouter son identifiant GitHub (spec D7, §5 bis.6).
+validateurs:
+  - MZA-code
+# Comptes autorisés à poser l'étiquette `cat:` d'origine en ouvrant l'issue (compte qui porte
+# la clé du serveur). Recommandé : un compte robot distinct, jamais listé dans `validateurs`.
+comptes_serveur: [arnaudmanza]

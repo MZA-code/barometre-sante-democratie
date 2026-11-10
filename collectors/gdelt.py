@@ -53,7 +53,13 @@ DOMAINES_URL = (
     "MASTER-GDELTDOMAINSBYCOUNTRY-MAY2018.TXT"
 )
 DOMAINES_ID = "domaines_par_pays_2018.txt"
+# Flux « translingual » de GDELT (presse non anglophone traduite, dont la presse française) :
+# mêmes fichiers préfixés `translation.`, archivés sous une source à part pour ne pas changer
+# la série de contexte « presse étrangère » (extract/gdelt.py). Utilisé par D7.
+SOURCE_ID_TRADUCTION = "gdelt_traduction"
+FLUX_TRADUCTION = "translation."
 DEPUIS = dt.date(2025, 1, 1)
+DEPUIS_TRADUCTION = dt.date(2024, 7, 1)  # reprise D7 : début de la XVIIe législature
 CACHE_DIR = ROOT / "data" / "cache" / "gdelt_evenements_fr"
 PAUSE_S = 0.2
 PAYS = "FR"
@@ -112,7 +118,9 @@ def fetch_rows(url: str, opener: Opener, sleep=time.sleep) -> list[list[str]] | 
     return list(csv.reader(io.StringIO(text), delimiter="\t", quoting=csv.QUOTE_NONE))
 
 
-def evenements_fr(day: dt.date, opener: Opener, cache_dir: Path) -> tuple[dict, list[str]]:
+def evenements_fr(
+    day: dt.date, opener: Opener, cache_dir: Path, flux: str = ""
+) -> tuple[dict, list[str]]:
     """Événements situés en France apparus ce jour-là (mis en cache, dérivé et jetable)."""
     path = cache_dir / f"{day.isoformat()}.json"
     if path.exists():
@@ -121,10 +129,10 @@ def evenements_fr(day: dt.date, opener: Opener, cache_dir: Path) -> tuple[dict, 
     events: dict[str, list[str]] = {}
     manquantes = []
     for stamp in stamps(day):
-        rows = fetch_rows(BASE.format(stamp=stamp, kind="export"), opener)
+        rows = fetch_rows(BASE.format(stamp=stamp, kind=f"{flux}export"), opener)
         time.sleep(PAUSE_S)
         if rows is None:
-            manquantes.append(f"{stamp}.export")
+            manquantes.append(f"{stamp}.{flux}export")
             continue
         for r in rows:
             if len(r) > E_PAYS and r[E_PAYS] == PAYS:
@@ -149,20 +157,20 @@ def langue(traduction: str) -> str:
     return "eng" if not traduction else ""
 
 
-def extrait_jour(day: dt.date, opener: Opener, cache_dir: Path) -> bytes:
+def extrait_jour(day: dt.date, opener: Opener, cache_dir: Path, flux: str = "") -> bytes:
     events: dict[str, list[str]] = {}
     manquantes: list[str] = []
     for d in (day - dt.timedelta(days=2), day - dt.timedelta(days=1), day):
-        ev, miss = evenements_fr(d, opener, cache_dir)
+        ev, miss = evenements_fr(d, opener, cache_dir, flux)
         events.update(ev)
         if d == day:
             manquantes += miss
     rows = []
     for stamp in stamps(day):
-        mentions = fetch_rows(BASE.format(stamp=stamp, kind="mentions"), opener)
+        mentions = fetch_rows(BASE.format(stamp=stamp, kind=f"{flux}mentions"), opener)
         time.sleep(PAUSE_S)
         if mentions is None:
-            manquantes.append(f"{stamp}.mentions")
+            manquantes.append(f"{stamp}.{flux}mentions")
             continue
         for m in mentions:
             if len(m) <= M_TRADUCTION or m[M_TYPE] != "1" or m[M_ID] not in events:
@@ -194,10 +202,12 @@ def extrait_jour(day: dt.date, opener: Opener, cache_dir: Path) -> bytes:
     return gzip.compress(out.getvalue().encode("utf-8"), mtime=0)
 
 
-def jours_a_traiter(conn: sqlite3.Connection, depuis: dt.date, today: dt.date) -> Iterator[dt.date]:
+def jours_a_traiter(
+    conn: sqlite3.Connection, depuis: dt.date, today: dt.date, source_id: str = SOURCE_ID
+) -> Iterator[dt.date]:
     day = today - dt.timedelta(days=1)  # dernier jour UTC complet
     while day >= depuis:
-        if not is_archived(conn, SOURCE_ID, f"{day.isoformat()}.tsv.gz"):
+        if not is_archived(conn, source_id, f"{day.isoformat()}.tsv.gz"):
             yield day
         day -= dt.timedelta(days=1)
 
@@ -210,9 +220,14 @@ def collect(
     depuis: dt.date = DEPUIS,
     max_jours: int = 7,
     cache_dir: Path = CACHE_DIR,
+    traduction: bool = False,
 ) -> list[str]:
     today = today or dt.datetime.now(dt.UTC).date()
-    if not is_archived(conn, SOURCE_ID, DOMAINES_ID):
+    source_id = SOURCE_ID_TRADUCTION if traduction else SOURCE_ID
+    flux = FLUX_TRADUCTION if traduction else ""
+    if traduction:
+        cache_dir = cache_dir / "traduction"
+    if not traduction and not is_archived(conn, SOURCE_ID, DOMAINES_ID):
         with opener(DOMAINES_URL) as response:
             store(
                 conn,
@@ -225,16 +240,16 @@ def collect(
                 suffix=".txt",
             )
     collected = []
-    for day in jours_a_traiter(conn, depuis, today):
+    for day in jours_a_traiter(conn, depuis, today, source_id):
         if len(collected) >= max_jours:
             break
         start = time.monotonic()
-        data = extrait_jour(day, opener, cache_dir)
+        data = extrait_jour(day, opener, cache_dir, flux)
         name = f"{day.isoformat()}.tsv.gz"
         store(
             conn,
             raw_dir,
-            source_id=SOURCE_ID,
+            source_id=source_id,
             external_id=name,
             url="https://data.gdeltproject.org/gdeltv2/",
             fetched_at=now_iso(),
@@ -258,13 +273,23 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m collectors.gdelt")
     parser.add_argument("--db", type=Path, default=DEFAULT_DB_PATH)
     parser.add_argument("--raw-dir", type=Path, default=DEFAULT_RAW_DIR)
-    parser.add_argument("--depuis", type=dt.date.fromisoformat, default=DEPUIS)
+    parser.add_argument("--depuis", type=dt.date.fromisoformat, default=None)
     parser.add_argument("--max-jours", type=int, default=7)
+    parser.add_argument(
+        "--traduction", action="store_true", help="flux traduit (presse non anglophone, D7)"
+    )
     args = parser.parse_args(argv)
+    depuis = args.depuis or (DEPUIS_TRADUCTION if args.traduction else DEPUIS)
     conn = connect(args.db)
     try:
         init_db(conn)
-        collect(conn, args.raw_dir, depuis=args.depuis, max_jours=args.max_jours)
+        collect(
+            conn,
+            args.raw_dir,
+            depuis=depuis,
+            max_jours=args.max_jours,
+            traduction=args.traduction,
+        )
     finally:
         conn.close()
     return 0

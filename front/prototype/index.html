@@ -148,12 +148,12 @@
       </p>
       <p class="mt-4 flex gap-2 max-w-3xl text-xs text-ink2 leading-relaxed">
         <i class="fa-solid fa-person-digging mt-0.5 text-muted" aria-hidden="true"></i>
-        <span><strong class="text-ink">À ce jour, le baromètre mesure surtout le droit et les
-        décisions officielles</strong>&nbsp;: lois, procédures parlementaires, décisions de justice,
-        avis d'autorités indépendantes. La façon dont les règles sont appliquées sur le terrain
-        (interpellations, atteintes à la liberté d'expression, usage de la force) n'entre pas encore
-        dans l'indice&nbsp;; sa mesure, à partir de faits recoupés par plusieurs sources
-        indépendantes, est en préparation.</span>
+        <span><strong class="text-ink">Le droit et la pratique.</strong> Les indicateurs D1 à D6
+        suivent surtout le droit et les décisions officielles&nbsp;: lois, procédures parlementaires,
+        décisions de justice, avis d'autorités indépendantes. La façon dont les règles sont
+        appliquées sur le terrain (interpellations, atteintes à la liberté d'expression, usage de la
+        force) est suivie par <a href="#t-d7" class="underline text-ink">D7 · Libertés en pratique</a>,
+        à partir de faits recoupés par plusieurs sources indépendantes et vérifiés un par un.</span>
       </p>
     </section>
 
@@ -621,6 +621,38 @@
       </details>
     </section>
 
+    <!-- D7. Libertés en pratique -->
+    <section id="d7" class="py-10 border-b border-rule" aria-labelledby="t-d7">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D7 · Libertés en pratique</p>
+      <h2 id="t-d7" class="mt-2 font-serif text-2xl font-semibold">Les atteintes aux libertés sur le terrain</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Ce que les textes ne disent pas&nbsp;: des atteintes commises en pratique par une autorité
+        publique (police, préfecture, administration, direction d'établissement public). Deux voies
+        seulement&nbsp;: les manquements constatés par le Défenseur des droits, et les faits rapportés
+        par au moins deux médias de groupes de propriétaires différents, puis vérifiés un par un
+        selon des critères écrits à l'avance. Chaque fait renvoie à sa source ou à sa fiche de
+        validation publique.
+      </p>
+      <div id="d7-cats" class="mt-6 grid gap-2 max-w-3xl"></div>
+      <p id="d7-resume" class="mt-4 max-w-3xl text-sm text-ink2"></p>
+      <p class="mt-3 flex gap-2 max-w-3xl text-xs text-ink2 leading-relaxed">
+        <i class="fa-solid fa-scale-balanced mt-0.5 text-muted" aria-hidden="true"></i>
+        <span><strong class="text-ink">Limites.</strong> Le relevé n'est pas exhaustif&nbsp;: il dépend de
+        ce que la presse et les autorités rendent public. Un sujet très couvert par les médias n'est
+        pas forcément plus fréquent&nbsp;; les constats du Défenseur des droits servent de contrepoids.
+        <span id="d7-relecteurs"></span></span>
+      </p>
+      <details class="mt-4 text-sm">
+        <summary class="text-ink2 flex items-center gap-2">
+          <i class="chev fa-solid fa-chevron-right text-xs text-muted transition-transform" aria-hidden="true"></i>
+          Voir les faits comptés
+        </summary>
+        <div class="mt-3 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+          <table class="w-full text-left" id="d7-table"></table>
+        </div>
+      </details>
+    </section>
+
     <!-- 5 quater. Contexte : journées de mobilisation -->
     <section id="mobilisations" class="py-10 border-b border-rule" aria-labelledby="t-mobil">
       <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Contexte · non noté</p>
@@ -913,7 +945,8 @@
     // serait classé au plus bas jamais observé alors qu'il est à son niveau habituel.
     // Un indicateur dont le relevé est arrêté (fin_couverture) n'entre pas dans l'indice : sa valeur
     // actuelle traduirait l'absence de données, pas une situation.
-    const dansIndice = d => !d.fin_couverture;
+    const dansIndice = d => !d.fin_couverture && !d.hors_indice;
+    const raisonHors = d => d.hors_indice || `relevé arrêté au ${dateLong(d.fin_couverture)}`;
     const position = d => d.mensuel.filter(m => m.v < d.actuel).length / d.mensuel.length + 0.5 * d.mensuel.filter(m => m.v === d.actuel).length / d.mensuel.length;
     function drawIndice(rows) {
       const v = rows.reduce((a, d) => a + position(d), 0) / rows.length, score = Math.round(v * 100);
@@ -954,7 +987,7 @@
         `0 si c'est le niveau le plus bas jamais observé, 100 si c'est le plus haut, 50 si c'est un niveau habituel (une valeur partagée par beaucoup de mois, zéro compris, est placée au milieu de ces mois). ` +
         `L'indice est la moyenne de ces ${rows.length} positions. Un niveau plus haut correspond à ce que la grille tient pour plus défavorable ` +
         `(plus de recours au 49.3, de dissolutions, de surveillance, un moins bon rang RSF…). Au ${dateLong(D.fin_donnees)}.` +
-        D.dimensions.filter(d => !dansIndice(d)).map(d => ` ${CODE[d.id] || d.code} (relevé arrêté au ${dateLong(d.fin_couverture)}) n'est pas compté.`).join('');
+        D.dimensions.filter(d => !dansIndice(d)).map(d => ` ${CODE[d.id] || d.code} (${raisonHors(d)}) n'est pas compté.`).join('');
     }
     function drawDial() {
       const host = document.getElementById('overview');
@@ -980,7 +1013,7 @@
         lab.children[0].textContent = CODE[d.id] || d.code; lab.children[1].textContent = d.label;
         const val = document.createElement('span'); val.className = 'text-sm tabular-nums text-right sm:order-3';
         val.textContent = exclu ? 'hors indice' : `${Math.round(p * 100)}${courte ? '*' : ''}`;
-        if (exclu) { a.style.opacity = '0.6'; a.setAttribute('aria-label', `${CODE[d.id] || d.code}, ${d.label} : relevé arrêté au ${dateLong(d.fin_couverture)}, hors indice`); }
+        if (exclu) { a.style.opacity = '0.6'; a.setAttribute('aria-label', `${CODE[d.id] || d.code}, ${d.label} : ${raisonHors(d)}, hors indice`); }
         const sub = document.createElement('span'); sub.className = 'block text-xs text-muted'; sub.textContent = UNIT[d.metrique](d.actuel);
         val.appendChild(sub);
         const track = document.createElement('span'); track.className = 'relative col-span-2 sm:col-span-1 sm:order-2 block h-3';
@@ -992,7 +1025,7 @@
       }
       for (const d of hors) {
         const li = document.createElement('li'); li.className = 'pt-2 text-xs text-ink2';
-        li.textContent = `${CODE[d.id] || d.code} : relevé arrêté au ${dateLong(d.fin_couverture)}, hors indice tant qu'il n'est pas complété (sa valeur traduirait l'absence de données, pas la situation).`;
+        li.textContent = d.fin_couverture ? `${CODE[d.id] || d.code} : relevé arrêté au ${dateLong(d.fin_couverture)}, hors indice tant qu'il n'est pas complété (sa valeur traduirait l'absence de données, pas la situation).` : `${CODE[d.id] || d.code} : ${d.hors_indice} ; hors indice d'ici là (une série incomplète passerait pour une baisse).`;
         host.appendChild(li);
       }
       const n = rows.filter(d => d.mensuel.length < SERIE_COURTE);
@@ -1313,6 +1346,7 @@
       nb_reports_scrutin: v => `${num(v)} report${v > 1 ? 's' : ''}`,
       rang_rsf: v => ordinal(Math.round(v)),
       nb_journalistes_mesures: v => `${num(v)} journaliste${v > 1 ? 's' : ''}`,
+      nb_atteintes_pratique: v => `${num(v)} fait${v > 1 ? 's' : ''}`,
       personnes_surveillees: v => num(Math.round(v)),
       jours_exception: v => `${num(v)} jour${v > 1 ? 's' : ''}`,
       nb_dissolutions: v => `${num(v)} dissolution${v > 1 ? 's' : ''}`,
@@ -1330,11 +1364,12 @@
       nb_reports_scrutin: "de scrutin ou prorogation de mandats électifs",
       rang_rsf: "rang de la France au classement mondial de la liberté de la presse (RSF)",
       nb_journalistes_mesures: "placés en garde à vue, interpellés, poursuivis ou condamnés (relevé pilote, non exhaustif)",
+      nb_atteintes_pratique: "d'atteinte aux libertés par une autorité, constatés ou recoupés par deux groupes de presse et validés",
       personnes_surveillees: "personnes surveillées par des techniques de renseignement dans l'année (CNCTR)",
       nb_dissolutions: "d'associations ou de groupements par décret",
     };
-    const ANCHOR = { 'D2.contournement_parlement': '#t-evolution', 'D2.procedure_acceleree': '#d2-2', 'D3.regimes_exception': '#d3', 'D3.lois_censurees': '#d3-2', 'D4.interdictions_manifester_juge': '#d4-2', 'D6.traitements_malgre_reserves': '#d6-2', 'D5.temps_parole_executif': '#d5-1', 'D1.regles_electorales_avant_scrutin': '#d1', 'D1.scrutins_reportes': '#d1-table', 'D5.classement_rsf': '#d5-3', 'D5.journalistes_inquietes': '#d5-2', 'D6.techniques_renseignement': '#d6-1', 'D4.dissolutions_administratives': '#d4' };
-    const CODE = { 'D2.contournement_parlement': 'D2.1', 'D2.procedure_acceleree': 'D2.2', 'D3.regimes_exception': 'D3.1', 'D3.lois_censurees': 'D3.2', 'D4.interdictions_manifester_juge': 'D4.2*', 'D6.traitements_malgre_reserves': 'D6.2', 'D5.temps_parole_executif': 'D5.1', 'D1.regles_electorales_avant_scrutin': 'D1.1', 'D1.scrutins_reportes': 'D1.2', 'D5.classement_rsf': 'D5.3', 'D5.journalistes_inquietes': 'D5.2', 'D6.techniques_renseignement': 'D6.1', 'D4.dissolutions_administratives': 'D4.1' };
+    const ANCHOR = { 'D2.contournement_parlement': '#t-evolution', 'D2.procedure_acceleree': '#d2-2', 'D3.regimes_exception': '#d3', 'D3.lois_censurees': '#d3-2', 'D4.interdictions_manifester_juge': '#d4-2', 'D6.traitements_malgre_reserves': '#d6-2', 'D5.temps_parole_executif': '#d5-1', 'D1.regles_electorales_avant_scrutin': '#d1', 'D1.scrutins_reportes': '#d1-table', 'D5.classement_rsf': '#d5-3', 'D5.journalistes_inquietes': '#d5-2', 'D6.techniques_renseignement': '#d6-1', 'D4.dissolutions_administratives': '#d4', 'D7.libertes_en_pratique': '#d7' };
+    const CODE = { 'D2.contournement_parlement': 'D2.1', 'D2.procedure_acceleree': 'D2.2', 'D3.regimes_exception': 'D3.1', 'D3.lois_censurees': 'D3.2', 'D4.interdictions_manifester_juge': 'D4.2*', 'D6.traitements_malgre_reserves': 'D6.2', 'D5.temps_parole_executif': 'D5.1', 'D1.regles_electorales_avant_scrutin': 'D1.1', 'D1.scrutins_reportes': 'D1.2', 'D5.classement_rsf': 'D5.3', 'D5.journalistes_inquietes': 'D5.2', 'D6.techniques_renseignement': 'D6.1', 'D4.dissolutions_administratives': 'D4.1', 'D7.libertes_en_pratique': 'D7' };
     function drawDims() {
       document.getElementById('t-dims').textContent = `${D.dimensions.length} indicateurs suivis`;
       const host = document.getElementById('dims');
@@ -1683,6 +1718,53 @@
           const td2 = tr.insertCell(); td2.className = 'py-1.5 px-3 border-b border-rule align-top tabnum whitespace-nowrap text-ink2'; td2.textContent = d.avis.map(v => `n° ${v.numero}`).join(', ');
           const td3 = tr.insertCell(); td3.className = 'py-1.5 px-3 border-b border-rule align-top text-ink2'; td3.textContent = d.formules.map(f => LIB[f] || f).join(', ') + (d.confiance === 'faible' ? ' — rapprochement à vérifier, non compté' : '');
         }
+      }
+    }
+
+    // ---- D7 : libertés en pratique ---------------------------------------------
+    function drawD7() {
+      const B = D.d7; if (!B) return;
+      const an = new Date(D.fin_donnees + 'T12:00:00'); an.setFullYear(an.getFullYear() - 1);
+      const recents = B.faits.filter(f => new Date(f.date + 'T12:00:00') > an);
+      const par = Object.fromEntries(Object.keys(B.categories).map(k => [k, 0]));
+      for (const f of recents) par[f.categorie] = (par[f.categorie] || 0) + 1;
+      const vmax = Math.max(1, ...Object.values(par));
+      const host = document.getElementById('d7-cats'); host.replaceChildren();
+      for (const [k, lib] of Object.entries(B.categories)) {
+        const row = document.createElement('div');
+        row.className = 'grid grid-cols-[minmax(0,1fr),5rem,2rem] sm:grid-cols-[19rem,minmax(0,1fr),2.5rem] items-center gap-3 text-sm';
+        row.innerHTML = '<span class="text-ink2 truncate"></span><span class="block h-2.5 rounded-full" style="background:var(--band)"><span class="block h-2.5 rounded-full" style="background:var(--series-1)"></span></span><span class="tabnum text-right"></span>';
+        row.children[0].textContent = lib; row.children[0].title = lib;
+        row.children[1].firstChild.style.width = `${(par[k] / vmax) * 100}%`;
+        row.children[2].textContent = num(par[k]);
+        host.appendChild(row);
+      }
+      const presse = recents.filter(f => f.voie === 'presse').length;
+      let txt = `Douze derniers mois : ${num(recents.length)} fait${recents.length > 1 ? 's' : ''} compté${recents.length > 1 ? 's' : ''}, dont ${num(presse)} rapporté${presse > 1 ? 's' : ''} par la presse et validé${presse > 1 ? 's' : ''}, ${num(recents.length - presse)} constaté${recents.length - presse > 1 ? 's' : ''} par le Défenseur des droits. `;
+      txt += `${num(B.en_attente)} fait${B.en_attente > 1 ? 's' : ''} de presse en attente de relecture (non comptés).`;
+      if (!B.reprise_complete) txt += ` Reprise depuis juillet 2024 en cours : ${num(B.candidats_sans_decision)} fait${B.candidats_sans_decision > 1 ? 's' : ''} candidat${B.candidats_sans_decision > 1 ? 's' : ''} à relire${B.reprise_relue_jusqu_au ? `, relue jusqu'au ${dateLong(B.reprise_relue_jusqu_au)}` : ''} ; D7 n'entre pas encore dans l'indice d'ensemble.`;
+      document.getElementById('d7-resume').textContent = txt;
+      const rel = document.getElementById('d7-relecteurs');
+      rel.textContent = B.validateurs === 1 ? 'Faits de presse validés par un seul relecteur pour le moment ; toutes les décisions sont publiques : ' : 'Toutes les décisions de relecture sont publiques : ';
+      const lien = document.createElement('a'); lien.href = B.issues_url; lien.className = 'underline text-ink'; lien.textContent = 'fiches de validation'; lien.target = '_blank'; lien.rel = 'noopener';
+      rel.append(lien, '.');
+      const tbl = document.getElementById('d7-table');
+      if (!tbl.rows.length) {
+        const head = tbl.createTHead().insertRow();
+        for (const h of ['Date', 'Catégorie', 'Lieu', 'Source']) {
+          const th = document.createElement('th'); th.className = 'sticky top-0 bg-surface py-2 px-3 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th);
+        }
+        const body = tbl.createTBody();
+        for (const f of B.faits) {
+          const tr = body.insertRow();
+          const c0 = tr.insertCell(); c0.className = 'py-1.5 px-3 border-b border-rule tabnum whitespace-nowrap align-top'; c0.textContent = new Date(f.date + 'T12:00:00').toLocaleDateString('fr-FR');
+          const c1 = tr.insertCell(); c1.className = 'py-1.5 px-3 border-b border-rule align-top'; c1.textContent = B.categories[f.categorie] || f.categorie;
+          const c2 = tr.insertCell(); c2.className = 'py-1.5 px-3 border-b border-rule align-top text-ink2'; c2.textContent = f.lieu || '—';
+          const c3 = tr.insertCell(); c3.className = 'py-1.5 px-3 border-b border-rule align-top';
+          const a = document.createElement('a'); a.href = f.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'hover:underline';
+          a.textContent = f.voie === 'presse' ? 'Presse, fiche validée' : 'Défenseur des droits'; c3.appendChild(a);
+        }
+        if (!B.faits.length) { const tr = body.insertRow(); const c = tr.insertCell(); c.colSpan = 4; c.className = 'py-3 px-3 text-ink2'; c.textContent = 'Aucun fait compté pour le moment.'; }
       }
     }
 
@@ -2369,6 +2451,7 @@
       ['Regards extérieurs (non noté)', 'binoculars', [['t-onu', "Déclarations de l'ONU", 'globe'], ['t-presse', 'Presse étrangère', 'newspaper']]],
       ['D5 · Pluralisme et information', 'tower-broadcast', [['t-d5-1', 'D5.1 · Temps de parole', 'microphone-lines'], ['t-partis', 'Temps de parole par parti', 'microphone-lines'], ['t-d5-2', 'D5.2 · Journalistes inquiétés', 'pen-nib'], ['t-annuels', 'D5.3 · Classement RSF', 'ranking-star']]],
       ['D6 · Surveillance et données', 'eye', [['t-annuels', 'D6.1 · Personnes surveillées', 'user-secret'], ['t-d6-2', 'D6.2 · Fichiers et avis de la CNIL', 'database']]],
+      ['D7 · Libertés en pratique', 'hand', [['t-d7', 'D7 · Atteintes sur le terrain', 'hand']]],
       ['Contexte (non noté)', 'layer-group', [['t-mobil', 'Journées de mobilisation', 'bullhorn'], ['t-ddd', 'Défenseur des droits', 'user-shield'], ['t-force', 'Usage de la force', 'shield-halved'], ['t-participation', 'Participation aux législatives', 'person-booth']]],
       ['Méthode', 'book-open', [['t-methode', 'Méthode et limites', 'book-open'], ['t-references', "Sur quoi on s'appuie", 'book'], ['t-mentions', 'Mentions légales', 'circle-info']]],
     ];
@@ -2430,7 +2513,7 @@
     let spyRaf; addEventListener('scroll', () => { cancelAnimationFrame(spyRaf); spyRaf = requestAnimationFrame(spy); }, { passive: true });
 
     // ---- Rendu -------------------------------------------------------------
-    const render = () => { drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
+    const render = () => { drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
     render(); spy();
     let raf; addEventListener('resize', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { render(); current = null; spy(); }); });
   })();

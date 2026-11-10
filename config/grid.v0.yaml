@@ -402,3 +402,133 @@ indicators:
     direction: increasing
     thresholds: [null, null, null, null]
     weight: null
+
+  D7.libertes_en_pratique:
+    label: Libertés en pratique
+    description: >-
+      Atteintes aux libertés commises en pratique par une autorité publique (police,
+      préfecture, administration, gouvernement, direction d'établissement public), alors que
+      les textes les protègent. Deux voies : les constats d'atteinte d'une autorité
+      indépendante ou d'un juge (comptés sans relecture), et les faits rapportés par au moins
+      deux médias de groupes de propriétaires différents, validés un par un sur GitHub selon
+      les critères écrits ci-dessous (spec docs/superpowers/specs/2026-11-10-...). Non
+      exhaustif : un sujet très couvert par la presse n'est pas forcément plus fréquent.
+    fact_types:
+      - fait_presse_valide
+      - constat_institutionnel
+    history_start: 2024-07-01   # reprise depuis le début de la XVIIe législature
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - nb_faits_presse_valides      # faits de presse recoupés et validés
+      - nb_constats_institutionnels  # constats d'atteinte (Défenseur des droits…)
+      - nb_atteintes_pratique        # somme des deux
+    scored_metric: nb_atteintes_pratique
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+    # Codage GDELT : seuls les événements dont l'acteur 1 est une autorité publique
+    # (police, gouvernement, justice, armée) peuvent devenir candidats.
+    acteurs_publics: [COP, GOV, JUD, MIL]
+    # Repérage dans les flux RSS (extract/d7_rss.py), figé avant tout comptage. Texte comparé
+    # en minuscules sans accents (titre + résumé du flux). Un article est candidat s'il contient
+    # un mot-clé d'une catégorie, et aussi un terme d'autorité quand la catégorie l'exige, et
+    # un terme de contexte quand la catégorie en fixe. Aucun terme ne désigne un parti, une
+    # personne ou une cause : seulement des actes et des autorités.
+    rss:
+      autorites: [police, policier, gendarm, crs, "forces de l'ordre", brav, prefet, prefecture,
+                  "ministre de l'interieur", rectorat, recteur, academie, mairie, maire,
+                  "ministere", douane]
+      population_min_commune: 5000   # communes reconnues dans les titres (liste INSEE)
+      jours_regroupement: 2          # écart maximal entre deux articles d'un même fait
+      categories:
+        interpellations:
+          mots_cles: [interpell, "garde a vue", "gardes a vue", nasse, arrestation]
+          contexte: [manifest, rassemblement, militant, eleve, lyceen, etudiant, syndical,
+                     greve, blocage, cortege, "sans motif", hasard]
+          autorite_requise: false
+        expression:
+          mots_cles: [convoque, convoquee, convocation, deprogramm, censur, sanction, suspendu,
+                      suspendue, "interdit de", "interdite de", retire]
+          autorite_requise: true
+          contexte: [opinion, propos, tribune, expression, oeuvre, exposition, spectacle,
+                     enseignant, professeur, eleve, artiste, symbole, tee-shirt, affiche,
+                     publication, "reseaux sociaux"]
+        reunion:
+          mots_cles: ["manifestation interdite", "interdiction de manifester",
+                      "rassemblement interdit", "interdit de manifester", dispers, "arrete d'interdiction"]
+          autorite_requise: false
+        surveillance:
+          mots_cles: [fichage, fiche, trombinoscope, drone, "reconnaissance faciale",
+                      videosurveillance, geolocalis, "donnees personnelles", surveill]
+          autorite_requise: true
+        force:
+          mots_cles: [lbd, grenade, flashball, taser, matraqu, "violences policieres",
+                      eborgne, mutile, "gaz lacrymogene", "tir policier"]
+          autorite_requise: true
+        decisions_ignorees:
+          mots_cles: ["malgre la decision", "malgre le jugement", "en depit de la decision",
+                      "refuse d'appliquer", "ne respecte pas la decision", astreinte,
+                      "malgre l'annulation", "malgre la suspension"]
+          autorite_requise: false
+    # Catégories et règles de décision, figées avant tout comptage. Le validateur les
+    # applique telles quelles. Le calcul ne les lit pas ; la collecte (codes_cameo), les
+    # issues GitHub et le site les reprennent. Codes CAMEO : code exact ou racine (2 chiffres).
+    categories:
+      interpellations:
+        libelle: Interpellations collectives
+        compte:
+          - "Au moins 10 interpellations ou gardes à vue lors d'un même événement (manifestation, rassemblement, opération), rapportées par deux groupes de presse."
+          - "Personnes interpellées sans lien établi avec une infraction, selon les deux sources (« au hasard », « en masse », nasse suivie d'interpellations)."
+        ne_compte_pas:
+          - "Interpellations visant des journalistes : indicateur D5.2."
+          - "Opérations judiciaires ciblées (trafic, terrorisme) décrites comme telles par les sources."
+          - "Interpellations isolées (moins de 10) sans autre élément."
+        codes_cameo: ["173"]
+      expression:
+        libelle: Entraves à l'expression ou à la création
+        compte:
+          - "Sanction, interdiction, déprogrammation ou retrait décidé ou demandé par une autorité publique en raison d'une opinion, d'un symbole, d'une œuvre ou d'un enseignement."
+          - "Convocation par la police ou la gendarmerie d'une personne pour une opinion exprimée, sans infraction pénale identifiée par les sources."
+        ne_compte_pas:
+          - "Mesure fondée sur une infraction pénale caractérisée (appel à la haine, apologie) retenue par un juge."
+          - "Décision d'un acteur privé (employeur, plateforme, salle privée) sans demande d'une autorité."
+          - "Mesures visant des journalistes : indicateur D5.2."
+        codes_cameo: ["1721", "1722"]
+      reunion:
+        libelle: Entraves à la réunion et à la manifestation
+        compte:
+          - "Dispersion, encerclement ou blocage d'un rassemblement déclaré ou pacifique selon les deux sources."
+          - "Interdiction d'un rassemblement ou d'une réunion non contestée devant le juge administratif."
+        ne_compte_pas:
+          - "Interdiction contestée devant le juge administratif : indicateur D4.2*."
+          - "Dissolution d'association par décret : indicateur D4.1."
+        codes_cameo: ["1721", "1723", "175"]
+      surveillance:
+        libelle: Fichage et surveillance hors cadre
+        compte:
+          - "Collecte, saisie ou conservation de données personnelles (élèves, manifestants, militants) par une autorité sans base légale citée, ou contre l'avis de la CNIL ou d'un juge."
+          - "Usage d'une technique de surveillance (drone, reconnaissance faciale, géolocalisation) dans un cadre que les sources décrivent comme non autorisé."
+        ne_compte_pas:
+          - "Création d'un fichier par décret après avis de la CNIL : indicateur D6.2."
+          - "Techniques de renseignement autorisées et comptées par la CNCTR : indicateur D6.1."
+        codes_cameo: []
+      force:
+        libelle: Usage disproportionné de la force
+        compte:
+          - "Blessure grave (mutilation, fracture, perte d'un œil, hospitalisation) d'une personne lors d'une opération de police ou de gendarmerie, rapportée par deux groupes de presse."
+          - "Usage d'une arme (LBD, grenade, Taser) sur une personne qui, selon les deux sources, ne menaçait personne."
+        ne_compte_pas:
+          - "Affrontements sans blessé grave identifié."
+          - "Blessures de membres des forces de l'ordre (autre série, non comptée ici)."
+        codes_cameo: ["175", "18", "19"]
+      decisions_ignorees:
+        libelle: Décisions de justice ou d'autorités non respectées
+        compte:
+          - "Administration qui n'exécute pas une décision de justice ou reprend un acte identique après sa suspension ou son annulation."
+          - "Autorité publique qui passe outre un avis contraignant ou une injonction d'une autorité indépendante."
+        ne_compte_pas:
+          - "Appel ou pourvoi contre une décision (exercice normal d'un recours)."
+        codes_cameo: []

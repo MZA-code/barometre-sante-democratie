@@ -77,3 +77,28 @@ sources:
     name: Fichiers de seed construits à la main depuis des listes officielles (data/seed/)
     url: data/seed/
     licence: Selon la source officielle citée sur chaque ligne
+
+  - id: presse_titres
+    name: Titres d'articles de presse candidats à l'indicateur D7 (titre seul, sans le texte)
+    url: https://barometre-democratique.fr/
+    licence: Titres publiés par chaque média (courte citation à fin d'analyse, art. L. 122-5 du code de la propriété intellectuelle)
+
+  - id: github_d7
+    name: Issues GitHub de validation des faits D7 (instantanés des étiquettes et de leurs auteurs)
+    url: https://github.com/MZA-code/barometre-sante-democratie/issues?q=label%3Ad7
+    licence: Contenu du dépôt public du baromètre
+
+  - id: gdelt_traduction
+    name: GDELT Project — flux « translingual » (presse non anglophone traduite, dont la presse française)
+    url: https://blog.gdeltproject.org/gdelt-translingual-translating-the-planet/
+    licence: Données ouvertes du GDELT Project, réutilisation avec citation de la source (conditions d'utilisation à confirmer)
+
+  - id: rss_presse
+    name: Flux RSS de la presse française (titre, lien, date et résumé court des articles ; repérage D7)
+    url: https://barometre-democratique.fr/
+    licence: Flux publiés par chaque média ; seuls le titre, le lien et le résumé fourni par le flux sont conservés (courte citation, art. L. 122-5 du code de la propriété intellectuelle)
+
+  - id: geo_communes
+    name: Liste des communes françaises avec leur population (API Découpage administratif, données INSEE)
+    url: https://geo.api.gouv.fr/decoupage-administratif/communes
+    licence: Licence Ouverte Etalab 2.0

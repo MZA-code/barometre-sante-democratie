@@ -204,3 +204,36 @@ def test_telechargement_tronque_retente():
 
     rows = collector.fetch_rows("u", coupe, sleep=lambda s: None)
     assert len(calls) == 3 and rows[0][0] == "1"
+
+
+def test_flux_traduit(tmp_path, monkeypatch, conn):
+    """Le flux « translingual » (presse non anglophone, dont la presse française) est lu dans
+    les fichiers `translation.*` et archivé sous une source à part (D7)."""
+    monkeypatch.setattr(collector, "PAUSE_S", 0)
+    day = dt.date(2026, 11, 5)
+    s0 = collector.stamps(day)[0]
+    files = {
+        collector.BASE.format(stamp=s0, kind="translation.export"): zipped(
+            event("9", "17", a1="COP") + "\n"
+        ),
+        collector.BASE.format(stamp=s0, kind="translation.mentions"): zipped(
+            mention("9", "lefigaro.fr", "https://www.lefigaro.fr/x", trad="srclc:fra;eng:GT") + "\n"
+        ),
+    }
+    noms = collector.collect(
+        conn,
+        tmp_path / "raw",
+        fake_opener(files),
+        today=dt.date(2026, 11, 6),
+        depuis=day,
+        max_jours=1,
+        cache_dir=tmp_path / "cache",
+        traduction=True,
+    )
+    assert noms == ["2026-11-05.tsv.gz"]
+    (src, path) = conn.execute("SELECT source_id, path FROM raw_documents").fetchone()
+    assert src == "gdelt_traduction"
+    assert (
+        "lefigaro.fr\thttps://www.lefigaro.fr/x\tfra"
+        in gzip.decompress((tmp_path / "raw" / path).read_bytes()).decode()
+    )

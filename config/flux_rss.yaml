@@ -1,0 +1,37 @@
+# Flux RSS lus pour repérer les faits de presse candidats à D7 (collectors/rss.py).
+# Adresses vérifiées le 2026-11-10 (réponse 200 et des articles). Le groupe de propriétaires
+# est lu sur le domaine du LIEN de chaque article (config/medias_groupes.yaml), pas sur le flux.
+# Non retenus (refus 403 ou adresse introuvable le 2026-11-10) : RTL, Le Point, La Voix du
+# Nord, Le Télégramme, La Provence, La Montagne, Public Sénat, ici.fr.
+flux:
+  lemonde_une: https://www.lemonde.fr/rss/une.xml
+  lemonde_societe: https://www.lemonde.fr/societe/rss_full.xml
+  lefigaro_france: https://www.lefigaro.fr/rss/figaro_actualite-france.xml
+  liberation: https://www.liberation.fr/arc/outboundfeeds/rss-all/?outputType=xml
+  franceinfo_titres: https://www.franceinfo.fr/titres.rss
+  franceinfo_societe: https://www.franceinfo.fr/societe.rss
+  ouest_france: https://www.ouest-france.fr/rss/france
+  sudouest: https://www.sudouest.fr/actualite/rss.xml
+  ladepeche: https://www.ladepeche.fr/rss.xml
+  leparisien: https://feeds.leparisien.fr/leparisien/rss
+  mediapart: https://www.mediapart.fr/articles/feed
+  20minutes_france: https://www.20minutes.fr/feeds/rss-france.xml
+  bfmtv_societe: https://www.bfmtv.com/rss/societe/
+  humanite: https://www.humanite.fr/feed
+  la_croix: https://www.la-croix.com/RSS/UNIVERS
+  lexpress: https://www.lexpress.fr/arc/outboundfeeds/rss/alaune.xml
+  reporterre: https://reporterre.net/spip.php?page=backend
+  streetpress: https://www.streetpress.com/rss.xml
+  nouvelobs: https://www.nouvelobs.com/rss.xml
+  huffingtonpost: https://www.huffingtonpost.fr/rss/all_headline.xml
+  leprogres: https://www.leprogres.fr/rss
+  midilibre: https://www.midilibre.fr/rss.xml
+  nicematin: https://www.nicematin.com/rss
+  dna: https://www.dna.fr/rss
+  franceinter: https://www.radiofrance.fr/franceinter/rss
+  francebleu: https://www.francebleu.fr/rss/infos.xml
+  europe1: https://www.europe1.fr/rss.xml
+  lci: https://www.lci.fr/feeds/rss-une.xml
+  ledauphine: https://www.ledauphine.com/rss
+  estrepublicain: https://www.estrepublicain.fr/rss
+  basta: https://www.basta.media/spip.php?page=backend

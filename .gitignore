@@ -25,3 +25,6 @@ config/deploiement.local
 config/deploiement.intermediaires.pem
 .outils/
 .openidea/
+.superpowers/
+config/github.local
+data/.d7_publiee

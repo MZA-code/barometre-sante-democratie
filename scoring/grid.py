@@ -67,6 +67,13 @@ class Grid:
     scale_meaning: str | None = None
 
 
+def load_raw(path: Path | str = DEFAULT_GRID_PATH) -> dict:
+    """Contenu brut de la grille (YAML), pour les blocs que le calcul n'utilise pas
+    (catégories de D7, critères de décision)."""
+    with Path(path).open(encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
+
 def load_grid(path: Path | str = DEFAULT_GRID_PATH) -> Grid:
     path = Path(path)
     match = GRID_FILENAME.match(path.name)

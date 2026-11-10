@@ -64,6 +64,15 @@ COLLECTES = (
     ("collect-datagouv", ()),
     # GDELT : hier, puis rattrapage de l'historique (≈ 2 min par jour, 5 jours par passage)
     ("collect-gdelt", ("GDELT_JOURS=5",)),
+    # D7 : flux traduit de GDELT (presse française), reprise jusqu'au 2024-07-01, 10 jours par
+    # passage (≈ 2 mois)
+    ("collect-gdelt-trad", ("GDELT_JOURS=10",)),
+    # D7 : titres des articles candidats (1 requête/s, 1500 au plus par passage), puis
+    # instantanés des issues de validation GitHub
+    ("collect-titres", ("TITRES_MAX=1500",)),
+    # D7 : flux RSS de la presse française (aussi lus toutes les heures par ops/decisions.py)
+    ("collect-rss", ()),
+    ("collect-decisions", ()),
     # Défenseur des droits : nouvelles fiches seulement (30 s entre deux requêtes, robots.txt)
     ("collect-ddd", ()),
     ("collect-rapports", ()),  # PDF cités par les relevés manuels, archivés une fois
@@ -71,7 +80,7 @@ COLLECTES = (
 # Sources interrogées pour savoir si le réseau répond (une seule suffit).
 HOTES_TEST = ("echanges.dila.gouv.fr", "www.data.gouv.fr")
 # `deployer` reconstruit la page publique et l'envoie (sans effet sans config/deploiement.local).
-RECONSTRUCTION = (("rebuild", ()), ("prototype-data", ()), ("deployer", ()))
+RECONSTRUCTION = (("rebuild", ()), ("prototype-data", ()), ("deployer", ()), ("publier-issues", ()))
 CONTROLE_HEBDO = ("verify-raw", ())
 COLLECTE_HEBDO = ("collect-senat", ())
 
