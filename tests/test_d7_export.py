@@ -92,3 +92,17 @@ def test_faits_sans_nom():
         "lieu": "Lyon",
         "url": "https://github.com/MZA-code/barometre-sante-democratie/issues/3",
     }
+
+
+def test_hors_indice_tant_que_la_collecte_du_passe_n_est_pas_remontee():
+    raison = export_data.hors_indice_d7(
+        etat(
+            reprise_complete=False,
+            candidats_sans_decision=0,
+            reprise_relue_jusqu_au=None,
+            reprise_collectee_depuis="2026-11-07",
+        )
+    )
+    assert raison == (
+        "reprise depuis juillet 2024 en cours de collecte (remontée au 7 novembre 2026)"
+    )

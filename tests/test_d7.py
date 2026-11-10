@@ -231,14 +231,15 @@ def test_etat_reprise():
     jour = dt.date(2026, 11, 10)
     cands = [("10", "2026-10-01"), ("11", "2026-11-09"), ("12", "2025-01-01")]
     statuts = {"10": "valide", "12": "rejete"}  # 11 récent, en attente : n'empêche pas
-    etat = d7.etat_reprise(cands, statuts, jour)
+    etat = d7.etat_reprise(cands, statuts, jour, couverture_debut=dt.date(2024, 7, 1))
     assert etat == {
         "reprise_complete": True,
         "reprise_relue_jusqu_au": "2025-01-01",
         "candidats_sans_decision": 0,
+        "reprise_collectee_depuis": "2024-07-01",
     }
     statuts.pop("12")
-    etat = d7.etat_reprise(cands, statuts, jour)
+    etat = d7.etat_reprise(cands, statuts, jour, couverture_debut=dt.date(2024, 7, 1))
     assert etat["reprise_complete"] is False
     assert etat["reprise_relue_jusqu_au"] == "2026-10-01"
     assert etat["candidats_sans_decision"] == 1
@@ -345,3 +346,13 @@ def test_revalidation_apres_modification(conn, tmp_path):
     archiver_a(conn, raw, revalide, "2026-11-10T14:00:00Z")
     (fait,) = [f for f in d7.extract(conn, raw) if f.fact_type == "fait_presse_valide"]
     assert fait.occurred_on == "2026-11-02"
+
+
+def test_reprise_incomplete_tant_que_la_collecte_n_est_pas_remontee():
+    """Aucun candidat ancien sans décision ne suffit pas : encore faut-il que la collecte du
+    passé soit remontée jusqu'au 1er juillet 2024."""
+    jour = dt.date(2026, 11, 10)
+    etat = d7.etat_reprise([], {}, jour, couverture_debut=dt.date(2026, 11, 7))
+    assert etat["reprise_complete"] is False
+    assert etat["reprise_collectee_depuis"] == "2026-11-07"
+    assert d7.etat_reprise([], {}, jour, couverture_debut=None)["reprise_complete"] is False

@@ -83,6 +83,10 @@ def hors_indice_d7(etat: dict) -> str | None:
     """Raison de laisser D7 hors de l'indice d'ensemble, ou None (spec D7, §7.2)."""
     if not etat["instantanes"]:
         return "validation des faits de presse pas encore commencée"
+    if not etat["reprise_complete"] and not etat["candidats_sans_decision"]:
+        depuis = etat.get("reprise_collectee_depuis")
+        suite = f" (remontée au {date_longue(depuis)})" if depuis else ""
+        return f"reprise depuis juillet 2024 en cours de collecte{suite}"
     if not etat["reprise_complete"]:
         raison = (
             "reprise depuis juillet 2024 en cours de relecture : "

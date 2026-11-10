@@ -248,7 +248,10 @@ def extract(conn: sqlite3.Connection, raw_dir: Path) -> list[FactDraft]:
 
 
 def etat_reprise(
-    candidats: list[tuple[str, str]], statuts: dict[str, str], aujourd_hui: dt.date
+    candidats: list[tuple[str, str]],
+    statuts: dict[str, str],
+    aujourd_hui: dt.date,
+    couverture_debut: dt.date | None = None,
 ) -> dict:
     """La reprise couvre les candidats de plus de 30 jours (les récents suivent le flux
     normal). `reprise_relue_jusqu_au` : en remontant le temps, jour le plus ancien jusqu'où
@@ -263,10 +266,16 @@ def etat_reprise(
                 relue = jour
         else:
             sans += 1
+    from collectors.gdelt import DEPUIS_TRADUCTION
+
+    # Complète seulement si la collecte du passé est remontée jusqu'au début de la reprise :
+    # sans cela, « aucun candidat ancien en attente » veut seulement dire « pas encore collecté ».
+    collectee = couverture_debut is not None and couverture_debut <= DEPUIS_TRADUCTION
     return {
-        "reprise_complete": sans == 0,
+        "reprise_complete": sans == 0 and collectee,
         "reprise_relue_jusqu_au": relue,
         "candidats_sans_decision": sans,
+        "reprise_collectee_depuis": str(couverture_debut) if couverture_debut else None,
     }
 
 
@@ -286,12 +295,20 @@ def etat_d7(conn: sqlite3.Connection, raw_dir: Path, aujourd_hui: dt.date) -> di
         if statut == "a_corriger":
             a_corriger.append((inst["numero"], motif))
     cands = [(c.evenement_id, c.jour) for c in candidats(conn, raw_dir)]
+    from collectors.gdelt import SOURCE_ID_TRADUCTION
+
+    row = conn.execute(
+        "SELECT min(substr(external_id, 1, 10)) FROM raw_documents"
+        " WHERE source_id = ? AND external_id LIKE '____-__-__.tsv.gz'",
+        (SOURCE_ID_TRADUCTION,),
+    ).fetchone()
+    couverture = dt.date.fromisoformat(row[0]) if row and row[0] else None
     return {
         "instantanes": len(insts),
         "en_attente": en_attente,
         "a_corriger": a_corriger,
         "validateurs": len(comptes),
-        **etat_reprise(cands, statuts, aujourd_hui),
+        **etat_reprise(cands, statuts, aujourd_hui, couverture),
     }
 
 
