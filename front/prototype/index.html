@@ -93,8 +93,11 @@
   <header class="border-b border-rule">
     <div class="mx-auto max-w-[120rem] px-4 sm:px-6 lg:px-10 py-4 flex items-center justify-between gap-4">
       <div class="flex items-center gap-3">
-        <i class="fa-solid fa-scale-balanced text-accent" aria-hidden="true"></i>
-        <h1 class="font-serif font-semibold tracking-tight">Baromètre de la santé démocratique</h1>
+        <svg viewBox="0 0 3 2" width="27" height="18" role="img" aria-label="Drapeau français"
+             class="shrink-0 rounded-sm" style="outline: 1px solid var(--rule)">
+          <rect width="1" height="2" fill="#000091"/><rect x="1" width="1" height="2" fill="#ffffff"/><rect x="2" width="1" height="2" fill="#e1000f"/>
+        </svg>
+        <h1 class="font-serif font-semibold tracking-tight">Baromètre de la santé démocratique en France</h1>
       </div>
       <div class="flex items-center gap-3 text-xs text-ink2">
         <span id="maj" class="text-right leading-tight"></span>
@@ -125,6 +128,34 @@
     <div id="toc-side" class="sticky top-0 max-h-screen overflow-y-auto py-6 pr-2 text-sm" style="scrollbar-width: thin"></div>
   </nav>
   <main class="min-w-0">
+
+    <!-- Définition : de quoi parle-t-on (sources détaillées dans « Sur quoi on s'appuie ») -->
+    <section class="pt-8 sm:pt-10 pb-8 border-b border-rule" aria-labelledby="t-definition">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">De quoi parle-t-on&nbsp;?</p>
+      <h2 id="t-definition" class="mt-3 font-serif text-2xl font-semibold">Ce qu'est une démocratie</h2>
+      <blockquote class="mt-4 max-w-3xl border-l-4 pl-4 font-serif text-lg leading-relaxed" style="border-color: var(--series-1)">
+        Une démocratie, c'est un pays où les citoyens choisissent librement leurs dirigeants, où
+        chacun peut s'exprimer, s'informer, se réunir et manifester sans crainte, et où le pouvoir
+        est limité par la loi, les juges, le Parlement et la presse, en droit comme en pratique.
+      </blockquote>
+      <p class="mt-4 max-w-3xl text-sm text-ink2 leading-relaxed">
+        Cette définition reprend les garanties posées par Robert Dahl et la dimension « libérale »
+        (État de droit, contre-pouvoirs, libertés publiques) retenue par les grands indices
+        internationaux. Le baromètre ne demande pas si la France «&nbsp;est&nbsp;» ou «&nbsp;n'est
+        pas&nbsp;» une démocratie&nbsp;: il suit, mois après mois, les signes d'érosion que la recherche
+        a appris à reconnaître.
+        <a href="#t-references" class="underline text-ink">Les ouvrages sur lesquels on s'appuie</a>.
+      </p>
+      <p class="mt-4 flex gap-2 max-w-3xl text-xs text-ink2 leading-relaxed">
+        <i class="fa-solid fa-person-digging mt-0.5 text-muted" aria-hidden="true"></i>
+        <span><strong class="text-ink">À ce jour, le baromètre mesure surtout le droit et les
+        décisions officielles</strong>&nbsp;: lois, procédures parlementaires, décisions de justice,
+        avis d'autorités indépendantes. La façon dont les règles sont appliquées sur le terrain
+        (interpellations, atteintes à la liberté d'expression, usage de la force) n'entre pas encore
+        dans l'indice&nbsp;; sa mesure, à partir de faits recoupés par plusieurs sources
+        indépendantes, est en préparation.</span>
+      </p>
+    </section>
 
     <!-- 0. Vue d'ensemble : chaque indicateur sur sa propre histoire -->
     <section class="pt-8 sm:pt-10 pb-8 border-b border-rule" aria-labelledby="t-cadran">
@@ -706,6 +737,60 @@
       </div>
       <h3 class="mt-8 font-semibold text-sm">Sources</h3>
       <ul id="sources" class="mt-2 text-sm text-ink2 space-y-1"></ul>
+    </section>
+
+    <!-- Références : la définition et la grille s'appuient sur ces travaux -->
+    <section class="py-10 border-t border-rule" aria-labelledby="t-references">
+      <h2 id="t-references" class="font-serif text-2xl font-semibold">Sur quoi on s'appuie</h2>
+      <p class="mt-2 max-w-3xl text-sm text-ink2 leading-relaxed">
+        Des travaux de science politique et de droit reconnus, d'auteurs et d'institutions de
+        pays et de sensibilités différents. Ils fixent ce qu'on mesure&nbsp;; les chiffres, eux,
+        viennent des sources officielles citées sous chaque indicateur.
+      </p>
+      <div class="mt-6 grid gap-8 md:grid-cols-3 text-sm leading-relaxed text-ink2">
+        <div class="space-y-3">
+          <h3 class="font-semibold text-ink">Définir la démocratie</h3>
+          <p><strong class="text-ink">Robert A. Dahl</strong>, <cite>Polyarchy. Participation and
+            Opposition</cite>, Yale University Press, 1971. Huit garanties&nbsp;: liberté de créer
+            des associations et d'y adhérer, liberté d'expression, droit de vote, éligibilité,
+            droit des responsables politiques de rivaliser pour les suffrages, sources
+            d'information alternatives, élections libres et loyales, institutions qui font
+            dépendre les politiques publiques des votes.</p>
+          <p><strong class="text-ink">Robert A. Dahl</strong>, <cite>On Democracy</cite>, Yale
+            University Press, 1998.</p>
+          <p><strong class="text-ink">V-Dem Institute</strong> (université de Göteborg),
+            <cite>Democracy Report</cite>, annuel. Indice de démocratie libérale, qui note les
+            pratiques et pas seulement les textes&nbsp;: <a class="underline text-ink" href="https://www.v-dem.net/">v-dem.net</a>.</p>
+        </div>
+        <div class="space-y-3">
+          <h3 class="font-semibold text-ink">Reconnaître l'érosion</h3>
+          <p><strong class="text-ink">Nancy Bermeo</strong>, «&nbsp;On Democratic Backsliding&nbsp;»,
+            <cite>Journal of Democracy</cite>, vol.&nbsp;27, n°&nbsp;1, 2016, p.&nbsp;5-19. Les
+            démocraties ne tombent plus par coup d'État mais s'érodent peu à peu, par un exécutif
+            qui affaiblit les contre-pouvoirs.</p>
+          <p><strong class="text-ink">Steven Levitsky et Daniel Ziblatt</strong>, <cite>La mort des
+            démocraties</cite>, Calmann-Lévy, 2019 (<cite>How Democracies Die</cite>, Crown,
+            2018). Signaux d'alerte, dont la restriction des libertés des opposants et des médias,
+            et rôle de la retenue dans l'usage du pouvoir.</p>
+          <p><strong class="text-ink">Kim Lane Scheppele</strong>, «&nbsp;Autocratic Legalism&nbsp;»,
+            <cite>University of Chicago Law Review</cite>, vol.&nbsp;85, n°&nbsp;2, 2018. Comment
+            on vide la démocratie de son sens en restant dans la légalité.</p>
+          <p><strong class="text-ink">Anna Lührmann et Staffan I. Lindberg</strong>, «&nbsp;A third
+            wave of autocratization is here: what is new about it?&nbsp;», <cite>Democratization</cite>,
+            vol.&nbsp;26, n°&nbsp;7, 2019.</p>
+        </div>
+        <div class="space-y-3">
+          <h3 class="font-semibold text-ink">Grilles d'évaluation</h3>
+          <p><strong class="text-ink">Commission de Venise</strong> (Conseil de l'Europe),
+            <cite>Liste des critères de l'État de droit</cite>, CDL-AD(2016)007, mise à jour en
+            2025 (CDL-AD(2025)002)&nbsp;: <a class="underline text-ink" href="https://www.coe.int/fr/web/venice-commission/main-reference-documents">documents de référence</a>.</p>
+          <p><strong class="text-ink">Commission européenne</strong>, <cite>Rapport sur l'état de
+            droit</cite>, annuel depuis 2020, chapitre consacré à la France.</p>
+          <p><strong class="text-ink">Freedom House</strong>, <cite>Freedom in the World</cite>, annuel.</p>
+          <p class="text-xs">Les notes de la France chez V-Dem et Freedom House ne sont pas encore
+            affichées ici&nbsp;; elles serviront de points de comparaison extérieurs.</p>
+        </div>
+      </div>
     </section>
 
     <!-- Mentions légales (LCEN) et données personnelles -->
@@ -2276,7 +2361,7 @@
     // ---- Sommaire -----------------------------------------------------------
     // [catégorie, icône, [[id du titre, libellé, icône]]] (icônes Font Awesome 6, style plein).
     const TOC = [
-      ["Vue d'ensemble", 'gauge-high', [['t-indice', "Le baromètre aujourd'hui", 'gauge-high'], ['t-dims', 'Indicateurs suivis', 'list-check']]],
+      ["Vue d'ensemble", 'gauge-high', [['t-definition', "Ce qu'est une démocratie", 'book-open-reader'], ['t-indice', "Le baromètre aujourd'hui", 'gauge-high'], ['t-dims', 'Indicateurs suivis', 'list-check']]],
       ['D1 · Élections et alternance', 'check-to-slot', [['t-d1', 'D1.1–D1.2 · Règles électorales et reports', 'check-to-slot']]],
       ['D2 · Place du Parlement', 'landmark', [['titre', "D2.1 · L'essentiel", 'landmark'], ['t-evolution', 'Depuis 1959', 'chart-line'], ['t-composantes', 'De quoi est fait le chiffre', 'puzzle-piece'], ['t-leg', 'Législature par législature', 'table-columns'], ['t-493', 'Les recours au 49.3', 'forward'], ['t-d2-2', 'D2.2 · Procédure accélérée', 'bolt']]],
       ["D3 · Contre-pouvoirs et État de droit", 'gavel', [['t-d3', "D3.1 · Régimes d'exception", 'triangle-exclamation'], ['t-d3-2', 'D3.2 · Lois censurées', 'gavel']]],
@@ -2285,7 +2370,7 @@
       ['D5 · Pluralisme et information', 'tower-broadcast', [['t-d5-1', 'D5.1 · Temps de parole', 'microphone-lines'], ['t-partis', 'Temps de parole par parti', 'microphone-lines'], ['t-d5-2', 'D5.2 · Journalistes inquiétés', 'pen-nib'], ['t-annuels', 'D5.3 · Classement RSF', 'ranking-star']]],
       ['D6 · Surveillance et données', 'eye', [['t-annuels', 'D6.1 · Personnes surveillées', 'user-secret'], ['t-d6-2', 'D6.2 · Fichiers et avis de la CNIL', 'database']]],
       ['Contexte (non noté)', 'layer-group', [['t-mobil', 'Journées de mobilisation', 'bullhorn'], ['t-ddd', 'Défenseur des droits', 'user-shield'], ['t-force', 'Usage de la force', 'shield-halved'], ['t-participation', 'Participation aux législatives', 'person-booth']]],
-      ['Méthode', 'book-open', [['t-methode', 'Méthode et limites', 'book-open'], ['t-mentions', 'Mentions légales', 'circle-info']]],
+      ['Méthode', 'book-open', [['t-methode', 'Méthode et limites', 'book-open'], ['t-references', "Sur quoi on s'appuie", 'book'], ['t-mentions', 'Mentions légales', 'circle-info']]],
     ];
     // Icône propre à un titre partagé par deux entrées du sommaire.
     const ICONE_TITRE = { 't-annuels': 'calendar-days' };
