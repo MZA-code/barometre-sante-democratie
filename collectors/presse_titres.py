@@ -6,6 +6,10 @@ dans un petit JSON `{"url", "titre"}`. Le texte des articles n'est jamais conser
 d'auteur, articles payants). Une page en échec est archivée avec `"titre": null` et n'est pas
 redemandée. Une requête par seconde au plus.
 
+Sécurité : les adresses viennent de GDELT (source extérieure). Seules sont lues les adresses
+`http(s)` dont l'hôte appartient à un média de config/medias_groupes.yaml ; une redirection
+vers un autre groupe donne un titre nul. Les autres sont notées sans être lues.
+
 Les titres servent à une seule chose : deux articles de groupes différents au titre
 identique (une fois normalisé) sont la même dépêche reprise, et comptent pour une seule source
 dans le recoupement (`fusionner`).
@@ -76,6 +80,21 @@ def fusionner(candidat, titres: dict[str, str | None]):
     return candidat if len(sources) >= 2 and len(groupes) >= 2 else None
 
 
+def adresse_autorisee(url: str, groupes: dict[str, str]) -> str | None:
+    """Groupe du média si l'adresse est en http(s) vers un média connu, sinon None."""
+    from urllib.parse import urlparse
+
+    from extract.d7_candidats import groupe_de
+
+    try:
+        u = urlparse(url)
+    except ValueError:
+        return None
+    if u.scheme not in ("http", "https") or not u.hostname:
+        return None
+    return groupe_de(u.hostname, groupes)
+
+
 def external_id(url: str) -> str:
     return hashlib.sha256(url.encode()).hexdigest()
 
@@ -87,18 +106,28 @@ def collect_urls(
     opener: Opener = urlopen,
     sleep: Callable[[float], None] = time.sleep,
 ) -> int:
+    from extract.d7_candidats import groupes_presse
+
+    groupes = groupes_presse()
     n = 0
     for url in dict.fromkeys(urls):
         if is_archived(conn, SOURCE_ID, external_id(url)):
             continue
-        if n:
-            sleep(PAUSE_S)
-        try:
-            with opener(url) as response:
-                titre = titre_de_page(response.read(OCTETS_MAX))
-        except Exception as exc:  # page payante, supprimée, refus : on note l'échec
-            print(f"[presse_titres] {url} : {exc}")
-            titre = None
+        groupe, titre = adresse_autorisee(url, groupes), None
+        if groupe is None:
+            print(f"[presse_titres] {url} : adresse hors des médias connus, non lue")
+        else:
+            if n:
+                sleep(PAUSE_S)
+            try:
+                with opener(url) as response:
+                    finale = response.geturl() if hasattr(response, "geturl") else url
+                    if adresse_autorisee(finale, groupes) == groupe:
+                        titre = titre_de_page(response.read(OCTETS_MAX))
+                    else:
+                        print(f"[presse_titres] {url} : redirigé hors du média ({finale})")
+            except Exception as exc:  # page payante, supprimée, refus : on note l'échec
+                print(f"[presse_titres] {url} : {exc}")
         data = json.dumps({"url": url, "titre": titre}, ensure_ascii=False, sort_keys=True)
         store(
             conn,

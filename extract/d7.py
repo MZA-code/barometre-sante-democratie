@@ -26,6 +26,7 @@ Deux voies (spec docs/superpowers/specs/2026-11-10-libertes-en-pratique-design.m
 from __future__ import annotations
 
 import datetime as dt
+import json
 import re
 import sqlite3
 from pathlib import Path
@@ -34,7 +35,7 @@ import yaml
 
 from collectors.ddd import BASE as DDD_BASE
 from collectors.ddd import SOURCE_ID as DDD
-from collectors.github_d7 import instantanes_docs
+from collectors.github_d7 import SOURCE_ID as GITHUB
 from extract.common import FactDraft, latest_documents
 from extract.d7_candidats import INDICATOR, categories_d7
 from extract.ddd import ANNEE, DATE, lire_fiche
@@ -123,9 +124,43 @@ def lieu_et_date(inst: dict) -> tuple[str, str] | None:
     return lu
 
 
+MODIFIEE = "issue modifiée après la validation : revalider"
+
+
+def issues_figees(conn: sqlite3.Connection, raw_dir: Path) -> list[tuple[int, dict]]:
+    """(document brut, dernier instantané) de chaque issue, par numéro. Une issue validée dont
+    le titre ou le corps a changé depuis le premier instantané portant cette validation (même
+    date de pose de `validé`) est marquée `_modifiee` : sur un dépôt public, l'auteur d'une
+    issue peut la modifier après coup ; il faut alors revalider (retirer puis reposer
+    `validé`)."""
+    versions: dict[str, list[tuple[int, dict]]] = {}
+    for row in conn.execute(
+        "SELECT id, external_id, path FROM raw_documents WHERE source_id = ?"
+        " ORDER BY fetched_at, id",
+        (GITHUB,),
+    ):
+        inst = json.loads((raw_dir / row["path"]).read_text(encoding="utf-8"))
+        versions.setdefault(row["external_id"], []).append((row["id"], inst))
+    out = []
+    for vs in versions.values():
+        doc_id, dernier = vs[-1]
+        pose = dernier["poses"].get("validé")
+        if "validé" in dernier["etiquettes"] and pose:
+            ref = next(
+                i for _, i in vs if "validé" in i["etiquettes"] and i["poses"].get("validé") == pose
+            )
+            if (ref["titre"], ref["corps"]) != (dernier["titre"], dernier["corps"]):
+                dernier = {**dernier, "_modifiee": True}
+        out.append((doc_id, dernier))
+    return sorted(out, key=lambda di: di[1]["numero"])
+
+
 def statut_complet(inst: dict, comptes: set[str], categories: dict, serveur=frozenset()):
-    """Comme `decision`, plus la date illisible d'une issue validée (`a_corriger`)."""
+    """Comme `decision`, plus la date illisible d'une issue validée et l'issue modifiée après
+    sa validation (`a_corriger`)."""
     statut, cat, motif = decision(inst, comptes, categories, serveur)
+    if statut == "valide" and inst.get("_modifiee"):
+        return "a_corriger", cat, MODIFIEE
     if statut == "valide" and lieu_et_date(inst) is None:
         return "a_corriger", cat, "date illisible (titre ou ligne « Date : AAAA-MM-JJ »)"
     return statut, cat, motif
@@ -143,7 +178,7 @@ def constate_manquement(resume: str) -> bool:
 def faits_presse(conn: sqlite3.Connection, raw_dir: Path) -> list[FactDraft]:
     comptes, categories, serveur = validateurs(), categories_d7(), comptes_serveur()
     out = []
-    for doc_id, inst in instantanes_docs(conn, raw_dir):
+    for doc_id, inst in issues_figees(conn, raw_dir):
         statut, cat, _ = statut_complet(inst, comptes, categories, serveur)
         if statut != "valide":
             continue
@@ -238,7 +273,7 @@ def etat_d7(conn: sqlite3.Connection, raw_dir: Path, aujourd_hui: dt.date) -> di
     comptes, categories, serveur = validateurs(), categories_d7(), comptes_serveur()
     statuts: dict[str, str] = {}
     en_attente, a_corriger = 0, []
-    insts = instantanes_docs(conn, raw_dir)
+    insts = issues_figees(conn, raw_dir)
     for _, inst in insts:
         statut, _, motif = statut_complet(inst, comptes, categories, serveur)
         if evt := evenement_de(inst["corps"]):
@@ -264,7 +299,7 @@ def empreinte_decisions(conn: sqlite3.Connection, raw_dir: Path) -> str:
 
     comptes, categories, serveur = validateurs(), categories_d7(), comptes_serveur()
     lignes = []
-    for _, inst in instantanes_docs(conn, raw_dir):
+    for _, inst in issues_figees(conn, raw_dir):
         statut, cat, motif = statut_complet(inst, comptes, categories, serveur)
         lignes.append([inst["numero"], statut, cat, motif, lieu_et_date(inst)])
     return hashlib.sha256(json.dumps(lignes, ensure_ascii=False).encode()).hexdigest()

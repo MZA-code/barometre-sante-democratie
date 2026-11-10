@@ -98,24 +98,59 @@ def conn(tmp_path):
 
 
 def test_collect_archive_une_fois(conn, tmp_path):
-    web = FauxWeb({"https://a.fr/1": b"<title>Un</title>", "https://b.fr/2": None})
-    urls = ["https://a.fr/1", "https://b.fr/2"]
+    web = FauxWeb(
+        {"https://www.lemonde.fr/1": b"<title>Un</title>", "https://www.lefigaro.fr/2": None}
+    )
+    urls = ["https://www.lemonde.fr/1", "https://www.lefigaro.fr/2"]
     assert pt.collect_urls(conn, tmp_path / "raw", urls, opener=web, sleep=lambda s: None) == 2
     assert pt.collect_urls(conn, tmp_path / "raw", urls, opener=web, sleep=lambda s: None) == 0
     assert web.appels == urls
     assert pt.titres_archives(conn, tmp_path / "raw") == {
-        "https://a.fr/1": "Un",
-        "https://b.fr/2": None,
+        "https://www.lemonde.fr/1": "Un",
+        "https://www.lefigaro.fr/2": None,
     }
 
 
 def test_document_archive_sans_texte(conn, tmp_path):
-    web = FauxWeb({"https://a.fr/1": b"<title>Un</title><p>texte de l'article</p>"})
-    pt.collect_urls(conn, tmp_path / "raw", ["https://a.fr/1"], opener=web, sleep=lambda s: None)
+    web = FauxWeb({"https://www.lemonde.fr/1": b"<title>Un</title><p>texte de l'article</p>"})
+    pt.collect_urls(
+        conn, tmp_path / "raw", ["https://www.lemonde.fr/1"], opener=web, sleep=lambda s: None
+    )
     (path,) = conn.execute(
         "SELECT path FROM raw_documents WHERE source_id = 'presse_titres'"
     ).fetchone()
     assert json.loads((tmp_path / "raw" / path).read_text()) == {
         "titre": "Un",
-        "url": "https://a.fr/1",
+        "url": "https://www.lemonde.fr/1",
     }
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "file:///etc/passwd",
+        "http://127.0.0.1/admin",
+        "https://evil.example/x",
+        "ftp://lemonde.fr/a",
+    ],
+)
+def test_adresse_hors_medias_connus_jamais_lue(conn, tmp_path, url):
+    web = FauxWeb({url: b"<title>secret</title>"})
+    pt.collect_urls(conn, tmp_path / "raw", [url], opener=web, sleep=lambda s: None)
+    assert web.appels == []
+    assert pt.titres_archives(conn, tmp_path / "raw") == {url: None}
+
+
+def test_redirection_vers_un_autre_site_ignoree(conn, tmp_path):
+    class Redirige(io.BytesIO):
+        def geturl(self):
+            return "https://evil.example/ailleurs"
+
+    @contextmanager
+    def opener(url):
+        yield Redirige(b"<title>autre</title>")
+
+    pt.collect_urls(
+        conn, tmp_path / "raw", ["https://www.lemonde.fr/a"], opener=opener, sleep=lambda s: None
+    )
+    assert pt.titres_archives(conn, tmp_path / "raw") == {"https://www.lemonde.fr/a": None}
