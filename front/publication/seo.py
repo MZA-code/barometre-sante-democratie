@@ -4,11 +4,11 @@ les moteurs de recherche (SEO) et pour les assistants d'IA (GEO).
 La page du prototype construit tout son contenu chiffré en JavaScript ; un robot qui ne
 l'exécute pas ne verrait aucun chiffre. On écrit donc dans le HTML, avant publication :
   - le titre, la description, les balises Open Graph et une description schema.org (Dataset) ;
-  - l'indice illustratif, sa phrase d'explication et la vue d'ensemble des 13 indicateurs
+  - l'indice illustratif, sa phrase d'explication et la vue d'ensemble des indicateurs
     (le JavaScript remplace ces contenus au chargement, avec les mêmes chiffres).
 Et on écrit à côté de la page :
   - `barometre.md` : résumé en texte simple, chaque chiffre avec sa source ;
-  - `indicateurs.csv` : les 13 indicateurs, valeur actuelle et position dans leur historique ;
+  - `indicateurs.csv` : les indicateurs, valeur actuelle et position dans leur historique ;
   - `llms.txt` : point d'entrée pour les assistants d'IA (format llmstxt.org) ;
   - `robots.txt`, et `sitemap.xml` si l'adresse du site est connue (`SITE_URL`) ;
   - `.htaccess` (Apache, hébergement mutualisé) : fichiers texte servis en UTF-8 et, si
@@ -103,8 +103,20 @@ def position(d: dict) -> float:
 
 
 def dans_indice(d: dict) -> bool:
-    """Un indicateur dont le relevé est arrêté (`fin_couverture`) n'entre pas dans l'indice."""
-    return not d.get("fin_couverture")
+    """Hors indice : relevé arrêté (`fin_couverture`) ou raison explicite (`hors_indice`, par
+    exemple D7 pendant la reprise du passé). Même règle que la page (index.html)."""
+    return not d.get("fin_couverture") and not d.get("hors_indice")
+
+
+NOMBRES = {13: "Treize", 14: "Quatorze", 15: "Quinze", 16: "Seize", 17: "Dix-sept", 18: "Dix-huit"}
+
+
+def nb_indicateurs(data: dict) -> int:
+    return len(data["dimensions"])
+
+
+def en_toutes_lettres(n: int) -> str:
+    return NOMBRES.get(n, str(n))
 
 
 def indice(dimensions: list[dict]) -> int:
@@ -151,6 +163,7 @@ def lignes(data: dict) -> list[dict]:
                 "valeur": valeur(d),
                 "valeur_brute": d["actuel"],
                 "fin_couverture": d.get("fin_couverture") or "",
+                "hors_indice": d.get("hors_indice") or "",
                 "position": round(100 * position(d)),
                 "dans_indice": dans_indice(d),
                 "mois_observes": len(d["mensuel"]),
@@ -167,7 +180,10 @@ def phrase_exclus(data: dict) -> str:
     if not hors:
         return ""
     noms = ", ".join(
-        f"{r['code']} (relevé arrêté au {date_longue(r['fin_couverture'])})" for r in hors
+        f"{r['code']} ("
+        + (r["hors_indice"] or f"relevé arrêté au {date_longue(r['fin_couverture'])}")
+        + ")"
+        for r in hors
     )
     return f" {noms} {'ne sont pas comptés' if len(hors) > 1 else 'n’est pas compté'}."
 
@@ -176,7 +192,8 @@ def description(data: dict) -> str:
     score = indice(data["dimensions"])
     jour = date_longue(data["fin_donnees"])
     return (
-        "13 indicateurs sourcés sur l'état de la démocratie en France (Parlement, "
+        f"{nb_indicateurs(data)} indicateurs sourcés sur l'état de la démocratie en France "
+        "(Parlement, "
         "contre-pouvoirs, libertés, pluralisme, surveillance, élections), recalculés "
         "chaque jour depuis les données officielles. "
         f"Indice illustratif au {jour} : {score} sur 100 (50 = niveau habituel)."
@@ -212,7 +229,8 @@ def json_ld(data: dict, site_url: str | None) -> str:
                 "description": (
                     f"Position {r['position']} sur 100 dans son historique (depuis {r['depuis']})"
                     if r["dans_indice"]
-                    else f"Hors indice : relevé arrêté au {date_longue(r['fin_couverture'])}"
+                    else "Hors indice : "
+                    + (r["hors_indice"] or f"relevé arrêté au {date_longue(r['fin_couverture'])}")
                 ),
             }
             for r in rows
@@ -240,7 +258,7 @@ def json_ld(data: dict, site_url: str | None) -> str:
 
 def entete(data: dict, site_url: str | None) -> str:
     desc = html.escape(description(data), quote=True)
-    titre = html.escape(f"{TITRE} — 13 indicateurs sourcés", quote=True)
+    titre = html.escape(f"{TITRE} — {nb_indicateurs(data)} indicateurs sourcés", quote=True)
     tags = [
         f'<meta name="description" content="{desc}">',
         '<meta name="robots" content="index, follow">',
@@ -293,7 +311,7 @@ def vue_statique(data: dict) -> tuple[str, str, str]:
 def appliquer(page: str, data: dict, site_url: str | None) -> str:
     page = re.sub(
         r"<title>.*?</title>",
-        f"<title>{html.escape(TITRE)} — 13 indicateurs sourcés</title>",
+        f"<title>{html.escape(TITRE)} — {nb_indicateurs(data)} indicateurs sourcés</title>",
         page,
         count=1,
         flags=re.S,
@@ -334,7 +352,7 @@ def resume_md(data: dict, site_url: str | None) -> str:
         "pour plus défavorable. Cet indice aide à lire l'ensemble ; "
         "il ne qualifie pas le régime.\n\n"
     )
-    w("## Les 13 indicateurs\n\n")
+    w(f"## Les {nb_indicateurs(data)} indicateurs\n\n")
     w("| Code | Indicateur | Valeur actuelle | Position (sur 100) | Série depuis |\n")
     w("| --- | --- | --- | --- | --- |\n")
     for r in lignes(data):
@@ -390,7 +408,8 @@ def llms_txt(data: dict, site_url: str | None) -> str:
     score = indice(data["dimensions"])
     return (
         f"# {TITRE}\n\n"
-        f"> Treize indicateurs sourcés sur l'état de la démocratie en France, recalculés chaque "
+        f"> {en_toutes_lettres(nb_indicateurs(data))} indicateurs sourcés sur l'état de la "
+        "démocratie en France, recalculés chaque "
         f"jour depuis les données officielles (Assemblée nationale, Journal officiel, Conseil "
         f"constitutionnel, CNIL, justice administrative, Arcom, RSF, CNCTR). Prototype : aucun "
         f"seuil ni aucune pondération n'est encore fixé ; l'indice affiché ({score} sur 100 au "
@@ -398,7 +417,8 @@ def llms_txt(data: dict, site_url: str | None) -> str:
         "Pour citer un chiffre, reprendre sa date et sa source ; ne pas présenter l'indice "
         "illustratif comme une note officielle.\n\n"
         "## Données\n\n"
-        f"- [Résumé complet en texte]({base}barometre.md) : indice, 13 indicateurs, contexte, "
+        f"- [Résumé complet en texte]({base}barometre.md) : indice, {nb_indicateurs(data)} "
+        "indicateurs, contexte, "
         "méthode, sources\n"
         f"- [Indicateurs (CSV)]({base}indicateurs.csv) : valeur actuelle et position dans "
         "l'historique\n"
@@ -428,9 +448,7 @@ def sitemap_xml(site_url: str, lastmod: str) -> str:
 
 
 APERCU = "apercu.png"  # image de partage (1200 × 630), front/publication/apercu.png
-APERCU_ALT = (
-    "Baromètre de la santé démocratique : 13 indicateurs sourcés sur la démocratie en France"
-)
+APERCU_ALT = "Baromètre de la santé démocratique : indicateurs sourcés sur la démocratie en France"
 
 # Politique de sécurité du contenu : tout vient du site lui-même (scripts et styles en ligne
 # compris).

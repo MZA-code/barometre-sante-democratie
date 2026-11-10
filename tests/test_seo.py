@@ -105,3 +105,31 @@ def test_indicateur_au_releve_arrete_hors_indice():
     data = {**DATA, "dimensions": dims}
     _, texte, items = seo.vue_statique(data)
     assert "relevé arrêté au 31 décembre 2025" in texte and "hors indice" in items
+
+
+def test_indicateur_hors_indice_par_raison_explicite():
+    """D7 pendant la reprise : `hors_indice` porte la raison, comme sur la page."""
+    dims = [dict(d) for d in DATA["dimensions"]]
+    dims[1]["hors_indice"] = "reprise depuis juillet 2024 en cours de collecte"
+    assert seo.indice(dims) == round(100 * seo.position(dims[0]))
+    _, texte, items = seo.vue_statique({**DATA, "dimensions": dims})
+    assert "reprise depuis juillet 2024 en cours de collecte" in texte
+    assert "hors indice" in items
+
+
+def test_nombre_d_indicateurs_calcule():
+    data = {
+        **DATA,
+        "dimensions": [dict(d) for d in DATA["dimensions"]] * 7 + [DATA["dimensions"][0]],
+    }
+    assert seo.description(data).startswith("15 indicateurs sourcés")
+    assert "15 indicateurs sourcés" in seo.entete(data, None)
+    assert "Quinze indicateurs sourcés" in seo.llms_txt(data, None)
+    assert "## Les 15 indicateurs" in seo.resume_md(data, None)
+    assert "13 indicateurs" not in seo.appliquer(PAGE, data, None)
+
+
+def test_donnees_structurees_avec_raison_hors_indice():
+    dims = [dict(d) for d in DATA["dimensions"]]
+    dims[1]["hors_indice"] = "reprise en cours"
+    assert "Hors indice : reprise en cours" in seo.json_ld({**DATA, "dimensions": dims}, None)
