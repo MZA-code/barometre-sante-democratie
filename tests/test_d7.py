@@ -296,25 +296,30 @@ def test_empreinte_ne_depend_que_des_decisions(conn, tmp_path):
     assert d7.empreinte_decisions(conn, raw) != e1
 
 
-def test_issue_modifiee_apres_validation_a_corriger(conn, tmp_path):
-    raw = tmp_path / "raw"
-    valide = inst(1, ("d7", "cat:force", "validé"), {"validé": pose()})
-    archiver_inst(conn, raw, valide)
-    modifie = {
-        **valide,
-        "titre": "[D7] Force · Ailleurs · 2025-01-01",
-        "maj": "2026-11-11T09:00:00Z",
-    }
+def archiver_a(conn, raw, i, quand):
     store(
         conn,
         raw,
         source_id="github_d7",
-        external_id="1",
+        external_id=str(i["numero"]),
         url="u",
-        fetched_at="2026-11-11T10:00:00Z",
-        chunks=[json.dumps(modifie).encode()],
+        fetched_at=quand,
+        chunks=[json.dumps(i).encode()],
         suffix=".json",
     )
+
+
+def test_issue_modifiee_apres_validation_a_corriger(conn, tmp_path):
+    raw = tmp_path / "raw"
+    vue = inst(1, ("d7", "cat:force"))
+    archiver_a(conn, raw, vue, "2026-11-10T09:00:00Z")  # ce que le validateur a lu
+    # validé à 10 h ; l'auteur modifie avant l'instantané de 11 h, qui porte donc déjà
+    # « validé » ET le contenu modifié
+    modifie = {
+        **inst(1, ("d7", "cat:force", "validé"), {"validé": pose()}),
+        "titre": "[D7] Force · Ailleurs · 2025-01-01",
+    }
+    archiver_a(conn, raw, modifie, "2026-11-10T11:00:00Z")
     assert [f for f in d7.extract(conn, raw) if f.fact_type == "fait_presse_valide"] == []
     etat = d7.etat_d7(conn, raw, __import__("datetime").date(2026, 11, 11))
     assert etat["a_corriger"] == [(1, "issue modifiée après la validation : revalider")]
@@ -322,18 +327,21 @@ def test_issue_modifiee_apres_validation_a_corriger(conn, tmp_path):
 
 def test_revalidation_apres_modification(conn, tmp_path):
     raw = tmp_path / "raw"
-    archiver_inst(conn, raw, inst(1, ("d7", "cat:force", "validé"), {"validé": pose()}))
-    revalide = inst(1, ("d7", "cat:force", "validé"), {"validé": pose(le="2026-11-11T11:00:00Z")})
-    revalide["titre"] = "[D7] Force · Lyon, Rhône-Alpes, France · 2026-11-02"
-    store(
+    archiver_a(conn, raw, inst(1, ("d7", "cat:force")), "2026-11-10T09:00:00Z")
+    archiver_a(
         conn,
         raw,
-        source_id="github_d7",
-        external_id="1",
-        url="u",
-        fetched_at="2026-11-11T12:00:00Z",
-        chunks=[json.dumps(revalide).encode()],
-        suffix=".json",
+        inst(1, ("d7", "cat:force", "validé"), {"validé": pose()}),
+        "2026-11-10T11:00:00Z",
     )
+    nouveau_titre = "[D7] Force · Lyon, Rhône-Alpes, France · 2026-11-02"
+    modifie = {**inst(1, ("d7", "cat:force", "validé"), {"validé": pose()}), "titre": nouveau_titre}
+    archiver_a(conn, raw, modifie, "2026-11-10T12:00:00Z")
+    assert [f for f in d7.extract(conn, raw) if f.fact_type == "fait_presse_valide"] == []
+    revalide = {
+        **inst(1, ("d7", "cat:force", "validé"), {"validé": pose(le="2026-11-10T13:00:00Z")}),
+        "titre": nouveau_titre,
+    }
+    archiver_a(conn, raw, revalide, "2026-11-10T14:00:00Z")
     (fait,) = [f for f in d7.extract(conn, raw) if f.fact_type == "fait_presse_valide"]
     assert fait.occurred_on == "2026-11-02"

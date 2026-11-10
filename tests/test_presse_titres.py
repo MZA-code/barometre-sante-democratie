@@ -154,3 +154,13 @@ def test_redirection_vers_un_autre_site_ignoree(conn, tmp_path):
         conn, tmp_path / "raw", ["https://www.lemonde.fr/a"], opener=opener, sleep=lambda s: None
     )
     assert pt.titres_archives(conn, tmp_path / "raw") == {"https://www.lemonde.fr/a": None}
+
+
+def test_redirection_refusee_avant_la_requete():
+    groupes = __import__("extract.d7_candidats", fromlist=["x"]).groupes_presse()
+    assert pt.redirection_permise("https://www.lemonde.fr/b", "groupe_le_monde", groupes)
+    assert not pt.redirection_permise("http://127.0.0.1/admin", "groupe_le_monde", groupes)
+    assert not pt.redirection_permise("https://www.lefigaro.fr/x", "groupe_le_monde", groupes)
+    gestionnaire = pt.GestionRedirections("groupe_le_monde", groupes)
+    with pytest.raises(pt.RedirectionRefusee):
+        gestionnaire.redirect_request(None, None, 302, "Found", {}, "http://169.254.169.254/")

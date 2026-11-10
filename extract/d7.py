@@ -128,26 +128,30 @@ MODIFIEE = "issue modifiée après la validation : revalider"
 
 
 def issues_figees(conn: sqlite3.Connection, raw_dir: Path) -> list[tuple[int, dict]]:
-    """(document brut, dernier instantané) de chaque issue, par numéro. Une issue validée dont
-    le titre ou le corps a changé depuis le premier instantané portant cette validation (même
-    date de pose de `validé`) est marquée `_modifiee` : sur un dépôt public, l'auteur d'une
-    issue peut la modifier après coup ; il faut alors revalider (retirer puis reposer
-    `validé`)."""
-    versions: dict[str, list[tuple[int, dict]]] = {}
+    """(document brut, dernier instantané) de chaque issue, par numéro. Une issue validée est
+    marquée `_modifiee` si son titre ou son corps diffère de ce que le validateur a vu : le
+    dernier instantané pris AVANT la pose de `validé` (à défaut, le premier qui la porte).
+    Sur un dépôt public, l'auteur d'une issue peut la modifier après coup ; il faut alors
+    revalider (retirer puis reposer `validé`). Limite : une issue ouverte, validée et
+    modifiée dans la même heure, sans instantané intermédiaire, n'est pas détectée."""
+    versions: dict[str, list[tuple[int, str, dict]]] = {}
     for row in conn.execute(
-        "SELECT id, external_id, path FROM raw_documents WHERE source_id = ?"
+        "SELECT id, external_id, fetched_at, path FROM raw_documents WHERE source_id = ?"
         " ORDER BY fetched_at, id",
         (GITHUB,),
     ):
         inst = json.loads((raw_dir / row["path"]).read_text(encoding="utf-8"))
-        versions.setdefault(row["external_id"], []).append((row["id"], inst))
+        versions.setdefault(row["external_id"], []).append((row["id"], row["fetched_at"], inst))
     out = []
     for vs in versions.values():
-        doc_id, dernier = vs[-1]
+        doc_id, _, dernier = vs[-1]
         pose = dernier["poses"].get("validé")
         if "validé" in dernier["etiquettes"] and pose:
-            ref = next(
-                i for _, i in vs if "validé" in i["etiquettes"] and i["poses"].get("validé") == pose
+            avant = [i for _, quand, i in vs if quand < pose["le"]]
+            ref = (
+                avant[-1]
+                if avant
+                else next(i for _, _, i in vs if i["poses"].get("validé") == pose)
             )
             if (ref["titre"], ref["corps"]) != (dernier["titre"], dernier["corps"]):
                 dernier = {**dernier, "_modifiee": True}

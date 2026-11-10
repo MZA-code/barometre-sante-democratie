@@ -8,7 +8,8 @@ redemandée. Une requête par seconde au plus.
 
 Sécurité : les adresses viennent de GDELT (source extérieure). Seules sont lues les adresses
 `http(s)` dont l'hôte appartient à un média de config/medias_groupes.yaml ; une redirection
-vers un autre groupe donne un titre nul. Les autres sont notées sans être lues.
+n'est suivie que vers le même groupe, vérifiée avant la nouvelle requête (sinon titre nul).
+Les autres adresses sont notées sans être lues.
 
 Les titres servent à une seule chose : deux articles de groupes différents au titre
 identique (une fois normalisé) sont la même dépêche reprise, et comptent pour une seule source
@@ -29,10 +30,12 @@ import sqlite3
 import sys
 import time
 import unicodedata
+import urllib.request
 from collections.abc import Callable, Iterable
+from contextlib import contextmanager
 from pathlib import Path
 
-from collectors.http import Opener, now_iso, urlopen
+from collectors.http import TIMEOUT, USER_AGENT, Opener, now_iso
 from extract.common import latest_documents
 from storage.archive import DEFAULT_RAW_DIR, is_archived, store
 from storage.db import DEFAULT_DB_PATH, connect, init_db
@@ -95,6 +98,36 @@ def adresse_autorisee(url: str, groupes: dict[str, str]) -> str | None:
     return groupe_de(u.hostname, groupes)
 
 
+def redirection_permise(nouvelle: str, groupe: str, groupes: dict[str, str]) -> bool:
+    return adresse_autorisee(nouvelle, groupes) == groupe
+
+
+class RedirectionRefusee(Exception):
+    """Redirection vers une adresse hors du média attendu : la requête n'est pas faite."""
+
+
+class GestionRedirections(urllib.request.HTTPRedirectHandler):
+    """Suit une redirection seulement vers le même groupe de presse, vérifiée AVANT la
+    nouvelle requête (jamais d'appel vers une adresse interne ou inconnue)."""
+
+    def __init__(self, groupe: str, groupes: dict[str, str]) -> None:
+        super().__init__()
+        self.groupe, self.groupes = groupe, groupes
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        if not redirection_permise(newurl, self.groupe, self.groupes):
+            raise RedirectionRefusee(newurl)
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+@contextmanager
+def ouvrir(url: str, groupe: str, groupes: dict[str, str]):
+    opener = urllib.request.build_opener(GestionRedirections(groupe, groupes))
+    requete = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    with opener.open(requete, timeout=TIMEOUT) as response:
+        yield response
+
+
 def external_id(url: str) -> str:
     return hashlib.sha256(url.encode()).hexdigest()
 
@@ -103,9 +136,10 @@ def collect_urls(
     conn: sqlite3.Connection,
     raw_dir: Path,
     urls: Iterable[str],
-    opener: Opener = urlopen,
+    opener: Opener | None = None,
     sleep: Callable[[float], None] = time.sleep,
 ) -> int:
+    """Archive le titre de chaque adresse ; `opener` (tests) remplace `ouvrir`."""
     from extract.d7_candidats import groupes_presse
 
     groupes = groupes_presse()
@@ -120,7 +154,8 @@ def collect_urls(
             if n:
                 sleep(PAUSE_S)
             try:
-                with opener(url) as response:
+                ouverture = opener(url) if opener else ouvrir(url, groupe, groupes)
+                with ouverture as response:
                     finale = response.geturl() if hasattr(response, "geturl") else url
                     if adresse_autorisee(finale, groupes) == groupe:
                         titre = titre_de_page(response.read(OCTETS_MAX))
