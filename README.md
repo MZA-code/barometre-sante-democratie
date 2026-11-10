@@ -4,6 +4,12 @@ Mesurer, à partir de faits vérifiables et d'une grille publiée à l'avance, �
 France se trouve d'un régime autoritaire. L'outil note des **actes**, jamais des partis : chaque
 chiffre affiché remonte jusqu'aux documents officiels qui le justifient.
 
+Définition retenue (affichée en tête du site, références dans la section « Sur quoi on
+s'appuie ») : une démocratie, c'est un pays où les citoyens choisissent librement leurs
+dirigeants, où chacun peut s'exprimer, s'informer, se réunir et manifester sans crainte, et où le
+pouvoir est limité par la loi, les juges, le Parlement et la presse, **en droit comme en
+pratique** (Dahl, V-Dem, Bermeo, Levitsky et Ziblatt, Scheppele, Commission de Venise).
+
 > **Statut : prototype.** La grille `v0` est un brouillon : aucun seuil ni aucune pondération
 > n'est encore fixé par le comité de méthode. Le pipeline publie donc des **métriques brutes**,
 > jamais de note officielle. L'indice affiché en tête de page est **illustratif** (moyenne
@@ -34,7 +40,7 @@ journaliste, aucun contenu payant archivé.
 
 ## Ce que mesure le baromètre
 
-### Indicateurs de la grille (13)
+### Indicateurs de la grille (16)
 
 | Code | Indicateur | Depuis |
 | --- | --- | --- |
@@ -42,6 +48,8 @@ journaliste, aucun contenu payant archivé.
 | D1.2 | Scrutins reportés | 1990 |
 | D2.1 | Contournement du Parlement (49.3 et ordonnances) | 1958 |
 | D2.2 | Procédure accélérée | 1978 |
+| D2.3 | Pétitions citoyennes de 500 000 signatures ou plus classées sans examen | 2020 |
+| D2.4 | Crédits votés par le Parlement puis annulés par décret | 2006 |
 | D3.1 | Régimes d'exception | 1958 |
 | D3.2 | Lois censurées par le Conseil constitutionnel | 1958 |
 | D4.1 | Dissolutions administratives | 1990 |
@@ -51,6 +59,16 @@ journaliste, aucun contenu payant archivé.
 | D5.3 | Classement RSF de la liberté de la presse | 2002 |
 | D6.1 | Techniques de renseignement (personnes surveillées) | 2016 |
 | D6.2 | Fichiers créés malgré les réserves de la CNIL | 1983 |
+| D7 | Libertés en pratique : faits recoupés par la presse et validés, constats du Défenseur des droits | 2024 |
+
+**D7 · Libertés en pratique** mesure ce que les textes ne disent pas : les atteintes commises
+sur le terrain par une autorité publique. Deux voies : les constats de manquement du Défenseur
+des droits (comptés d'office) et les faits rapportés par au moins deux groupes de presse
+différents (flux RSS, et GDELT pour la reprise depuis juillet 2024), validés un par un sur
+GitHub (issues étiquetées `d7`, critères écrits dans la grille). D7 reste hors de l'indice tant
+que la reprise du passé n'est pas collectée et relue. Conception :
+[docs/superpowers/specs/2026-11-10-libertes-en-pratique-design.md](docs/superpowers/specs/2026-11-10-libertes-en-pratique-design.md) ;
+mise en service et validation : [ops/README-d7.md](ops/README-d7.md).
 
 ### Contexte et regards extérieurs (non notés)
 
@@ -72,7 +90,11 @@ de la force (séries annuelles de l'IGPN).
 | [RSF](https://rsf.org/fr/classement) : classement | fichier annuel | automatique |
 | [CNCTR](https://www.cnctr.fr/rapports-activit%C3%A9) : rapports | PDF annuels | automatique |
 | [data.gouv.fr](https://www.data.gouv.fr) : résultats électoraux | open data | automatique |
-| [GDELT 2.0](https://www.gdeltproject.org/data.html) : presse en ligne mondiale | fichiers publics | automatique |
+| [GDELT 2.0](https://www.gdeltproject.org/data.html) : presse en ligne mondiale, flux anglophone et flux traduit (presse française, D7) | fichiers publics | automatique |
+| Flux RSS de 30 médias français (`config/flux_rss.yaml`) : titre, lien, date, résumé court (D7) | flux publics | automatique (toutes les heures) |
+| Issues GitHub `d7` du dépôt : décisions de validation (D7) | API GitHub (`config/github.local`) | automatique (toutes les heures) |
+| [Plateforme des pétitions de l'Assemblée nationale](https://petitions.assemblee-nationale.fr/) et [jeu data.gouv](https://www.data.gouv.fr/datasets/petitions-de-lassemblee-nationale) (D2.3) | pages publiques, open data | automatique |
+| [Communes (geo.api.gouv.fr)](https://geo.api.gouv.fr/decoupage-administratif/communes) : lieu des faits de presse (D7) | open data | une fois |
 | [Défenseur des droits](https://juridique.defenseurdesdroits.fr/) : décisions liées aux manifestations | base documentaire publique (30 s entre deux requêtes, robots.txt) | automatique |
 | Rapports annuels IGPN et Défenseur des droits ([vie-publique.fr](https://www.vie-publique.fr/rapports)) : usage de la force | PDF archivés, chiffres relevés à la main | manuelle (annuelle) |
 | Seeds manuels (`data/seed/`) : 49.3 avant 2012, régimes d'exception, journalistes inquiétés, mobilisations, déclarations de l'ONU, chiffres CNCTR | relevé à la main, chaque chiffre vérifié dans sa source | manuelle |
@@ -114,10 +136,15 @@ make nouveautes     # faits nouveaux depuis la dernière exécution (aussi fait 
 make deplanifier    # retire le timer
 ```
 
+Sur l'hébergement, une seconde tâche tourne toutes les heures (`ops/decisions.sh`) : lecture
+des flux RSS et des décisions de validation D7 sur GitHub, puis republication du site si une
+décision a changé. Voir [ops/README-d7.md](ops/README-d7.md).
+
 Journaux dans `data/logs/` ; une source en panne n'empêche pas les autres (voir
 `ops/quotidien.py`). Chaque jour, les faits nouveaux sont résumés dans
 `data/exports/nouveautes.md`. L'historique GDELT est rattrapé progressivement (5 jours par
-passage, `GDELT_JOURS`).
+passage, `GDELT_JOURS`) ; le flux traduit (D7) l'est jusqu'au 1er juillet 2024, 10 jours par
+passage.
 
 ## Mise en ligne
 
@@ -170,10 +197,10 @@ La page construit ses chiffres en JavaScript ; la version web les écrit aussi d
 | Fichier / balise | Rôle |
 | --- | --- |
 | titre, `description`, Open Graph | résultats de recherche et aperçus de partage |
-| JSON-LD schema.org `Dataset` | description structurée : 13 indicateurs, valeurs, sources |
+| JSON-LD schema.org `Dataset` | description structurée : indicateurs, valeurs, sources |
 | indice et vue d'ensemble dans le HTML | contenu lisible sans JavaScript |
 | `barometre.md` | résumé en texte simple, chaque chiffre avec sa source |
-| `indicateurs.csv` | valeurs et positions des 13 indicateurs |
+| `indicateurs.csv` | valeurs et positions des indicateurs |
 | `llms.txt` | point d'entrée pour les assistants d'IA ([llmstxt.org](https://llmstxt.org)) |
 | `robots.txt`, `sitemap.xml` | exploration ; le sitemap et l'URL canonique exigent `SITE_URL` |
 | `.htaccess` | UTF-8, page 404, en-têtes de sécurité (CSP, HSTS en https…) et de cache ; si `SITE_URL` est en https, redirection de http et www vers cette adresse |
@@ -190,14 +217,14 @@ une racine de confiance du système, rien n'est envoyé sinon.
 
 | Dossier | Rôle |
 | --- | --- |
-| `collectors/` | téléchargement et archivage : `an_opendata`, `senat`, `justice_admin`, `arcom`, `rsf`, `cnctr`, `dila` (LEGI, JORF, CONSTIT, CNIL), `datagouv`, `gdelt`, `ddd`, `rapports`, `seed` |
+| `collectors/` | téléchargement et archivage : `an_opendata`, `senat`, `justice_admin`, `arcom`, `rsf`, `cnctr`, `dila` (LEGI, JORF, CONSTIT, CNIL), `datagouv`, `gdelt`, `ddd`, `rapports`, `seed`, `rss`, `presse_titres`, `github_d7`, `petitions` |
 | `storage/` | schéma SQLite, archive brute immuable (`archive.py`), base (`db.py`) |
 | `extract/` | documents bruts -> faits (un module par source ou indicateur) |
 | `scoring/` | grille (`grid.py`), métriques (`metrics.py`), notes (`score.py`), rapports (`report.py`) |
 | `front/prototype/` | page du baromètre (`index.html`) et export des données (`export_data.py`) |
 | `front/publication/` | construction de la page autonome (`build.py`) et référencement de la version web (`seo.py`) |
-| `ops/` | exécution quotidienne (`quotidien.py`), alerte des faits nouveaux (`nouveautes.py`), mise en ligne (`deployer.py`), unités systemd |
-| `config/` | grille, sources, paramètres des collectes |
+| `ops/` | exécution quotidienne (`quotidien.py`), tâche horaire D7 (`decisions.py`), ouverture des issues D7 (`issues_d7.py`), alerte des faits nouveaux (`nouveautes.py`), mise en ligne (`deployer.py`), unités systemd |
+| `config/` | grille, sources, paramètres des collectes ; D7 : groupes de presse (`medias_groupes.yaml`), flux RSS, validateurs ; pétitions suivies (`petitions_suivies.yaml`) |
 | `data/seed/` | seeds manuels versionnés, voir leur [README](data/seed/README.md) |
 | `data/raw/` | archive brute (non versionnée) |
 | `data/cache/`, `data/exports/`, `data/logs/` | dérivés, supprimables |

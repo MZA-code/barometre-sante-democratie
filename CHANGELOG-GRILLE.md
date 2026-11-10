@@ -112,6 +112,13 @@ ci-dessous et un recalcul complet de l'historique (`make rebuild GRID=config/gri
   (dont classées par la commission sans examen, datées du classement ; métrique notée).
   Historique depuis l'ouverture de la plateforme (2020-10-01). Seuils `null`.
 
+- Indicateur **D2.4 — Crédits votés annulés par décret** (`D2.annulations_credits`), ajouté
+  le 2026-11-10 avant tout gel : `nb_decrets_annulation` et `montant_annule_cp_md` (crédits de
+  paiement annulés, milliards d'euros courants ; métrique notée), lus à l'article 1 des décrets
+  « portant annulation de crédits » du Journal officiel (décrets d'avance exclus). Historique
+  depuis la LOLF (2006-01-01). Nouveau type de métrique additive `sum` (somme de montants).
+  Seuils `null`.
+
 ### 2026-11-06 — Extraction (sans changement de grille)
 
 - D4.2\* : décisions sportives, antidopage et nautiques exclues ; issue lue du point de vue du

@@ -108,12 +108,14 @@ class Event:
     avant_scrutin: bool = False  # texte électoral publié moins d'un an avant le scrutin visé
     nb_journalistes: int = 0  # journalistes visés par une mesure (D5.2)
     comptee: bool = False  # mesure entrant dans la définition de D5.2
+    montant: float = 0.0  # montant porté par le fait (D2.4 : crédits annulés, milliards d'euros)
 
 
 # Métriques additives, calculées jour par jour puis sommées sur la fenêtre :
 #   - "count" : nombre de faits datés du jour ;
 #   - "coverage" : 1 si le jour est couvert par au moins une période (les chevauchements
-#     de périodes ne sont comptés qu'une fois).
+#     de périodes ne sont comptés qu'une fois) ;
+#   - "sum" : somme des montants (`Event.montant`) des faits datés du jour.
 DAILY_METRICS = {
     "nb_dissolutions": ("count", lambda e: e.fact_type == "dissolution_administrative"),
     "jours_exception": ("coverage", lambda e: e.fact_type == "periode_regime_exception"),
@@ -124,6 +126,9 @@ DAILY_METRICS = {
     # D2.3 : pétitions citoyennes de 500 000 signatures ou plus, et celles classées sans examen.
     "nb_petitions_500k": ("count", lambda e: e.fact_type.startswith("petition_500k_")),
     "nb_petitions_500k_classees": ("count", lambda e: e.fact_type == "petition_500k_classee"),
+    # D2.4 : décrets d'annulation de crédits, nombre et montant (crédits de paiement, Md€).
+    "nb_decrets_annulation": ("count", lambda e: e.fact_type == "decret_annulation_credits"),
+    "montant_annule_cp_md": ("sum", lambda e: e.fact_type == "decret_annulation_credits"),
     # D7 : faits de presse validés sur GitHub, constats d'autorités, et leur somme.
     "nb_faits_presse_valides": ("count", lambda e: e.fact_type == "fait_presse_valide"),
     "nb_constats_institutionnels": ("count", lambda e: e.fact_type == "constat_institutionnel"),
@@ -144,11 +149,16 @@ class DailySeries:
         for event in filter(keep, events):
             # un fait compte le jour où il survient ; une période couvre jusqu'à sa fin
             # (en cours : jusqu'à la fin des données)
-            last_day = event.day if kind == "count" else event.until or end
+            last_day = event.until or end if kind == "coverage" else event.day
             lo = max(0, (event.day - origin).days)
             hi = min(size - 1, (last_day - origin).days)
             for i in range(lo, hi + 1):
-                daily[i] = daily[i] + 1 if kind == "count" else 1
+                if kind == "count":
+                    daily[i] += 1
+                elif kind == "sum":
+                    daily[i] += event.montant
+                else:
+                    daily[i] = 1
         self.cumul = [0]
         for value in daily:
             self.cumul.append(self.cumul[-1] + value)
@@ -311,6 +321,7 @@ def load_events(conn: sqlite3.Connection, indicator: Indicator) -> list[Event]:
                 avant_scrutin=attrs.get("moins_d_un_an", False),
                 nb_journalistes=attrs.get("nb_journalistes", 0),
                 comptee=attrs.get("comptee", False),
+                montant=attrs.get("montant_cp_md", 0.0),
             )
         )
     return events

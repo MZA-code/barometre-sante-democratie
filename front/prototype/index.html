@@ -374,6 +374,31 @@
       <p id="petitions-resume" class="mt-4 max-w-3xl text-sm text-ink2"></p>
     </section>
 
+    <!-- D2.4. Crédits votés annulés par décret -->
+    <section id="d2-4" class="py-10 border-b border-rule" aria-labelledby="t-d2-4">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D2 · Place du Parlement</p>
+      <h2 id="t-d2-4" class="mt-2 font-serif text-2xl font-semibold">Les crédits votés puis annulés par décret</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Les citoyens consentent à l'impôt par leurs représentants et ont le droit d'en suivre
+        l'emploi (article 14 de la Déclaration de 1789). Le Parlement vote chaque année les dépenses
+        de l'État&nbsp;; le Gouvernement peut ensuite en annuler une partie par simple décret, sans
+        nouveau vote. On relève ici ces annulations, telles que publiées au Journal officiel. Ce
+        chiffre ne juge pas les choix de dépenses&nbsp;: il mesure la part du budget voté qui échappe
+        ensuite au vote.
+      </p>
+      <p id="annulations-resume" class="mt-4 max-w-3xl text-sm text-ink2"></p>
+      <details class="mt-4 text-sm">
+        <summary class="text-ink2 flex items-center gap-2">
+          <i class="chev fa-solid fa-chevron-right text-xs text-muted transition-transform" aria-hidden="true"></i>
+          Voir les décrets d'annulation
+        </summary>
+        <div class="mt-3 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+          <table class="w-full text-left" id="annulations-table"></table>
+        </div>
+      </details>
+      <p class="mt-3 max-w-3xl text-xs text-ink2">Montants en crédits de paiement, en euros courants, ni corrigés de l'inflation ni rapportés à la taille du budget. Les décrets d'avance, qui annulent des crédits pour en ouvrir d'autres, ne sont pas comptés.</p>
+    </section>
+
     <section id="d3" class="py-10 border-b border-rule" aria-labelledby="t-d3">
       <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D3 · Contre-pouvoirs et État de droit</p>
       <h2 id="t-d3" class="mt-2 font-serif text-2xl font-semibold">Les régimes d'exception depuis 1958</h2>
@@ -570,6 +595,22 @@
         représentativité (résultats électoraux, groupes parlementaires) et n'entre dans aucune note.
         Contrôle&nbsp;: pour chaque mois et chaque colonne du relevé, la somme des partis est égale
         au total publié par l'Arcom, à la seconde près.</span>
+      </p>
+      <p class="mt-3 flex gap-2 text-sm text-ink2 max-w-3xl">
+        <i class="fa-solid fa-triangle-exclamation mt-0.5 text-muted" aria-hidden="true"></i>
+        <span><strong class="text-ink">Ce que mesure ce temps, et ce qu'il ne mesure pas.</strong>
+        L'Arcom compte le temps pendant lequel une personnalité politique parle à l'antenne, quel que
+        soit le contexte&nbsp;: un extrait diffusé pour être critiqué compte comme un temps accordé, et
+        une rediffusion en pleine nuit compte autant qu'un passage en journée. Une chaîne peut ainsi
+        atteindre l'équilibre demandé en rediffusant la nuit des discours d'un parti qu'elle critique
+        le jour. Reporters sans frontières l'a documenté pour CNews (en mars 2025, les rattrapages
+        nocturnes représentaient 39&nbsp;% du temps attribué à cette partie de l'échiquier, dont des
+        meetings de La France insoumise), et l'Arcom avait déjà mis la chaîne en demeure pour ce motif
+        en 2021. L'Arcom annonce ne plus compter la nuit (de minuit à 5 h 59) dans son calcul
+        d'équilibre depuis octobre 2025&nbsp;; ses fichiers publiés ne ventilent pas les temps par
+        heure, et l'on ne peut pas vérifier ici quelle part de ces temps a été diffusée la nuit.
+        Sources&nbsp;: <a class="underline text-ink" href="https://rsf.org/fr/pluralisme-en-france-sur-cnews-le-grand-contournement">RSF, «&nbsp;Sur CNews, le grand contournement&nbsp;»</a>,
+        <a class="underline text-ink" href="https://rsf.org/fr/france-sur-cnews-lfi-jusqu-au-bout-de-la-nuit">RSF, «&nbsp;Sur CNews, LFI jusqu'au bout de la nuit&nbsp;»</a>.</span>
       </p>
       <details class="mt-4">
         <summary class="text-sm text-ink2 flex items-center gap-2"><i class="fa-solid fa-chevron-right chev text-xs transition-transform" aria-hidden="true"></i>Voir les relevés mensuels de l'Arcom</summary>
@@ -1366,6 +1407,7 @@
       nb_journalistes_mesures: v => `${num(v)} journaliste${v > 1 ? 's' : ''}`,
       nb_atteintes_pratique: v => `${num(v)} fait${v > 1 ? 's' : ''}`,
       nb_petitions_500k_classees: v => `${num(v)} pétition${v > 1 ? 's' : ''}`,
+      montant_annule_cp_md: v => `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v)} Md€`,
       personnes_surveillees: v => num(Math.round(v)),
       jours_exception: v => `${num(v)} jour${v > 1 ? 's' : ''}`,
       nb_dissolutions: v => `${num(v)} dissolution${v > 1 ? 's' : ''}`,
@@ -1385,11 +1427,12 @@
       nb_journalistes_mesures: "placés en garde à vue, interpellés, poursuivis ou condamnés (relevé pilote, non exhaustif)",
       nb_atteintes_pratique: "d'atteinte aux libertés par une autorité, constatés ou recoupés par deux groupes de presse et validés",
       nb_petitions_500k_classees: "de 500 000 signatures ou plus classées par la commission sans examen",
+      montant_annule_cp_md: "de crédits votés par le Parlement puis annulés par décret, sans nouveau vote",
       personnes_surveillees: "personnes surveillées par des techniques de renseignement dans l'année (CNCTR)",
       nb_dissolutions: "d'associations ou de groupements par décret",
     };
-    const ANCHOR = { 'D2.contournement_parlement': '#t-evolution', 'D2.procedure_acceleree': '#d2-2', 'D3.regimes_exception': '#d3', 'D3.lois_censurees': '#d3-2', 'D4.interdictions_manifester_juge': '#d4-2', 'D6.traitements_malgre_reserves': '#d6-2', 'D5.temps_parole_executif': '#d5-1', 'D1.regles_electorales_avant_scrutin': '#d1', 'D1.scrutins_reportes': '#d1-table', 'D5.classement_rsf': '#d5-3', 'D5.journalistes_inquietes': '#d5-2', 'D6.techniques_renseignement': '#d6-1', 'D4.dissolutions_administratives': '#d4', 'D7.libertes_en_pratique': '#d7', 'D2.petitions_classees': '#d2-3' };
-    const CODE = { 'D2.contournement_parlement': 'D2.1', 'D2.procedure_acceleree': 'D2.2', 'D3.regimes_exception': 'D3.1', 'D3.lois_censurees': 'D3.2', 'D4.interdictions_manifester_juge': 'D4.2*', 'D6.traitements_malgre_reserves': 'D6.2', 'D5.temps_parole_executif': 'D5.1', 'D1.regles_electorales_avant_scrutin': 'D1.1', 'D1.scrutins_reportes': 'D1.2', 'D5.classement_rsf': 'D5.3', 'D5.journalistes_inquietes': 'D5.2', 'D6.techniques_renseignement': 'D6.1', 'D4.dissolutions_administratives': 'D4.1', 'D7.libertes_en_pratique': 'D7', 'D2.petitions_classees': 'D2.3' };
+    const ANCHOR = { 'D2.contournement_parlement': '#t-evolution', 'D2.procedure_acceleree': '#d2-2', 'D3.regimes_exception': '#d3', 'D3.lois_censurees': '#d3-2', 'D4.interdictions_manifester_juge': '#d4-2', 'D6.traitements_malgre_reserves': '#d6-2', 'D5.temps_parole_executif': '#d5-1', 'D1.regles_electorales_avant_scrutin': '#d1', 'D1.scrutins_reportes': '#d1-table', 'D5.classement_rsf': '#d5-3', 'D5.journalistes_inquietes': '#d5-2', 'D6.techniques_renseignement': '#d6-1', 'D4.dissolutions_administratives': '#d4', 'D7.libertes_en_pratique': '#d7', 'D2.petitions_classees': '#d2-3', 'D2.annulations_credits': '#d2-4' };
+    const CODE = { 'D2.contournement_parlement': 'D2.1', 'D2.procedure_acceleree': 'D2.2', 'D3.regimes_exception': 'D3.1', 'D3.lois_censurees': 'D3.2', 'D4.interdictions_manifester_juge': 'D4.2*', 'D6.traitements_malgre_reserves': 'D6.2', 'D5.temps_parole_executif': 'D5.1', 'D1.regles_electorales_avant_scrutin': 'D1.1', 'D1.scrutins_reportes': 'D1.2', 'D5.classement_rsf': 'D5.3', 'D5.journalistes_inquietes': 'D5.2', 'D6.techniques_renseignement': 'D6.1', 'D4.dissolutions_administratives': 'D4.1', 'D7.libertes_en_pratique': 'D7', 'D2.petitions_classees': 'D2.3', 'D2.annulations_credits': 'D2.4' };
     function drawDims() {
       document.getElementById('t-dims').textContent = `${D.dimensions.length} indicateurs suivis`;
       const host = document.getElementById('dims');
@@ -1738,6 +1781,31 @@
           const td2 = tr.insertCell(); td2.className = 'py-1.5 px-3 border-b border-rule align-top tabnum whitespace-nowrap text-ink2'; td2.textContent = d.avis.map(v => `n° ${v.numero}`).join(', ');
           const td3 = tr.insertCell(); td3.className = 'py-1.5 px-3 border-b border-rule align-top text-ink2'; td3.textContent = d.formules.map(f => LIB[f] || f).join(', ') + (d.confiance === 'faible' ? ' — rapprochement à vérifier, non compté' : '');
         }
+      }
+    }
+
+    // ---- D2.4 : crédits annulés par décret --------------------------------------
+    function drawAnnulations() {
+      const A = D.annulations || [], tbl = document.getElementById('annulations-table');
+      if (!tbl || tbl.rows.length) return;
+      const md = v => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 2 }).format(v);
+      const parAn = {};
+      for (const a of A) parAn[a.date.slice(0, 4)] = (parAn[a.date.slice(0, 4)] || 0) + a.montant_cp_md;
+      const annees = Object.keys(parAn).sort().slice(-5);
+      document.getElementById('annulations-resume').textContent = A.length
+        ? `${num(A.length)} décrets d'annulation depuis 2006. Montants annulés par année : ` + annees.map(y => `${y} : ${md(parAn[y])} Md€`).join(' ; ') + '.'
+        : 'Collecte en cours.';
+      const head = tbl.createTHead().insertRow();
+      for (const h of ['Date', 'Décret', 'Crédits de paiement annulés']) {
+        const th = document.createElement('th'); th.className = 'sticky top-0 bg-surface py-2 px-3 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th);
+      }
+      const body = tbl.createTBody();
+      for (const a of A) {
+        const tr = body.insertRow();
+        const c0 = tr.insertCell(); c0.className = 'py-1.5 px-3 border-b border-rule tabnum whitespace-nowrap align-top'; c0.textContent = new Date(a.date + 'T12:00:00').toLocaleDateString('fr-FR');
+        const c1 = tr.insertCell(); c1.className = 'py-1.5 px-3 border-b border-rule align-top';
+        const l = document.createElement('a'); l.href = a.url; l.target = '_blank'; l.rel = 'noopener'; l.className = 'hover:underline'; l.textContent = `n° ${a.numero}`; c1.appendChild(l);
+        const c2 = tr.insertCell(); c2.className = 'py-1.5 px-3 border-b border-rule align-top tabnum whitespace-nowrap'; c2.textContent = `${md(a.montant_cp_md)} Md€`;
       }
     }
 
@@ -2491,7 +2559,7 @@
     const TOC = [
       ["Vue d'ensemble", 'gauge-high', [['t-definition', "Ce qu'est une démocratie", 'book-open-reader'], ['t-indice', "Le baromètre aujourd'hui", 'gauge-high'], ['t-dims', 'Indicateurs suivis', 'list-check']]],
       ['D1 · Élections et alternance', 'check-to-slot', [['t-d1', 'D1.1–D1.2 · Règles électorales et reports', 'check-to-slot']]],
-      ['D2 · Place du Parlement', 'landmark', [['titre', "D2.1 · L'essentiel", 'landmark'], ['t-evolution', 'Depuis 1959', 'chart-line'], ['t-composantes', 'De quoi est fait le chiffre', 'puzzle-piece'], ['t-leg', 'Législature par législature', 'table-columns'], ['t-493', 'Les recours au 49.3', 'forward'], ['t-d2-2', 'D2.2 · Procédure accélérée', 'bolt'], ['t-d2-3', 'D2.3 · Pétitions citoyennes', 'file-signature']]],
+      ['D2 · Place du Parlement', 'landmark', [['titre', "D2.1 · L'essentiel", 'landmark'], ['t-evolution', 'Depuis 1959', 'chart-line'], ['t-composantes', 'De quoi est fait le chiffre', 'puzzle-piece'], ['t-leg', 'Législature par législature', 'table-columns'], ['t-493', 'Les recours au 49.3', 'forward'], ['t-d2-2', 'D2.2 · Procédure accélérée', 'bolt'], ['t-d2-3', 'D2.3 · Pétitions citoyennes', 'file-signature'], ['t-d2-4', 'D2.4 · Crédits annulés par décret', 'scissors']]],
       ["D3 · Contre-pouvoirs et État de droit", 'gavel', [['t-d3', "D3.1 · Régimes d'exception", 'triangle-exclamation'], ['t-d3-2', 'D3.2 · Lois censurées', 'gavel']]],
       ['D4 · Libertés publiques', 'people-group', [['t-d4-2', 'D4.2* · Interdictions de manifester', 'ban'], ['t-d4', 'D4.1 · Dissolutions', 'users-slash']]],
       ['Regards extérieurs (non noté)', 'binoculars', [['t-onu', "Déclarations de l'ONU", 'globe'], ['t-presse', 'Presse étrangère', 'newspaper']]],
@@ -2559,7 +2627,7 @@
     let spyRaf; addEventListener('scroll', () => { cancelAnimationFrame(spyRaf); spyRaf = requestAnimationFrame(spy); }, { passive: true });
 
     // ---- Rendu -------------------------------------------------------------
-    const render = () => { drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawPetitions(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
+    const render = () => { drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawPetitions(); drawAnnulations(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
     render(); spy();
     let raf; addEventListener('resize', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { render(); current = null; spy(); }); });
   })();

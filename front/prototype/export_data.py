@@ -33,6 +33,7 @@ DIMENSIONS = (
     "D2.contournement_parlement",
     "D2.procedure_acceleree",
     "D2.petitions_classees",
+    "D2.annulations_credits",
     "D3.regimes_exception",
     "D3.lois_censurees",
     "D4.interdictions_manifester_juge",
@@ -328,6 +329,13 @@ def main(argv=None) -> int:
         "ordonnances_fenetre": ordonnances,
         "dimensions": dimensions,
         "d7": d7,
+        "annulations": [
+            {"date": d, "numero": ref, "titre": t, **json.loads(a)}
+            for d, ref, t, a in conn.execute(
+                "SELECT occurred_on, official_ref, title, attributes FROM facts"
+                " WHERE indicator_id = 'D2.annulations_credits' ORDER BY occurred_on DESC"
+            )
+        ],
         "petitions": petitions_500k(
             conn.execute(
                 "SELECT fact_type, attributes FROM facts"

@@ -121,6 +121,30 @@ indicators:
     thresholds: [null, null, null, null]
     weight: null
 
+  D2.annulations_credits:
+    label: Crédits votés annulés par décret
+    description: >-
+      Crédits de paiement votés par le Parlement en loi de finances puis annulés par décret du
+      Gouvernement, sans nouveau vote (article 14 de la loi organique relative aux lois de
+      finances). Montant lu à l'article 1 de chaque décret « portant annulation de crédits » ;
+      les décrets d'avance (ouverture et annulation) ne sont pas comptés. Mesure le contrôle
+      du Parlement sur l'argent public, pas le bien-fondé des dépenses. Montants en euros
+      courants, ni corrigés de l'inflation ni rapportés à la taille du budget.
+    fact_types:
+      - decret_annulation_credits
+    history_start: 2006-01-01   # entrée en vigueur de la LOLF
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - nb_decrets_annulation   # décrets portant annulation de crédits
+      - montant_annule_cp_md    # crédits de paiement annulés, en milliards d'euros
+    scored_metric: montant_annule_cp_md
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
   D3.regimes_exception:
     label: Régimes d'exception
     description: >-
