@@ -28,3 +28,4 @@ config/deploiement.intermediaires.pem
 .superpowers/
 config/github.local
 data/.d7_publiee
+front/prototype/donnees/

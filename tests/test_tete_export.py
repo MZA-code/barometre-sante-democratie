@@ -36,3 +36,35 @@ def test_opinion_plus_bas_faux_si_deja_atteint(tmp_path):
         "q22_fonctionne_bien;France;2021-01;30;1;\nq22_fonctionne_mal;France;2021-01;69;1;\n"
     )
     assert not export_data.opinion(f)["plus_bas"]
+
+
+def test_donnees_telechargeables(tmp_path):
+    from storage.db import connect, init_db
+
+    conn = connect(tmp_path / "b.sqlite")
+    init_db(conn)
+    src = conn.execute("SELECT id FROM sources LIMIT 1").fetchone()[0]
+    conn.execute(
+        "INSERT INTO raw_documents (source_id, external_id, url, fetched_at, sha256, path)"
+        " VALUES (?, 'doc1', 'https://officiel.example/doc1', '2026-01-01', ?, 'x')",
+        (src, "a" * 64),
+    )
+    for ind, titre in (("D4.dissolutions_administratives", "Décret X"), (export_data.D7, "Nom")):
+        conn.execute(
+            "INSERT INTO facts (indicator_id, fact_type, occurred_on, title, attributes,"
+            " extraction_method) VALUES (?, 't', '2025-05-01', ?, '{}', 'm')",
+            (ind, titre),
+        )
+        conn.execute("INSERT INTO fact_sources VALUES (last_insert_rowid(), 1)")
+    dims = [
+        {"id": "D4.dissolutions_administratives", "metrique": "nb_dissolutions",
+         "mensuel": [{"date": "2025-05-31", "v": 1.0}]},
+        {"id": export_data.D7, "metrique": "nb", "mensuel": []},
+    ]  # fmt: skip
+    export_data.ecrire_donnees(conn, dims, tmp_path / "d")
+    serie = (tmp_path / "d" / "D4.dissolutions_administratives-serie.csv").read_text()
+    assert serie == "fin_de_mois,nb_dissolutions\n2025-05-31,1.0\n"
+    faits = (tmp_path / "d" / "D4.dissolutions_administratives-faits.csv").read_text()
+    assert "2025-05-01,t,Décret X,,https://officiel.example/doc1," in faits
+    assert "a" * 64 in faits and faits.rstrip().endswith(",m,non")
+    assert "Nom" not in (tmp_path / "d" / f"{export_data.D7}-faits.csv").read_text()

@@ -128,9 +128,9 @@ def test_nombre_d_indicateurs_calcule():
         **DATA,
         "dimensions": [dict(d) for d in DATA["dimensions"]] * 7 + [DATA["dimensions"][0]],
     }
-    assert "15 indicateurs sourcés" in seo.description(data)
-    assert "15 indicateurs sourcés" in seo.entete(data, None)
-    assert "Quinze indicateurs sourcés" in seo.llms_txt(data, None)
+    assert "15 indicateurs suivis" in seo.description(data)
+    assert "15 indicateurs suivis" in seo.entete(data, None)
+    assert "Quinze indicateurs suivis" in seo.llms_txt(data, None)
     assert "## Les 15 indicateurs" in seo.resume_md(data, None)
     assert "13 indicateurs" not in seo.appliquer(PAGE, data, None)
 
@@ -190,3 +190,25 @@ def test_reponse_opinion(tmp_path):
     md = (tmp_path / "barometre.md").read_text()
     assert "### Ce qu'en pensent les Français" in md and "2026-01 23 %" in md
     assert seo.reponse_opinion(DATA) == ""
+
+
+def test_sommaire_lisible_sans_javascript():
+    page = (
+        '<div id="toc-side" class="s"></div><script>const TOC = [\n'
+        "  [\"Vue d'ensemble\", 'g', [['t-question', 'Encore une démocratie ?', 'c'], "
+        "['t-definition', \"Ce qu'est une démocratie\", 'b']]],\n];</script>"
+    )
+    out = seo.sommaire_statique(page)
+    assert (
+        '<a class="block py-0.5 hover:underline" href="#t-question">Encore une démocratie ?</a>'
+        in out
+    )
+    assert 'href="#t-definition">Ce qu&#x27;est une démocratie</a>' in out
+
+
+def test_csv_indicateurs_avec_fichiers_et_dernier_fait():
+    dims = [dict(d) for d in DATA["dimensions"]]
+    dims[0]["dernier_fait"] = "2026-10-01"
+    csv_txt = seo.indicateurs_csv({**DATA, "dimensions": dims})
+    assert csv_txt.splitlines()[0].endswith("dernier_fait,dans_indice,fichier_serie,fichier_faits")
+    assert "2026-10-01,True,donnees/D4.dissolutions_administratives-serie.csv" in csv_txt

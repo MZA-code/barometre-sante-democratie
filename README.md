@@ -1,4 +1,6 @@
-# Baromètre de la santé démocratique
+# Baromètre démocratique
+
+La démocratie en France, en faits sourcés : https://barometre-democratique.fr
 
 Mesurer, à partir de faits vérifiables et d'une grille publiée à l'avance, à quelle distance la
 France se trouve d'un régime autoritaire. L'outil note des **actes**, jamais des partis : chaque

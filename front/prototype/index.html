@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Baromètre de la santé démocratique — prototype</title>
+  <title>Baromètre démocratique — prototype</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
@@ -105,7 +105,8 @@
              class="shrink-0 rounded-sm" style="outline: 1px solid var(--rule)">
           <rect width="1" height="2" fill="#000091"/><rect x="1" width="1" height="2" fill="#ffffff"/><rect x="2" width="1" height="2" fill="#e1000f"/>
         </svg>
-        <h1 class="font-serif font-semibold tracking-tight">Baromètre de la santé démocratique en France</h1>
+        <h1 class="font-serif font-semibold tracking-tight leading-tight">Baromètre démocratique
+          <span class="hidden sm:block font-sans text-xs font-normal text-ink2">La démocratie en France, en faits sourcés</span></h1>
       </div>
       <div class="flex items-center gap-3 text-xs text-ink2">
         <span id="maj" class="text-right leading-tight"></span>
@@ -164,7 +165,7 @@
         internationaux jugent le régime, avec des experts et une méthode publiée qui compare tous
         les pays sur la même échelle. Le sondage mesure ce que ressentent les citoyens&nbsp;: il ne
         demande pas si la France est une démocratie, mais si elle fonctionne bien. Le baromètre,
-        lui, ne qualifie pas le régime&nbsp;: il suit chaque jour des faits officiels sourcés, et dit
+        lui, ne qualifie pas le régime&nbsp;: il suit des faits officiels sourcés, collectés chaque jour (chaque indicateur indique la date de son dernier fait relevé), et dit
         s'ils sont plus fréquents ou plus rares que d'habitude (plus bas). Les classements et le
         sondage sont annuels.</span>
       </p>
@@ -256,7 +257,7 @@
         douze derniers mois parmi tous les mois observés depuis le début de la série de cet
         indicateur&nbsp;; pour tous les indicateurs de la grille, une valeur plus haute correspond à une
         situation que la grille tient pour plus défavorable (pour le classement RSF, un rang plus
-        élevé). Aucune pondération, aucun seuil&nbsp;: le comité de méthode ne les a pas encore fixés.
+        élevé). Aucune pondération, aucun seuil n'est fixé.
         Les déclarations de l'ONU, la presse étrangère et le temps de parole par parti sont des
         données de contexte et n'entrent pas ici.</span>
       </p>
@@ -275,7 +276,7 @@
     <!-- 1. L'essentiel -->
     <section class="pt-10 sm:pt-14 pb-10 border-b border-rule" aria-labelledby="titre">
       <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">
-        Indicateur D2 · Contournement du Parlement
+        Indicateur D2.1 · Place du Parlement
       </p>
       <h2 id="titre" class="mt-3 font-serif text-[1.75rem] sm:text-4xl leading-tight font-semibold max-w-3xl"></h2>
       <p id="sous-titre" class="mt-4 max-w-3xl text-ink2 leading-relaxed"></p>
@@ -297,7 +298,7 @@
 
       <p class="mt-8 flex gap-2 text-sm text-ink2 max-w-3xl">
         <i class="fa-solid fa-circle-info mt-0.5 text-muted" aria-hidden="true"></i>
-        <span>Aucun seuil n'a encore été fixé par le comité de méthode&nbsp;: la jauge situe la
+        <span>Aucun seuil n'est fixé&nbsp;: la jauge situe la
         valeur actuelle parmi celles observées depuis 1959, elle ne la qualifie pas.</span>
       </p>
     </section>
@@ -393,7 +394,7 @@
 
     <!-- 5. D2.2 Procédure accélérée -->
     <section id="d2-2" class="py-10 border-b border-rule" aria-labelledby="t-d2-2">
-      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D2 · Place du Parlement</p>
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D2.2 · Place du Parlement</p>
       <h2 id="t-d2-2" class="mt-2 font-serif text-2xl font-semibold">Les lois adoptées en procédure accélérée depuis 1978</h2>
       <p class="mt-2 max-w-3xl text-ink2">
         La procédure accélérée («&nbsp;déclaration d'urgence&nbsp;» avant la révision constitutionnelle
@@ -423,7 +424,7 @@
     <!-- 5 bis. Régimes d'exception -->
     <!-- D2.3. Pétitions citoyennes -->
     <section id="d2-3" class="py-10 border-b border-rule" aria-labelledby="t-d2-3">
-      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D2 · Place du Parlement</p>
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D2.3 · Place du Parlement</p>
       <h2 id="t-d2-3" class="mt-2 font-serif text-2xl font-semibold">Les pétitions citoyennes de plus de 500&nbsp;000 signatures</h2>
       <p class="mt-2 max-w-3xl text-ink2">
         Le droit de pétition est l'un des rares moyens d'intervention directe des citoyens entre
@@ -441,7 +442,7 @@
 
     <!-- D2.4. Crédits votés annulés par décret -->
     <section id="d2-4" class="py-10 border-b border-rule" aria-labelledby="t-d2-4">
-      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D2 · Place du Parlement</p>
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D2.4 · Place du Parlement</p>
       <h2 id="t-d2-4" class="mt-2 font-serif text-2xl font-semibold">Les crédits votés puis annulés par décret</h2>
       <p class="mt-2 max-w-3xl text-ink2">
         Les citoyens consentent à l'impôt par leurs représentants et ont le droit d'en suivre
@@ -465,7 +466,7 @@
     </section>
 
     <section id="d3" class="py-10 border-b border-rule" aria-labelledby="t-d3">
-      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D3 · Contre-pouvoirs et État de droit</p>
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D3.1 · Contre-pouvoirs et État de droit</p>
       <h2 id="t-d3" class="mt-2 font-serif text-2xl font-semibold">Les régimes d'exception depuis 1958</h2>
       <p class="mt-2 max-w-3xl text-ink2">
         État d'urgence, état d'urgence sanitaire et article 16 de la Constitution. Chaque barre
@@ -489,7 +490,7 @@
 
     <!-- 5 bis bis. Lois censurées -->
     <section id="d3-2" class="py-10 border-b border-rule" aria-labelledby="t-d3-2">
-      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D3 · Contre-pouvoirs et État de droit</p>
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D3.2 · Contre-pouvoirs et État de droit</p>
       <h2 id="t-d3-2" class="mt-2 font-serif text-2xl font-semibold">Les lois censurées par le Conseil constitutionnel</h2>
       <p class="mt-2 max-w-3xl text-ink2">
         Part des lois soumises au Conseil constitutionnel avant leur promulgation qu'il a jugées
@@ -517,7 +518,7 @@
 
     <!-- 5 ter. Interdictions de manifester contestées -->
     <section id="d4-2" class="py-10 border-b border-rule" aria-labelledby="t-d4-2">
-      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D4 · Libertés publiques</p>
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D4.2 · Libertés publiques</p>
       <h2 id="t-d4-2" class="mt-2 font-serif text-2xl font-semibold">Les interdictions de manifester contestées devant le juge</h2>
       <p class="mt-2 max-w-3xl text-ink2">
         Décisions de la justice administrative portant sur une interdiction de manifester, d'après
@@ -526,6 +527,13 @@
         justice, pas toutes les interdictions&nbsp;; une même interdiction peut donner lieu à
         plusieurs décisions. Le graphique commence au troisième trimestre 2022, premier trimestre
         couvert par les deux sources&nbsp;; un mois n'est intégré qu'une fois terminé.
+      </p>
+      <p class="mt-2 max-w-3xl text-sm text-ink2">
+        <strong class="text-ink">Une approximation.</strong> Le nombre total d'interdictions de
+        manifester n'est publié nulle part. On mesure donc la part des décisions qui suspendent ou
+        annulent l'interdiction contestée (25&nbsp;% = une décision sur quatre donne raison au
+        requérant). Une part élevée peut signaler des interdictions plus fragiles comme un juge qui
+        contrôle pleinement&nbsp;: l'indicateur est présenté à part, hors de l'écart à l'habituel.
       </p>
       <div id="manif-chart" class="viz relative mt-6"></div>
       <div class="mt-3 flex flex-wrap gap-5 text-xs text-ink2">
@@ -547,7 +555,7 @@
 
     <!-- 5 ter. Dissolutions -->
     <section id="d4" class="py-10 border-b border-rule" aria-labelledby="t-d4">
-      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D4 · Libertés publiques</p>
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D4.1 · Libertés publiques</p>
       <h2 id="t-d4" class="mt-2 font-serif text-2xl font-semibold">Les dissolutions administratives depuis 1990</h2>
       <p class="mt-2 max-w-3xl text-ink2">
         Décrets dissolvant une association ou un groupement de fait pour un motif d'ordre public
@@ -623,7 +631,7 @@
 
     <!-- 5 sexies. D5.1 Temps de parole de l'exécutif -->
     <section id="d5-1" class="py-10 border-b border-rule" aria-labelledby="t-d5-1">
-      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D5 · Pluralisme et information</p>
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D5.1 · Pluralisme et information</p>
       <h2 id="t-d5-1" class="mt-2 font-serif text-2xl font-semibold">Le temps de parole de l'exécutif à la télévision et à la radio</h2>
       <p class="mt-2 max-w-3xl text-ink2">
         Part du Gouvernement et du Président de la République (pour ses propos relevant du débat
@@ -685,7 +693,7 @@
 
     <!-- 5 octies. D5.2 Journalistes inquiétés -->
     <section id="d5-2" class="py-10 border-b border-rule" aria-labelledby="t-d5-2">
-      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D5 · Pluralisme et information</p>
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D5.2 · Pluralisme et information</p>
       <h2 id="t-d5-2" class="mt-2 font-serif text-2xl font-semibold">Les journalistes inquiétés dans l'exercice de leur métier</h2>
       <p class="mt-2 max-w-3xl text-ink2">
         Gardes à vue, interpellations, poursuites et condamnations de journalistes documentées par
@@ -719,7 +727,7 @@
 
     <!-- 5 quinquies. D6.2 Fichiers créés malgré les réserves de la CNIL -->
     <section id="d6-2" class="py-10 border-b border-rule" aria-labelledby="t-d6-2">
-      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D6 · Surveillance et données</p>
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D6.2 · Surveillance et données</p>
       <h2 id="t-d6-2" class="mt-2 font-serif text-2xl font-semibold">Les fichiers créés malgré les réserves de la CNIL</h2>
       <p class="mt-2 max-w-3xl text-ink2">
         Décrets créant ou modifiant un traitement de données, publiés après un avis de la CNIL sur
@@ -895,6 +903,66 @@
       <ul id="sources" class="mt-2 text-sm text-ink2 space-y-1"></ul>
     </section>
 
+    <!-- Transparence : formules, données, code, corrections, outils -->
+    <section class="py-10 border-t border-rule" aria-labelledby="t-verifier">
+      <h2 id="t-verifier" class="font-serif text-2xl font-semibold">Vérifier par soi-même</h2>
+      <p class="mt-2 max-w-3xl text-sm text-ink2 leading-relaxed">
+        Un baromètre qui se veut neutre doit pouvoir être refait par quelqu'un qui n'est pas
+        d'accord avec lui. Voici les formules, les données et le code.
+      </p>
+      <div class="mt-6 grid gap-8 md:grid-cols-2 text-sm leading-relaxed text-ink2">
+        <div class="space-y-3">
+          <h3 class="font-semibold text-ink">Les formules</h3>
+          <p><strong class="text-ink">Valeur d'un mois.</strong> Pour chaque indicateur, total (ou
+            part) sur les douze mois glissants qui se terminent à la fin de ce mois. Les séries
+            annuelles (RSF, CNCTR) gardent la valeur de la dernière édition publiée.</p>
+          <p><strong class="text-ink">Position dans l'historique</strong>, de 0 à 100&nbsp;:
+            100 × (nombre de mois où la valeur était plus basse + ½ × nombre de mois où elle était
+            égale) ÷ nombre de mois observés. Exemple&nbsp;: zéro report de scrutin, alors que 78&nbsp;%
+            des mois observés en comptent aussi zéro, donne la position 39&nbsp;: c'est le niveau
+            habituel, pas le plus bas.</p>
+          <p><strong class="text-ink">Écart à l'habituel</strong> = moyenne simple des positions
+            des indicateurs retenus − 50, de −50 à +50. Un indicateur est retenu si son historique
+            couvre au moins cinq ans, si son relevé n'est pas arrêté et s'il ne se lit pas dans les
+            deux sens (D3.2 et D4.2, présentés à part). Les autres façons de combiner les positions,
+            et leur résultat, sont publiées <a class="underline text-ink" href="#t-indice">avec l'écart</a>.</p>
+          <p><strong class="text-ink">Sens de lecture.</strong> Pour chaque indicateur, une valeur
+            plus haute correspond à ce que la grille tient pour plus défavorable (plus de textes
+            sans vote, de dissolutions, de surveillance, un moins bon rang RSF…). Aucun seuil ni
+            aucune pondération n'est fixé&nbsp;: aucun indicateur n'est noté.</p>
+          <p><strong class="text-ink">Corrections et changements de méthode.</strong> Chacun est daté,
+            avec son effet sur l'indice, dans le <a class="underline text-ink" href="journal.md">journal des modifications</a>.</p>
+        </div>
+        <div class="space-y-3">
+          <h3 class="font-semibold text-ink">Les données et le code</h3>
+          <p>Pour chaque indicateur, deux fichiers CSV&nbsp;: la <strong class="text-ink">série</strong>
+            (valeur de chaque fin de mois, celle qui sert à la position) et les
+            <strong class="text-ink">faits</strong> (un par ligne, avec le lien vers le document
+            officiel, l'empreinte SHA-256 de la copie archivée et l'indication d'une relecture humaine).</p>
+          <ul id="telechargements" class="space-y-1"></ul>
+          <p>Résumé de tous les indicateurs&nbsp;: <a class="underline text-ink" href="indicateurs.csv">indicateurs.csv</a>
+            et <a class="underline text-ink" href="barometre.md">barometre.md</a>. Code source complet, qui
+            recalcule tout à l'identique depuis les documents archivés&nbsp;:
+            <a class="underline text-ink" href="https://github.com/MZA-code/barometre-sante-democratie">github.com/MZA-code/barometre-sante-democratie</a>.</p>
+          <h3 class="pt-2 font-semibold text-ink">Signaler une erreur</h3>
+          <p>Un chiffre faux, une source mal lue, un lien cassé, une formulation trompeuse&nbsp;:
+            <a class="underline text-ink" href="https://github.com/MZA-code/barometre-sante-democratie/issues/new?template=erreur.md">ouvrir un signalement</a>
+            (compte GitHub nécessaire). Chaque correction est datée dans le journal des modifications.</p>
+          <h3 class="pt-2 font-semibold text-ink">Outils et contrôle humain</h3>
+          <p>Le code de ce site est écrit avec l'aide d'un assistant d'intelligence artificielle
+            (Claude, d'Anthropic), sous la direction de l'éditeur, qui décide de chaque évolution et
+            la valide avant publication. Les chiffres ne sont pas produits par l'IA&nbsp;: ce code les
+            calcule chaque jour à partir des documents officiels archivés, et chacun peut refaire ce
+            calcul. Les relevés faits à la main (manifestants, journalistes, déclarations de l'ONU,
+            classements internationaux, sondage) ont été préparés avec l'aide de l'IA puis contrôlés
+            sur la source citée&nbsp;; ceux qu'aucune personne n'a encore relus sont marqués
+            «&nbsp;non&nbsp;» dans la colonne <code>verifie_par_un_humain</code> des fichiers de faits.
+            Les faits de D7 sont validés un par un par des personnes, sur au moins deux sources
+            indépendantes.</p>
+        </div>
+      </div>
+    </section>
+
     <!-- Références : la définition et la grille s'appuient sur ces travaux -->
     <section class="py-10 border-t border-rule" aria-labelledby="t-references">
       <h2 id="t-references" class="font-serif text-2xl font-semibold">Sur quoi on s'appuie</h2>
@@ -943,8 +1011,9 @@
           <p><strong class="text-ink">Commission européenne</strong>, <cite>Rapport sur l'état de
             droit</cite>, annuel depuis 2020, chapitre consacré à la France.</p>
           <p><strong class="text-ink">Freedom House</strong>, <cite>Freedom in the World</cite>, annuel.</p>
-          <p class="text-xs">Les notes de la France chez V-Dem et Freedom House ne sont pas encore
-            affichées ici&nbsp;; elles serviront de points de comparaison extérieurs.</p>
+          <p class="text-xs">Les classements de la France chez V-Dem et Freedom House sont repris
+            <a class="underline text-ink" href="#t-question">en tête de page</a>, comme points de
+            comparaison extérieurs.</p>
         </div>
       </div>
     </section>
@@ -964,9 +1033,10 @@
         </div>
         <div class="space-y-3">
           <h3 class="font-semibold text-ink">Données personnelles et cookies</h3>
-          <p>Aucun cookie, aucune mesure d'audience, aucun formulaire, aucun service tiers&nbsp;: le site
-            ne collecte aucune donnée personnelle. Votre choix de thème clair ou sombre et la fermeture
-            de l'avis sur les cookies sont gardés dans votre navigateur seulement. Comme tout serveur
+          <p>Aucun cookie, aucune mesure d'audience, aucun formulaire&nbsp;: le site ne collecte aucune
+            donnée personnelle. Polices et icônes : Google Fonts et cdnjs (Cloudflare), qui voient votre adresse IP.
+            Votre choix de thème clair ou sombre est gardé dans votre navigateur seulement
+            (stockage local, pas un cookie). Comme tout serveur
             web, celui de l'hébergeur enregistre techniquement les connexions (adresse IP, page
             demandée, date) dans ses journaux.</p>
           <h3 class="font-semibold text-ink">Contenus et licences</h3>
@@ -984,13 +1054,6 @@
   </footer>
 
   <div id="tip" class="tooltip" role="status" aria-live="polite"></div>
-
-  <div id="avis-cookies" role="region" aria-label="Cookies" hidden
-       class="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-sm z-50 rounded-lg border border-rule bg-surface p-4 text-sm text-ink2 shadow-lg">
-    <p class="flex gap-2"><i class="fa-solid fa-cookie-bite text-muted mt-0.5" aria-hidden="true"></i>
-      <span><strong class="text-ink">Aucun cookie</strong>, aucune mesure d'audience. Seul votre choix de thème reste dans votre navigateur. Polices et icônes : Google Fonts et cdnjs (Cloudflare), qui voient votre adresse IP.</span></p>
-    <button id="avis-cookies-ok" type="button" class="mt-3 ml-6 rounded-full border border-rule px-3 py-1 text-xs text-ink hover:bg-[var(--band)]">J'ai compris</button>
-  </div>
 
   <script src="data.js"></script>
   <script>
@@ -1112,7 +1175,7 @@
         : `Une majorité juge qu'elle fonctionne bien : ${last.bien} % des Français, ${last.mal} % pensent le contraire.`) +
         (attache ? ` Mais ${attache} % jugent qu'un système démocratique est une bonne façon de gouverner.` : '')
       document.getElementById('reponse-opinion').textContent = document.getElementById('reponse-opinion').textContent.replace(/ %/g, '\u00a0%');
-      document.getElementById('opinion-question').textContent = `« ${O.question} » Part qui répond « très bien » ou « assez bien », depuis ${debut}.`;
+      document.getElementById('opinion-question').textContent = `«\u00a0${O.question}\u00a0» Part qui répond «\u00a0très bien\u00a0» ou «\u00a0assez bien\u00a0», depuis ${debut}.`;
       const box = document.getElementById('opinion-chart');
       annualChart(box, S.map(s => ({ ...s, url: O.url })), {
         x: s => +s.date.slice(0, 4) + (+s.date.slice(5, 7) - 1) / 12, y: s => s.bien, inverted: false, max: 60, etiquetteDessous: true,
@@ -1136,6 +1199,17 @@
       src.append(`Source : ${O.source}, ${O.edition}, ${O.terrain}, ${O.echantillon} ; marge d'incertitude d'environ 1 à 2 points. `);
       const a = document.createElement('a'); a.href = O.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'underline text-ink'; a.textContent = 'Rapport complet';
       src.append(a, '.');
+    }
+
+    // ---- Données téléchargeables (donnees/, écrites par export_data.py) ------------
+    function drawTelechargements() {
+      const ul = document.getElementById('telechargements'); ul.replaceChildren();
+      const lien = (href, lab) => { const a = document.createElement('a'); a.href = href; a.className = 'underline text-ink'; a.textContent = lab; return a; };
+      for (const d of [...D.dimensions].sort((a, b) => (CODE[a.id] || a.code).localeCompare(CODE[b.id] || b.code))) {
+        const li = document.createElement('li');
+        li.append(`${CODE[d.id] || d.code} · ${d.label} : `, lien(`donnees/${d.id}-serie.csv`, 'série'), ', ', lien(`donnees/${d.id}-faits.csv`, 'faits'));
+        ul.appendChild(li);
+      }
     }
 
     // ---- Vue d'ensemble : chaque indicateur situé dans sa propre histoire ---------
@@ -1533,12 +1607,12 @@
       part_executif: v => pct(v),
       nb_textes_electoraux_avant_scrutin: v => `${num(v)} loi${v > 1 ? 's' : ''}`,
       nb_reports_scrutin: v => `${num(v)} report${v > 1 ? 's' : ''}`,
-      rang_rsf: v => ordinal(Math.round(v)),
+      rang_rsf: v => `${ordinal(Math.round(v))} rang`,
       nb_journalistes_mesures: v => `${num(v)} journaliste${v > 1 ? 's' : ''}`,
       nb_atteintes_pratique: v => `${num(v)} fait${v > 1 ? 's' : ''}`,
       nb_petitions_500k_classees: v => `${num(v)} pétition${v > 1 ? 's' : ''}`,
       montant_annule_cp_md: v => `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(v)} Md€`,
-      personnes_surveillees: v => num(Math.round(v)),
+      personnes_surveillees: v => `${num(Math.round(v))} personnes`,
       jours_exception: v => `${num(v)} jour${v > 1 ? 's' : ''}`,
       nb_dissolutions: v => `${num(v)} dissolution${v > 1 ? 's' : ''}`,
     };
@@ -1562,7 +1636,7 @@
       nb_dissolutions: "d'associations ou de groupements par décret",
     };
     const ANCHOR = { 'D2.contournement_parlement': '#t-evolution', 'D2.procedure_acceleree': '#d2-2', 'D3.regimes_exception': '#d3', 'D3.lois_censurees': '#d3-2', 'D4.interdictions_manifester_juge': '#d4-2', 'D6.traitements_malgre_reserves': '#d6-2', 'D5.temps_parole_executif': '#d5-1', 'D1.regles_electorales_avant_scrutin': '#d1', 'D1.scrutins_reportes': '#d1-table', 'D5.classement_rsf': '#d5-3', 'D5.journalistes_inquietes': '#d5-2', 'D6.techniques_renseignement': '#d6-1', 'D4.dissolutions_administratives': '#d4', 'D7.libertes_en_pratique': '#d7', 'D2.petitions_classees': '#d2-3', 'D2.annulations_credits': '#d2-4' };
-    const CODE = { 'D2.contournement_parlement': 'D2.1', 'D2.procedure_acceleree': 'D2.2', 'D3.regimes_exception': 'D3.1', 'D3.lois_censurees': 'D3.2', 'D4.interdictions_manifester_juge': 'D4.2*', 'D6.traitements_malgre_reserves': 'D6.2', 'D5.temps_parole_executif': 'D5.1', 'D1.regles_electorales_avant_scrutin': 'D1.1', 'D1.scrutins_reportes': 'D1.2', 'D5.classement_rsf': 'D5.3', 'D5.journalistes_inquietes': 'D5.2', 'D6.techniques_renseignement': 'D6.1', 'D4.dissolutions_administratives': 'D4.1', 'D7.libertes_en_pratique': 'D7', 'D2.petitions_classees': 'D2.3', 'D2.annulations_credits': 'D2.4' };
+    const CODE = { 'D2.contournement_parlement': 'D2.1', 'D2.procedure_acceleree': 'D2.2', 'D3.regimes_exception': 'D3.1', 'D3.lois_censurees': 'D3.2', 'D4.interdictions_manifester_juge': 'D4.2', 'D6.traitements_malgre_reserves': 'D6.2', 'D5.temps_parole_executif': 'D5.1', 'D1.regles_electorales_avant_scrutin': 'D1.1', 'D1.scrutins_reportes': 'D1.2', 'D5.classement_rsf': 'D5.3', 'D5.journalistes_inquietes': 'D5.2', 'D6.techniques_renseignement': 'D6.1', 'D4.dissolutions_administratives': 'D4.1', 'D7.libertes_en_pratique': 'D7', 'D2.petitions_classees': 'D2.3', 'D2.annulations_credits': 'D2.4' };
     function drawDims() {
       document.getElementById('t-dims').textContent = `${D.dimensions.length} indicateurs suivis`;
       const host = document.getElementById('dims');
@@ -1591,6 +1665,7 @@
           : d.part_mois_inferieurs === 0
             ? `Valeur la plus basse observée depuis le début de la série. Médiane : ${fmt(d.mediane)}, maximum : ${fmt(d.max)} (${monthLong(d.date_max)}).`
             : `Supérieur à ${pct(d.part_mois_inferieurs)} des mois observés. Médiane : ${fmt(d.mediane)}, maximum : ${fmt(d.max)} (${monthLong(d.date_max)}).`;
+        if (d.dernier_fait) rank.textContent += ` Dernier fait relevé : ${dateLong(d.dernier_fait)}.`;
         host.appendChild(card);
         // position : piste de 0 au maximum, médiane, valeur actuelle
         const W = 260, Hh = 22, x = v => 4 + (v / (d.max || 1)) * (W - 8);
@@ -2307,20 +2382,12 @@
       `Prototype. Données arrêtées au ${dateLong(D.fin_donnees)}, archive du ${dateLong(g.etat_archive.slice(0, 10))}. ` +
       `Chaque chiffre est reconstruit à l'identique depuis les documents officiels archivés.`;
 
-    // ---- Date de mise à jour (dernière collecte) et avis sur les cookies -------
+    // ---- Date de mise à jour (dernière collecte) ----------------------------------
     const majDate = (month) => new Date(g.etat_archive).toLocaleDateString('fr-FR', { day: 'numeric', month, year: 'numeric', timeZone: 'Europe/Paris' });
     document.getElementById('maj').innerHTML =
       `<span class="block sm:inline whitespace-nowrap">Mis à jour le</span> <time datetime="${g.etat_archive}" class="font-medium text-ink whitespace-nowrap">` +
       `<span class="sm:hidden">${majDate('short')}</span><span class="hidden sm:inline">${majDate('long')}</span></time>` +
       `<span class="hidden md:inline"> · données au ${dateLong(D.fin_donnees)}</span>`;
-    const avis = document.getElementById('avis-cookies');
-    let avisVu = false;
-    try { avisVu = localStorage.getItem('avis-cookies') === 'vu'; } catch (_) {}
-    if (!avisVu) avis.hidden = false;
-    document.getElementById('avis-cookies-ok').addEventListener('click', () => {
-      avis.hidden = true;
-      try { localStorage.setItem('avis-cookies', 'vu'); } catch (_) {}
-    });
 
     // ---- Thème -------------------------------------------------------------
     const root = document.documentElement;
@@ -2691,13 +2758,13 @@
       ['D1 · Élections et alternance', 'check-to-slot', [['t-d1', 'D1.1–D1.2 · Règles électorales et reports', 'check-to-slot']]],
       ['D2 · Place du Parlement', 'landmark', [['titre', "D2.1 · L'essentiel", 'landmark'], ['t-evolution', 'Depuis 1959', 'chart-line'], ['t-composantes', 'De quoi est fait le chiffre', 'puzzle-piece'], ['t-leg', 'Législature par législature', 'table-columns'], ['t-493', 'Les recours au 49.3', 'forward'], ['t-d2-2', 'D2.2 · Procédure accélérée', 'bolt'], ['t-d2-3', 'D2.3 · Pétitions citoyennes', 'file-signature'], ['t-d2-4', 'D2.4 · Crédits annulés par décret', 'scissors']]],
       ["D3 · Contre-pouvoirs et État de droit", 'gavel', [['t-d3', "D3.1 · Régimes d'exception", 'triangle-exclamation'], ['t-d3-2', 'D3.2 · Lois censurées', 'gavel']]],
-      ['D4 · Libertés publiques', 'people-group', [['t-d4-2', 'D4.2* · Interdictions de manifester', 'ban'], ['t-d4', 'D4.1 · Dissolutions', 'users-slash']]],
+      ['D4 · Libertés publiques', 'people-group', [['t-d4-2', 'D4.2 · Interdictions de manifester', 'ban'], ['t-d4', 'D4.1 · Dissolutions', 'users-slash']]],
       ['Regards extérieurs (non noté)', 'binoculars', [['t-onu', "Déclarations de l'ONU", 'globe'], ['t-presse', 'Presse étrangère', 'newspaper']]],
       ['D5 · Pluralisme et information', 'tower-broadcast', [['t-d5-1', 'D5.1 · Temps de parole', 'microphone-lines'], ['t-partis', 'Temps de parole par parti', 'microphone-lines'], ['t-d5-2', 'D5.2 · Journalistes inquiétés', 'pen-nib'], ['t-annuels', 'D5.3 · Classement RSF', 'ranking-star']]],
       ['D6 · Surveillance et données', 'eye', [['t-annuels', 'D6.1 · Personnes surveillées', 'user-secret'], ['t-d6-2', 'D6.2 · Fichiers et avis de la CNIL', 'database']]],
       ['D7 · Libertés en pratique', 'hand', [['t-d7', 'D7 · Atteintes sur le terrain', 'hand']]],
       ['Contexte (non noté)', 'layer-group', [['t-mobil', 'Journées de mobilisation', 'bullhorn'], ['t-ddd', 'Défenseur des droits', 'user-shield'], ['t-force', 'Usage de la force', 'shield-halved'], ['t-participation', 'Participation aux législatives', 'person-booth']]],
-      ['Méthode', 'book-open', [['t-methode', 'Méthode et limites', 'book-open'], ['t-references', "Sur quoi on s'appuie", 'book'], ['t-mentions', 'Mentions légales', 'circle-info']]],
+      ['Méthode', 'book-open', [['t-methode', 'Méthode et limites', 'book-open'], ['t-verifier', 'Vérifier par soi-même', 'magnifying-glass'], ['t-references', "Sur quoi on s'appuie", 'book'], ['t-mentions', 'Mentions légales', 'circle-info']]],
     ];
     // Icône propre à un titre partagé par deux entrées du sommaire.
     const ICONE_TITRE = { 't-annuels': 'calendar-days' };
@@ -2738,6 +2805,7 @@
       host.firstChild.style.marginTop = '0'; host.firstChild.style.borderTop = '0'; host.firstChild.style.paddingTop = '0';
     };
     const side = document.getElementById('toc-side'), panel = document.getElementById('toc-panel'), toggle = document.getElementById('toc-toggle');
+    side.replaceChildren(); panel.replaceChildren();  // remplace le sommaire statique (seo.py)
     buildToc(side); buildToc(panel);
     for (const [, , items] of TOC) for (const [id, , icl] of items) {
       const h2 = document.getElementById(id), c = h2 && !h2.dataset.ic && caractere(ICONE_TITRE[id] || icl);
@@ -2774,7 +2842,7 @@
     let spyRaf; addEventListener('scroll', () => { cancelAnimationFrame(spyRaf); spyRaf = requestAnimationFrame(spy); }, { passive: true });
 
     // ---- Rendu -------------------------------------------------------------
-    const render = () => { drawReperes(); drawOpinion(); drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawPetitions(); drawAnnulations(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
+    const render = () => { drawReperes(); drawOpinion(); drawTelechargements(); drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawPetitions(); drawAnnulations(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
     render(); spy();
     let raf; addEventListener('resize', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { render(); current = null; spy(); }); });
   })();

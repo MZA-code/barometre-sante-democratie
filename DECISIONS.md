@@ -1016,3 +1016,31 @@ sensibilité et avant application. Données au 11/11/2026.
   renoncer ») et met en regard l'attachement au système démocratique (82 %). La phrase est
   construite à partir des chiffres (seuil de 50 % ; « plus bas depuis » calculé).
 - **Pas d'effet sur l'indice** : ce sont des données de contexte, hors indice.
+
+## 2026-11-12 — Transparence et cohérence (revue externe, P1 et P2)
+
+- **Comité de méthode** : il n'existe pas (réponse de l'auteur). Toutes les mentions sont
+  retirées ; le site dit seulement qu'aucun seuil ni aucune pondération n'est fixé.
+- **Vérifier par soi-même** (nouvelle section) : formules (valeur mensuelle, position,
+  écart, règles de composition, sens de lecture), données téléchargeables par indicateur
+  (`donnees/<id>-serie.csv`, `donnees/<id>-faits.csv` avec lien officiel, empreinte SHA-256
+  de la copie archivée et relecture humaine oui/non ; titres de D7 non publiés), code
+  source, journal des modifications publié (`journal.md`), signalement d'erreur par issue
+  GitHub (modèle `erreur.md` ; pas d'adresse électronique, l'éditeur restant anonyme).
+- **IA** : le site dit que le code est écrit avec l'aide de Claude (Anthropic) sous la
+  direction de l'éditeur, que les chiffres sont calculés par ce code et non par l'IA, et
+  que les relevés manuels préparés avec l'IA non relus par une personne sont marqués.
+- **Cohérence** : « 16 indicateurs suivis » (au lieu de « sourcés ») et « dont 11 dans
+  l'écart » ; D4.2 sans astérisque, approximation expliquée ; numérotation D2.1 à D6.2 dans
+  les surtitres ; unités (personnes, rang) ; date du dernier fait relevé sur chaque carte ;
+  sommaire écrit dans le HTML pour une lecture sans JavaScript ; avis « cookies » retiré
+  (le site n'en pose pas ; l'information reste dans les mentions légales).
+- Pas d'effet sur l'indice.
+
+## 2026-11-12 — Titre : « Baromètre démocratique »
+
+- « Baromètre de la santé démocratique » devient **« Baromètre démocratique »**, sous-titre
+  « La démocratie en France, en faits sourcés » (choix de l'auteur). La métaphore sain/malade
+  supposait un diagnostic que le site ne pose pas ; le nouveau titre est aussi celui du
+  domaine. Image de partage régénérée (nouveau titre, sans la jauge colorée retirée de la
+  page). Le nom du dépôt GitHub ne change pas.

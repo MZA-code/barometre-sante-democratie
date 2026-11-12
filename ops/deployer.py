@@ -52,6 +52,7 @@ SOURCE = ROOT / "front" / "publication" / "web"
 # Données et fichiers annexes d'abord, page ensuite ; sitemap.xml seulement si le domaine est connu.
 FICHIERS = (
     "data.js",
+    "journal.md",
     "barometre.md",
     "indicateurs.csv",
     "llms.txt",
@@ -67,11 +68,16 @@ OBLIGATOIRES = ("data.js", "index.html")
 
 
 def presents(source: Path) -> list[str]:
-    """Fichiers à envoyer, chemins relatifs : polices et icônes (`assets/`), puis FICHIERS."""
-    assets = sorted(
-        p.relative_to(source).as_posix() for p in (source / "assets").rglob("*") if p.is_file()
-    )
-    return assets + [name for name in FICHIERS if (source / name).exists()]
+    """Fichiers à envoyer, chemins relatifs : polices et icônes (`assets/`), données
+    téléchargeables (`donnees/`), puis FICHIERS."""
+    dossiers = [
+        p.relative_to(source).as_posix()
+        for d in ("assets", "donnees")
+        if (source / d).is_dir()
+        for p in sorted((source / d).rglob("*"))
+        if p.is_file()
+    ]
+    return dossiers + [name for name in FICHIERS if (source / name).exists()]
 
 
 def lire_config(path: Path) -> dict[str, str] | None:

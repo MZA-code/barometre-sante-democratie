@@ -25,7 +25,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent.parent
 SOURCE = ROOT / "front" / "prototype"
 DIST = Path(__file__).resolve().parent / "dist"
-TITRE = "Baromètre de la santé démocratique"
+TITRE = "Baromètre démocratique"
 DOSSIER_SEUILS = "https://claude.ai/artifact/TnbzQb6cfDVMz5YY8E6KaJ"
 VERIFICATION = "https://claude.ai/artifact/ThcB5kWYainR3xq3fGNhEp"
 
@@ -43,7 +43,7 @@ SHIM = """
 DOCUMENTS = """
       <div class="mt-8 rounded-lg border border-rule p-4 text-sm text-ink2 space-y-2">
         <h3 class="font-semibold text-ink">Documents de travail</h3>
-        <p>Aucun indicateur n'est encore noté : les seuils de la grille seront fixés par un comité.
+        <p>Aucun indicateur n'est encore noté : aucun seuil n'est fixé.
           Le <a class="underline" href="{dossier}">dossier pour la fixation des seuils</a> présente,
           pour chaque indicateur, son historique, ses limites et des propositions de bornes.</p>
         <p>Le <a class="underline" href="{verification}">document de vérification humaine</a> liste
@@ -51,6 +51,18 @@ DOCUMENTS = """
         <p class="text-xs text-muted">Ces deux documents sont accessibles sur invitation.</p>
       </div>
 """
+
+
+JOURNAL = ROOT / "docs" / "journal-modifications.md"
+
+
+def copier_donnees(dist: Path) -> None:
+    """Données téléchargeables (front/prototype/donnees/, écrites par export_data.py) et journal
+    des modifications de méthode, publiés à côté de la page."""
+    shutil.rmtree(dist / "donnees", ignore_errors=True)
+    if (SOURCE / "donnees").is_dir():
+        shutil.copytree(SOURCE / "donnees", dist / "donnees")
+    shutil.copyfile(JOURNAL, dist / "journal.md")
 
 
 def build(dossier: str, verification: str, dist: Path = DIST) -> Path:
@@ -81,6 +93,7 @@ def build(dossier: str, verification: str, dist: Path = DIST) -> Path:
     dist.mkdir(parents=True, exist_ok=True)
     (dist / "index.html").write_text(page, encoding="utf-8")
     shutil.copyfile(SOURCE / "data.js", dist / "data.js")
+    copier_donnees(dist)
     return dist
 
 
@@ -173,6 +186,7 @@ def build_web(dist: Path = WEB, site_url: str | None = None) -> Path:
     html = seo.ecrire(dist, html, data_js, site_url)
     (dist / "index.html").write_text(html, encoding="utf-8")
     shutil.copyfile(SOURCE / "data.js", dist / "data.js")
+    copier_donnees(dist)
     return dist
 
 

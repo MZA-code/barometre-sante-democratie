@@ -35,13 +35,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from scoring.indice import dans_indice, position_dim  # noqa: E402
 from scoring.indice import indice as calcul_indice  # noqa: E402
 
-TITRE = "Baromètre de la santé démocratique en France"
+TITRE = "Baromètre démocratique"
+SOUS_TITRE = "La démocratie en France, en faits sourcés"
+TITRE_COMPLET = f"{TITRE} — {SOUS_TITRE[0].lower()}{SOUS_TITRE[1:]}"
 CODE = {
     "D2.contournement_parlement": "D2.1",
     "D2.procedure_acceleree": "D2.2",
     "D3.regimes_exception": "D3.1",
     "D3.lois_censurees": "D3.2",
-    "D4.interdictions_manifester_juge": "D4.2*",
+    "D4.interdictions_manifester_juge": "D4.2",
     "D6.traitements_malgre_reserves": "D6.2",
     "D5.temps_parole_executif": "D5.1",
     "D1.regles_electorales_avant_scrutin": "D1.1",
@@ -245,6 +247,9 @@ def lignes(data: dict) -> list[dict]:
                 "contre_pouvoir": bool(d.get("contre_pouvoir")),
                 "mois_observes": len(d["mensuel"]),
                 "depuis": d["debut_historique"][:4],
+                "dernier_fait": d.get("dernier_fait") or "",
+                "fichier_serie": f"donnees/{d['id']}-serie.csv",
+                "fichier_faits": f"donnees/{d['id']}-faits.csv",
                 "ancre": ANCRE.get(d["id"], ""),
             }
         )
@@ -272,9 +277,10 @@ def description(data: dict) -> str:
         "La France est-elle encore une démocratie ? "
         + (reponse(data) + " " if reponse(data) else "")
         + (reponse_opinion(data) + " " if reponse_opinion(data) else "")
-        + f"{nb_indicateurs(data)} indicateurs sourcés sur la démocratie en France (Parlement, "
-        "contre-pouvoirs, libertés, pluralisme, surveillance, élections), recalculés "
-        "chaque jour depuis les données officielles. "
+        + f"{nb_indicateurs(data)} indicateurs suivis sur la démocratie en France (Parlement, "
+        "contre-pouvoirs, libertés, pluralisme, surveillance, élections), "
+        f"dont {i['nb_indicateurs']} dans l'écart à l'habituel ; calcul refait chaque jour "
+        "à partir des données officielles, avec la date du dernier fait relevé par indicateur. "
         f"Écart à l'habituel au {jour} : {ecart_texte(i)}."
     )
 
@@ -337,7 +343,7 @@ def json_ld(data: dict, site_url: str | None) -> str:
 
 def entete(data: dict, site_url: str | None) -> str:
     desc = html.escape(description(data), quote=True)
-    titre = html.escape(f"{TITRE} — {nb_indicateurs(data)} indicateurs sourcés", quote=True)
+    titre = html.escape(TITRE_COMPLET, quote=True)
     tags = [
         f'<meta name="description" content="{desc}">',
         '<meta name="robots" content="index, follow">',
@@ -400,7 +406,7 @@ def vue_statique(data: dict) -> tuple[str, str, str]:
 def appliquer(page: str, data: dict, site_url: str | None) -> str:
     page = re.sub(
         r"<title>.*?</title>",
-        f"<title>{html.escape(TITRE)} — {nb_indicateurs(data)} indicateurs sourcés</title>",
+        f"<title>{html.escape(TITRE_COMPLET)}</title>",
         page,
         count=1,
         flags=re.S,
@@ -421,7 +427,27 @@ def appliquer(page: str, data: dict, site_url: str | None) -> str:
         )
         if n != 1:
             raise ValueError(f"emplacement {ancre} introuvable dans la page")
-    return page
+    return sommaire_statique(page)
+
+
+# Entrée du sommaire dans index.html : ['t-question', 'Encore une démocratie ?', 'icône']
+ENTREE_SOMMAIRE = re.compile(r"""\[(['"])([\w-]+)\1, (['"])(.+?)\3, '[\w-]+'\]""")
+
+
+def sommaire_statique(page: str) -> str:
+    """Sommaire lisible sans JavaScript : liens tirés du tableau TOC de la page, écrits dans
+    #toc-side (le JavaScript le remplace par le sommaire complet au chargement)."""
+    debut = page.find("const TOC = [")
+    if debut < 0:
+        return page
+    bloc = page[debut : page.index("];", debut)]
+    liens = "".join(
+        f'<li><a class="block py-0.5 hover:underline" href="#{m.group(2)}">'
+        f"{html.escape(m.group(4))}</a></li>"
+        for m in ENTREE_SOMMAIRE.finditer(bloc)
+    )
+    motif = re.compile(r'(<div id="toc-side"[^>]*>)(</div>)')
+    return motif.sub(lambda m: f"{m.group(1)}<ul>{liens}</ul>{m.group(2)}", page, count=1)
 
 
 def resume_md(data: dict, site_url: str | None) -> str:
@@ -429,7 +455,7 @@ def resume_md(data: dict, site_url: str | None) -> str:
     base = site_url.rstrip("/") + "/" if site_url else ""
     out = io.StringIO()
     w = out.write
-    w(f"# {TITRE}\n\n")
+    w(f"# {TITRE}\n\n{SOUS_TITRE}.\n\n")
     w(f"Données arrêtées au {date_longue(data['fin_donnees'])}. Prototype : la grille ")
     w("d'indicateurs est un brouillon, aucun seuil ni aucune pondération n'est encore fixé ; ")
     w("aucune note officielle n'est produite.\n\n")
@@ -512,6 +538,10 @@ def indicateurs_csv(data: dict) -> str:
         "mois_observes",
         "depuis",
         "fin_couverture",
+        "dernier_fait",
+        "dans_indice",
+        "fichier_serie",
+        "fichier_faits",
     ]
     writer = csv.DictWriter(out, fieldnames=cols, extrasaction="ignore", lineterminator="\n")
     writer.writeheader()
@@ -524,9 +554,9 @@ def llms_txt(data: dict, site_url: str | None) -> str:
     i = indice(data)
     return (
         f"# {TITRE}\n\n"
-        f"> {en_toutes_lettres(nb_indicateurs(data))} indicateurs sourcés sur l'état de la "
-        "démocratie en France, recalculés chaque "
-        f"jour depuis les données officielles (Assemblée nationale, Journal officiel, Conseil "
+        f"> {en_toutes_lettres(nb_indicateurs(data))} indicateurs suivis sur l'état de la "
+        "démocratie en France, calcul refait chaque "
+        f"jour à partir des données officielles (Assemblée nationale, Journal officiel, Conseil "
         f"constitutionnel, CNIL, justice administrative, Arcom, RSF, CNCTR). Prototype : aucun "
         "seuil ni aucune pondération n'est encore fixé ; l'écart à l'habituel affiché "
         f"({ecart_texte(i)}, au {date_longue(data['fin_donnees'])}) est illustratif. "
@@ -541,7 +571,10 @@ def llms_txt(data: dict, site_url: str | None) -> str:
         "indicateurs, contexte, "
         "méthode, sources\n"
         f"- [Indicateurs (CSV)]({base}indicateurs.csv) : valeur actuelle et position dans "
-        "l'historique\n"
+        "l'historique, avec les fichiers de chaque indicateur (`donnees/<id>-serie.csv`, "
+        "`donnees/<id>-faits.csv` : faits liés à leur document officiel)\n"
+        f"- [Journal des modifications]({base}journal.md) : changements de méthode et "
+        "corrections, avec leur effet sur l'indice\n"
         f"- [Page interactive]({base or './'}) : graphiques et listes de faits, chacun lié à "
         "sa source\n"
     )
@@ -568,7 +601,7 @@ def sitemap_xml(site_url: str, lastmod: str) -> str:
 
 
 APERCU = "apercu.png"  # image de partage (1200 × 630), front/publication/apercu.png
-APERCU_ALT = "Baromètre de la santé démocratique : indicateurs sourcés sur la démocratie en France"
+APERCU_ALT = "Baromètre démocratique : la démocratie en France, en faits sourcés"
 
 # Politique de sécurité du contenu : tout vient du site lui-même (scripts et styles en ligne
 # compris).

@@ -29,6 +29,9 @@ from storage.db import DEFAULT_DB_PATH, connect  # noqa: E402
 INDICATOR = "D2.contournement_parlement"
 ROLLING = "glissante_365j"
 OUT = Path(__file__).with_name("data.js")
+# Données téléchargeables : une série et une liste de faits sourcés par indicateur, publiées
+# avec la page (front/publication/build.py les copie dans donnees/).
+DONNEES = Path(__file__).with_name("donnees")
 DIMENSIONS = (
     "D1.regles_electorales_avant_scrutin",
     "D1.scrutins_reportes",
@@ -272,6 +275,7 @@ def main(argv=None) -> int:
     for d in dimensions:
         d["hors_indice"] = raison_d7 if d["id"] == D7 else None
     composer(dimensions)
+    ecrire_donnees(conn, dimensions)
     periodes = []
     for day, attrs in conn.execute(
         "SELECT occurred_on, attributes FROM facts"
@@ -544,6 +548,71 @@ def opinion(path: Path = OPINION) -> dict:
     }
 
 
+COLONNES_FAITS = (
+    "date",
+    "type",
+    "titre",
+    "reference",
+    "lien",
+    "source",
+    "document_archive",
+    "empreinte_sha256",
+    "methode",
+    "verifie_par_un_humain",
+)
+
+
+def faits_indicateur(conn, ind_id: str) -> list[dict]:
+    """Faits d'un indicateur, chacun avec le document officiel archivé qui le justifie (le
+    premier s'il y en a plusieurs) et son empreinte SHA-256. Pour D7, pas de titre : seuls la
+    date, la catégorie et le lien sont publiés (aucun nom)."""
+    out = []
+    for row in conn.execute(
+        "SELECT f.occurred_on, f.fact_type, f.title, f.official_ref, f.attributes,"
+        " f.extraction_method, f.verified_by_human, r.url, r.external_id, r.sha256, s.name"
+        " FROM facts f"
+        " LEFT JOIN raw_documents r ON r.id ="
+        "   (SELECT min(raw_document_id) FROM fact_sources WHERE fact_id = f.id)"
+        " LEFT JOIN sources s ON s.id = r.source_id"
+        " WHERE f.indicator_id = ? ORDER BY f.occurred_on, f.id",
+        (ind_id,),
+    ):
+        day, ftype, title, ref, attrs, method, human, url, ext, sha, source = tuple(row)
+        a = json.loads(attrs)
+        out.append(
+            {
+                "date": day,
+                "type": ftype,
+                "titre": "" if ind_id == D7 else title,
+                "reference": ref or "",
+                "lien": a.get("url") or url or "",
+                "source": source or "",
+                "document_archive": ext or "",
+                "empreinte_sha256": sha or "",
+                "methode": method,
+                "verifie_par_un_humain": "oui" if human else "non",
+            }
+        )
+    return out
+
+
+def ecrire_donnees(conn, dimensions: list[dict], dossier: Path = DONNEES) -> None:
+    """Pour chaque indicateur : `<id>-serie.csv` (valeur sur douze mois glissants à chaque fin
+    de mois, celle qui sert à la position) et `<id>-faits.csv` (faits sourcés)."""
+    dossier.mkdir(parents=True, exist_ok=True)
+    for ancien in dossier.glob("*.csv"):
+        ancien.unlink()
+    for d in dimensions:
+        with (dossier / f"{d['id']}-serie.csv").open("w", encoding="utf-8", newline="") as f:
+            w = csv.writer(f, lineterminator="\n")
+            w.writerow(("fin_de_mois", d["metrique"]))
+            w.writerows((m["date"], m["v"]) for m in d["mensuel"])
+        with (dossier / f"{d['id']}-faits.csv").open("w", encoding="utf-8", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=COLONNES_FAITS, lineterminator="\n")
+            w.writeheader()
+            w.writerows(faits_indicateur(conn, d["id"]))
+
+
 def avec_categorie_rsf(edition: dict) -> dict:
     """Catégorie RSF (« situation plutôt bonne »…) pour les éditions où elle est vérifiée."""
     from extract.rsf import PREMIERE_EDITION_CATEGORIES, categorie
@@ -605,6 +674,10 @@ def dimension(conn, grid, ind_id: str, month_ends: set[str]) -> dict:
     values = [v for _, v in monthly]
     current_day, current = series[-1]
     peak = max(monthly, key=lambda dv: dv[1])
+    dernier_fait = conn.execute(
+        "SELECT max(occurred_on) FROM facts WHERE indicator_id = ? AND occurred_on <= ?",
+        (ind_id, current_day),
+    ).fetchone()[0]
     return {
         "id": ind_id,
         "code": ind_id.split(".")[0],
@@ -614,6 +687,7 @@ def dimension(conn, grid, ind_id: str, month_ends: set[str]) -> dict:
         "date": current_day,
         "debut_historique": since,
         "fin_couverture": until,
+        "dernier_fait": dernier_fait,
         "mensuel": [{"date": d, "v": v} for d, v in monthly],
         "mediane": statistics.median(values),
         "max": peak[1],

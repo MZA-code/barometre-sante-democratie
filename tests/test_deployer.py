@@ -141,3 +141,17 @@ def test_copie_locale_atomique_avec_sous_dossiers(tmp_path, web):
     assert (dest / "index.html").read_text() == "<!doctype html>"
     assert (dest / "assets" / "fa" / "x.css").read_text() == "css"
     assert not list(dest.rglob("*.envoi"))
+
+
+def test_donnees_telechargeables_envoyees_avant_la_page(tmp_path):
+    for f in ("assets/a.css", "donnees/D1.x-serie.csv", "data.js", "journal.md", "index.html"):
+        (tmp_path / f).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / f).write_text("x")
+    liste = deployer.presents(tmp_path)
+    assert liste == [
+        "assets/a.css",
+        "donnees/D1.x-serie.csv",
+        "data.js",
+        "journal.md",
+        "index.html",
+    ]
