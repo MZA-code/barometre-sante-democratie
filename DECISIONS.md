@@ -976,3 +976,43 @@ métriques de contexte (aucune ne change la métrique notée de la grille v0) :
   Une collecte DILA interrompue ou limitée par `--max` n'est pas une vérification.
 - **Limite** : la DILA publie le Journal officiel du jour vers 21 h ; au passage de 6 h 30,
   les données vont donc au mieux jusqu'à la veille.
+
+## 2026-11-12 — Revue externe : la question en tête, écart à l'habituel, composition de l'indice
+
+Brief `docs/brief-amelioration-barometre.md`, vérification et sensibilité dans
+`docs/rapport-sensibilite-2026-11-12.md`. Décisions de l'auteur, prises sur le rapport de
+sensibilité et avant application. Données au 11/11/2026.
+
+- **Tête de page** : la question « La France est-elle encore une démocratie ? » reçoit la
+  réponse des classements internationaux (V-Dem, Freedom House ; RSF pour la presse),
+  recopiés dans `data/seed/reperes_internationaux.csv`. Le jugement est le leur. Le
+  baromètre ne le formule pas : son échelle est relative à l'histoire française et ne peut
+  pas dire si un régime est démocratique. EIU non repris (source primaire illisible le
+  12/11).
+- **Indice** : renommé « écart à l'habituel », affiché en écart signé à 50 avec la fourchette
+  de cinq agrégations (`scoring/indice.py`, `VARIANTES`). La jauge colorée vert-rouge est
+  retirée, car elle contredisait « ce n'est pas une note ».
+- **Ex æquo** : rang moyen conservé ; la définition affichée est corrigée (« 0 si elle est
+  plus basse que tous les mois », plus « au plus bas jamais observé »).
+- **Historique minimal** : 5 ans de points mensuels (`HISTORIQUE_MIN_MOIS = 60`). D5.1 sort
+  (1 an). D4.2 aurait aussi été sorti (3,6 ans) s'il n'était pas déjà à part.
+- **Double lecture** : D3.2 et D4.2 sont présentés à part comme « indicateurs de
+  contre-pouvoir ». Leur position est affichée, hors indice.
+- **Effet, rapporté quel qu'en soit le sens** : 58,5 → 61,6, soit un écart de **+12**
+  (fourchette −4 à +28). Indicateurs retenus : 11 au lieu de 14.
+
+## 2026-11-12 — Second axe de la question : ce qu'en pensent les Français
+
+- **Choix de l'auteur** : répondre à « La France est-elle encore une démocratie ? » selon
+  deux axes côte à côte. D'un côté, les classements internationaux (jugement d'experts). De
+  l'autre, l'opinion des Français (ressenti mesuré par sondage).
+- **Source** : Baromètre de la confiance politique du CEVIPOF, vague 17 (janvier 2026,
+  OpinionWay, 3 166 inscrits), recopié dans `data/seed/opinion_cevipof.csv`. Série « la
+  démocratie fonctionne bien » depuis décembre 2009 (18 vagues), attachement au système
+  démocratique, tentation autoritaire, comparaison avec quatre pays. Eurobaromètre non
+  repris (site illisible sans JavaScript le 12/11).
+- **Lecture affichée** : la question du sondage porte sur le fonctionnement de la démocratie,
+  pas sur son existence. La phrase le dit (« ils jugent qu'elle fonctionne mal, sans y
+  renoncer ») et met en regard l'attachement au système démocratique (82 %). La phrase est
+  construite à partir des chiffres (seuil de 50 % ; « plus bas depuis » calculé).
+- **Pas d'effet sur l'indice** : ce sont des données de contexte, hors indice.

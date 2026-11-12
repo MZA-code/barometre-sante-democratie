@@ -247,3 +247,51 @@ et la ligne ou la phrase citée.
   phrases en colonnes vérifiées dans l'ordre de lecture. Recherche des sources : rapport
   d'instruction du 2026-11-07 (IGPN, IGGN, ministère, Défenseur des droits, Parlement) ;
   aucune série mensuelle ni propre aux manifestations n'existe.
+
+## `reperes_internationaux.csv`
+
+Classements internationaux affichés en tête de page pour répondre à « la France est-elle
+encore une démocratie ? » (décision du 2026-11-12) : le jugement est celui de ces
+organismes, pas du baromètre. Lu directement par `front/prototype/export_data.py` (pas de
+fait en base : ce ne sont pas des indicateurs du baromètre).
+
+- Une ligne par source, la dernière édition seulement ; mettre à jour à chaque parution
+  (V-Dem en mars, Freedom House en février-mars) et noter la date de lecture dans `controle`.
+- `categorie_democratique` : `oui` si la catégorie attribuée à la France est une catégorie
+  démocratique de la source (V-Dem : démocratie libérale ou électorale ; Freedom House :
+  pays libre).
+- Le classement de l'Economist Intelligence Unit n'est pas repris : sa page officielle n'a
+  pas pu être lue le 2026-11-12. À ajouter après lecture de la source primaire.
+- Le classement RSF n'est pas ici : il vient de l'indicateur D5.3 (dernière édition).
+
+## `opinion_cevipof.csv`
+
+Second axe de la tête de page, « ce qu'en pensent les Français » (décision du 2026-11-12) :
+résultats du Baromètre de la confiance politique du CEVIPOF (Sciences Po), enquête
+OpinionWay en ligne, vague 17, du 12 au 28 janvier 2026, 3 166 inscrits sur les listes
+électorales (méthode des quotas ; marge d'incertitude de 0,7 à 1,7 point).
+Rapport : https://www.sciencespo.fr/cevipof/sites/sciencespo.fr.cevipof/files/Barometre_confiance_CEVIPOFVague17_fev2026_vd1.pdf
+Lu directement par `front/prototype/export_data.py` (pas de fait en base).
+
+- Format long : `indicateur;pays;date;valeur;page;note`, valeur en % de répondants, `page`
+  = page du rapport (numérotation du PDF).
+- `q22_fonctionne_bien` / `q22_fonctionne_mal` : « Diriez-vous qu'en France la démocratie
+  fonctionne très bien, assez bien, pas très bien ou pas bien du tout ? », sous-totaux
+  « bien » et « pas bien ». Série de décembre 2009 à janvier 2026 lue sur le graphique de
+  la page 34 (étiquettes des points, appariées par couleur de courbe) ; comparaison de cinq
+  pays page 35.
+- `q55_*` : « Je vais vous décrire différents types de systèmes politiques […] cette façon
+  de gouverner le pays serait très bonne, assez bonne, assez mauvaise ou très mauvaise »,
+  part « bonne » : système démocratique, homme fort sans parlement ni élections, armée
+  (page 93).
+- `q56_*` : part « d'accord » avec : « C'est utile de voter… », « La démocratie
+  fonctionnerait mieux si les citoyens étaient associés de manière directe… », « En
+  démocratie rien n'avance, il vaudrait mieux moins de démocratie mais plus d'efficacité »
+  (page 96).
+- Droits : rapport © Sciences Po ; seuls quelques chiffres sont repris, cités avec leur
+  source (droit de courte citation). Mettre à jour à chaque vague (février) et vérifier
+  les valeurs passées, que le CEVIPOF peut réviser.
+- **Contrôle** (2026-11-12) : valeurs relues sur le rapport (`pdftotext` et image de la
+  page 34).
+- L'Eurobaromètre (satisfaction envers le fonctionnement de la démocratie) n'est pas
+  repris : son site ne s'affiche qu'en JavaScript et n'a pas pu être lu le 2026-11-12.

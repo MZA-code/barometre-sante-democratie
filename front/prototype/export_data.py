@@ -10,6 +10,7 @@ Usage :
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import re
 import statistics
@@ -20,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
 from scoring.grid import load_grid  # noqa: E402
+from scoring.indice import composer, indice  # noqa: E402
 from scoring.metrics import load_legislatures  # noqa: E402
 from storage.archive import DEFAULT_RAW_DIR  # noqa: E402
 from storage.db import DEFAULT_DB_PATH, connect  # noqa: E402
@@ -269,6 +271,7 @@ def main(argv=None) -> int:
     d7, raison_d7 = bloc_d7(conn, args.raw_dir)
     for d in dimensions:
         d["hors_indice"] = raison_d7 if d["id"] == D7 else None
+    composer(dimensions)
     periodes = []
     for day, attrs in conn.execute(
         "SELECT occurred_on, attributes FROM facts"
@@ -328,6 +331,9 @@ def main(argv=None) -> int:
         "engagements": engagements,
         "ordonnances_fenetre": ordonnances,
         "dimensions": dimensions,
+        "indice": indice(dimensions),
+        "reperes": reperes_internationaux(),
+        "opinion": opinion(),
         "d7": d7,
         "annulations": [
             {"date": d, "numero": ref, "titre": t, **json.loads(a)}
@@ -379,10 +385,12 @@ def main(argv=None) -> int:
             ],
         },
         "rsf": [
-            {
-                k: json.loads(a)[k]
-                for k in ("edition", "rang", "nb_pays", "score", "periode_score", "url")
-            }
+            avec_categorie_rsf(
+                {
+                    k: json.loads(a)[k]
+                    for k in ("edition", "rang", "nb_pays", "score", "periode_score", "url")
+                }
+            )
             for (a,) in conn.execute(
                 "SELECT attributes FROM facts WHERE fact_type = 'classement_rsf'"
                 " ORDER BY occurred_on"
@@ -489,6 +497,70 @@ def main(argv=None) -> int:
     )
     print(f"{OUT} : {len(monthly)} mois, {len(engagements)} engagements, fin {end}")
     return 0
+
+
+REPERES = ROOT / "data" / "seed" / "reperes_internationaux.csv"
+
+
+OPINION = ROOT / "data" / "seed" / "opinion_cevipof.csv"
+OPINION_SOURCE = {
+    "source": "Baromètre de la confiance politique du CEVIPOF (Sciences Po), enquête OpinionWay",
+    "edition": "vague 17",
+    "terrain": "du 12 au 28 janvier 2026",
+    "echantillon": "3 166 personnes inscrites sur les listes électorales",
+    "url": "https://www.sciencespo.fr/cevipof/sites/sciencespo.fr.cevipof/files/"
+    "Barometre_confiance_CEVIPOFVague17_fev2026_vd1.pdf",
+    "question": "Diriez-vous qu'en France la démocratie fonctionne très bien, assez bien, "
+    "pas très bien ou pas bien du tout ?",
+}
+
+
+def opinion(path: Path = OPINION) -> dict:
+    """Ce qu'en pensent les Français (CEVIPOF) : voir data/seed/README.md."""
+    with path.open(encoding="utf-8") as f:
+        rows = list(csv.DictReader(f, delimiter=";"))
+    france = [r for r in rows if r["pays"] == "France"]
+    mal = {r["date"]: int(r["valeur"]) for r in france if r["indicateur"] == "q22_fonctionne_mal"}
+    serie = [
+        {"date": r["date"], "bien": int(r["valeur"]), "mal": mal[r["date"]], "note": r["note"]}
+        for r in sorted(france, key=lambda r: r["date"])
+        if r["indicateur"] == "q22_fonctionne_bien"
+    ]
+    derniere = serie[-1]["date"]
+    return {
+        **OPINION_SOURCE,
+        "serie": serie,
+        "plus_bas": min(serie[:-1], key=lambda s: s["bien"])["bien"] > serie[-1]["bien"],
+        "autres": {
+            r["indicateur"]: int(r["valeur"])
+            for r in france
+            if r["date"] == derniere and r["indicateur"].startswith(("q55_", "q56_"))
+        },
+        "pays": [
+            {"pays": r["pays"], "bien": int(r["valeur"])}
+            for r in rows
+            if r["indicateur"] == "q22_fonctionne_bien" and r["date"] == derniere
+        ],
+    }
+
+
+def avec_categorie_rsf(edition: dict) -> dict:
+    """Catégorie RSF (« situation plutôt bonne »…) pour les éditions où elle est vérifiée."""
+    from extract.rsf import PREMIERE_EDITION_CATEGORIES, categorie
+
+    if edition["edition"] >= PREMIERE_EDITION_CATEGORIES and edition["score"] is not None:
+        edition["categorie"] = categorie(edition["score"])[1]
+    return edition
+
+
+def reperes_internationaux(path: Path = REPERES) -> list[dict]:
+    """Classements internationaux (V-Dem, Freedom House), recopiés à la main : voir
+    data/seed/README.md. Le classement RSF vient de D5.3."""
+    with path.open(encoding="utf-8") as f:
+        rows = list(csv.DictReader(f, delimiter=";"))
+    for r in rows:
+        r["categorie_democratique"] = r["categorie_democratique"] == "oui"
+    return rows
 
 
 def temps_parole_partis(conn) -> dict:

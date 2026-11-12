@@ -34,7 +34,6 @@
       --series-1: #2a78d6; --series-1-wash: rgba(42, 120, 214, 0.10); --hist: #b7d3f6;
       --accent-soft: #e8f0fb; --series-2: #eb6834;
       /* Échelle de la jauge : vert (bas) - jaune - orange - rouge - rouge sombre (haut). */
-      --jauge-bas: #0ca30c; --jauge-milieu: #fab219; --jauge-haut-1: #ec835a; --jauge-haut-2: #d03b3b; --jauge-haut-3: #7a1414;
     }
     @media (prefers-color-scheme: dark) {
       :root:where(:not([data-theme="light"])) {
@@ -138,10 +137,51 @@
   </nav>
   <main class="min-w-0">
 
+    <!-- La question : réponse des classements internationaux (data/seed/reperes_internationaux.csv) -->
+    <section class="pt-8 sm:pt-10 pb-8 border-b border-rule" aria-labelledby="t-question">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">La question</p>
+      <h2 id="t-question" class="mt-3 font-serif text-2xl sm:text-3xl font-semibold">La France est-elle encore une démocratie&nbsp;?</h2>
+      <div class="mt-6 grid gap-10 lg:grid-cols-2">
+        <div>
+          <h3 class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Selon les classements internationaux</h3>
+          <p id="reponse" class="mt-3 font-serif text-xl sm:text-2xl leading-snug"></p>
+          <ul id="reperes" class="mt-5 space-y-5"></ul>
+        </div>
+        <div class="lg:border-l lg:border-rule lg:pl-10">
+          <h3 class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Selon les Français</h3>
+          <p id="reponse-opinion" class="mt-3 font-serif text-xl sm:text-2xl leading-snug"></p>
+          <figure class="mt-5">
+            <figcaption id="opinion-question" class="text-sm text-ink2"></figcaption>
+            <div id="opinion-chart" class="viz relative mt-2"></div>
+          </figure>
+          <ul id="opinion-chiffres" class="mt-4 space-y-2 text-sm"></ul>
+          <p id="opinion-source" class="mt-4 text-xs text-ink2 leading-relaxed"></p>
+        </div>
+      </div>
+      <p class="mt-8 flex gap-2 max-w-3xl text-xs text-ink2 leading-relaxed">
+        <i class="fa-solid fa-scale-balanced mt-0.5 text-muted" aria-hidden="true"></i>
+        <span><strong class="text-ink">Deux regards, deux questions.</strong> Les classements
+        internationaux jugent le régime, avec des experts et une méthode publiée qui compare tous
+        les pays sur la même échelle. Le sondage mesure ce que ressentent les citoyens&nbsp;: il ne
+        demande pas si la France est une démocratie, mais si elle fonctionne bien. Le baromètre,
+        lui, ne qualifie pas le régime&nbsp;: il suit chaque jour des faits officiels sourcés, et dit
+        s'ils sont plus fréquents ou plus rares que d'habitude (plus bas). Les classements et le
+        sondage sont annuels.</span>
+      </p>
+    </section>
+
     <!-- Définition : de quoi parle-t-on (sources détaillées dans « Sur quoi on s'appuie ») -->
     <section class="pt-8 sm:pt-10 pb-8 border-b border-rule" aria-labelledby="t-definition">
       <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">De quoi parle-t-on&nbsp;?</p>
       <h2 id="t-definition" class="mt-3 font-serif text-2xl font-semibold">Ce qu'est une démocratie</h2>
+      <p class="mt-3 max-w-3xl text-ink2 leading-relaxed">
+        Le mot vient du grec <em>dêmos</em>, le peuple, et <em>kratos</em>, le pouvoir&nbsp;: le
+        pouvoir du peuple. À Athènes, où il est né au <span class="whitespace-nowrap">V<sup>e</sup> siècle</span>
+        avant notre ère, ce «&nbsp;peuple&nbsp;» excluait les femmes, les esclaves et les étrangers, et
+        votait directement les lois. Les démocraties modernes sont surtout représentatives&nbsp;: le
+        peuple choisit ceux qui décident, peut les remplacer, et garde des droits que la majorité
+        elle-même ne peut pas lui retirer.
+      </p>
       <blockquote class="mt-4 max-w-3xl border-l-4 pl-4 font-serif text-lg leading-relaxed" style="border-color: var(--series-1)">
         Une démocratie, c'est un pays où les citoyens choisissent librement leurs dirigeants, où
         chacun peut s'exprimer, s'informer, se réunir et manifester sans crainte, et où le pouvoir
@@ -150,9 +190,11 @@
       <p class="mt-4 max-w-3xl text-sm text-ink2 leading-relaxed">
         Cette définition reprend les garanties posées par Robert Dahl et la dimension « libérale »
         (État de droit, contre-pouvoirs, libertés publiques) retenue par les grands indices
-        internationaux. Le baromètre ne demande pas si la France «&nbsp;est&nbsp;» ou «&nbsp;n'est
-        pas&nbsp;» une démocratie&nbsp;: il suit, mois après mois, les signes d'érosion que la recherche
-        a appris à reconnaître.
+        internationaux. Elle n'est pas la seule possible&nbsp;: la définition de la démocratie est
+        débattue, et celle-ci a été retenue parce qu'elle est proche de celle des classements
+        cités plus haut. Le baromètre ne tranche pas lui-même si la France «&nbsp;est&nbsp;» ou
+        «&nbsp;n'est pas&nbsp;» une démocratie&nbsp;: il suit, mois après mois, les actes que la
+        recherche associe à un recul démocratique.
         <a href="#t-references" class="underline text-ink">Les ouvrages sur lesquels on s'appuie</a>.
       </p>
       <p class="mt-4 flex gap-2 max-w-3xl text-xs text-ink2 leading-relaxed">
@@ -168,21 +210,28 @@
 
     <!-- 0. Vue d'ensemble : chaque indicateur sur sa propre histoire -->
     <section class="pt-8 sm:pt-10 pb-8 border-b border-rule" aria-labelledby="t-cadran">
-      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Le baromètre aujourd'hui</p>
-      <div class="mt-4 grid gap-6 md:grid-cols-[minmax(0,1fr),minmax(0,1.1fr)] md:items-center">
-        <figure class="relative">
-          <div id="dial" class="viz relative mx-auto max-w-[460px]"></div>
-        </figure>
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Et par rapport à d'habitude&nbsp;?</p>
+      <div class="mt-4 grid gap-6 md:grid-cols-[auto,minmax(0,1fr)] md:items-start">
+        <div class="md:pr-8 md:border-r md:border-rule">
+          <div class="text-sm text-ink2">Écart à l'habituel</div>
+          <div id="ecart" class="font-serif text-6xl font-semibold tracking-tight leading-none mt-1 tabular-nums"></div>
+          <div id="ecart-fourchette" class="mt-2 text-xs text-muted"></div>
+        </div>
         <div>
           <h2 id="t-indice" class="font-serif text-2xl sm:text-3xl font-semibold leading-snug"></h2>
           <p id="indice-text" class="mt-3 text-ink2 leading-relaxed"></p>
+          <details class="mt-4 text-sm text-ink2">
+            <summary class="cursor-pointer text-ink">Pourquoi une fourchette&nbsp;? Le même calcul fait autrement</summary>
+            <p class="mt-2 leading-relaxed">Avec les mêmes données, d'autres façons défendables de
+            combiner les indicateurs donnent d'autres résultats. La méthode retenue a été fixée avant
+            d'en connaître l'effet&nbsp;; les autres sont publiées pour que chacun juge de la solidité du chiffre.</p>
+            <table class="mt-2 w-full text-sm"><tbody id="variantes"></tbody></table>
+          </details>
           <p class="mt-4 flex gap-2 text-xs text-ink2 leading-relaxed">
             <i class="fa-solid fa-flask mt-0.5 text-muted" aria-hidden="true"></i>
-            <span><strong class="text-ink">Indice illustratif.</strong> Moyenne simple, chaque indicateur
-            comptant pour autant que les autres. Couleurs de la jauge&nbsp;: du vert (0, plus bas que
-            d'habitude) au rouge sombre (100, plus haut que d'habitude), en passant par le jaune
-            autour de 50 et l'orange. Le comité de méthode n'a encore fixé ni les pondérations ni les seuils&nbsp;: ce
-            chiffre aide à lire l'ensemble, il ne qualifie pas le régime.</span>
+            <span><strong class="text-ink">Indice illustratif.</strong> 0 veut dire «&nbsp;comme
+            d'habitude&nbsp;», pas «&nbsp;tout va bien&nbsp;»&nbsp;: si l'habitude est elle-même dégradée, cet
+            écart ne le montre pas. C'est le rôle des classements internationaux ci-dessus.</span>
           </p>
         </div>
       </div>
@@ -194,6 +243,13 @@
         <span class="text-right">position · valeur</span>
       </div>
       <ol id="overview" class="mt-2 space-y-1"></ol>
+      <h3 id="t-contre-pouvoirs" class="mt-8 font-semibold">Indicateurs de contre-pouvoir, présentés à part</h3>
+      <p class="mt-1 max-w-3xl text-sm text-ink2 leading-relaxed">
+        Une hausse s'y lit dans les deux sens&nbsp;: plus de lois censurées ou d'interdictions annulées
+        peut signaler des décisions plus fragiles, ou des juges qui exercent pleinement leur contrôle.
+        Leur position est donnée, mais ils n'entrent pas dans l'écart ci-dessus.
+      </p>
+      <ol id="contre-pouvoirs" class="mt-2 space-y-1"></ol>
       <p class="mt-5 flex gap-2 text-xs text-ink2 leading-relaxed max-w-3xl">
         <i class="fa-solid fa-scale-balanced mt-0.5 text-muted" aria-hidden="true"></i>
         <span><strong class="text-ink">Ce n'est pas une note.</strong> Chaque repère situe la valeur des
@@ -1005,63 +1061,149 @@
     document.getElementById('hero').textContent = pct(ratio);
     document.getElementById('hero-date').textContent = `Au ${dateLong(D.fin_donnees)}`;
 
+    // ---- La question : réponse des classements internationaux ---------------------
+    const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+    function drawReperes() {
+      const R = D.reperes || [], rsf = D.rsf[D.rsf.length - 1];
+      const oui = R.filter(r => r.categorie_democratique).length;
+      document.getElementById('reponse').textContent = !R.length ? ''
+        : oui === R.length ? `Oui. Les classements internationaux de référence classent la France parmi les démocraties${R.some(r => /limite/.test(r.categorie)) ? ', l\'un d\'eux à la limite de sa catégorie inférieure' : ''}.`
+        : oui === 0 ? 'Non, selon les classements internationaux de référence.'
+        : `Les classements internationaux ne s'accordent pas : ${oui} sur ${R.length} classent la France parmi les démocraties.`;
+      const cartes = R.map(r => ({
+        tete: `${r.source} · ${r.edition}`, sous: `données ${r.annee_donnees}`, categorie: cap(r.categorie),
+        valeur: [`${r.valeur.replace('.', ',')} ${r.echelle.startsWith('sur') ? r.echelle : `(${r.echelle})`}`, r.rang].filter(Boolean).join(' · '),
+        detail: r.detail, url: r.url,
+      }));
+      if (rsf) cartes.push({
+        tete: `RSF · Classement mondial ${rsf.edition}`, sous: 'liberté de la presse, indicateur D5.3', categorie: cap(rsf.categorie || `${rsf.rang}e sur ${rsf.nb_pays}`),
+        valeur: `${num(rsf.score)} sur 100 · ${rsf.rang}e sur ${rsf.nb_pays}`,
+        detail: 'Ne classe pas les régimes : mesure la liberté de la presse. Cinq catégories, de « bonne situation » à « situation très grave ».', url: rsf.url,
+      });
+      const box = document.getElementById('reperes'); box.replaceChildren();
+      for (const c of cartes) {
+        const li = document.createElement('li'); li.className = 'border-t border-rule pt-3';
+        li.innerHTML = '<div class="text-xs text-ink2"><span class="font-semibold"></span> <span class="text-muted"></span></div>' +
+          '<div class="mt-1 font-serif text-lg font-semibold leading-snug"></div><div class="mt-1 text-sm tabular-nums"></div>' +
+          '<p class="mt-2 text-xs text-ink2 leading-relaxed"></p><a class="mt-1 inline-block text-xs underline text-ink" target="_blank" rel="noopener">Source</a>';
+        const [t, cat, val, det, a] = li.children;
+        t.children[0].textContent = c.tete; t.children[1].textContent = `(${c.sous})`;
+        cat.textContent = c.categorie; val.textContent = c.valeur; det.textContent = c.detail; a.href = c.url;
+        box.appendChild(li);
+      }
+    }
+
+    // ---- La question, second axe : ce qu'en pensent les Français (CEVIPOF) --------
+    const OPINION_LIBELLES = {
+      q55_systeme_democratique_bon: 'jugent qu\'un système démocratique est une bonne façon de gouverner le pays',
+      q56_utile_de_voter: 'jugent utile de voter, parce que c\'est par les élections qu\'on fait évoluer les choses',
+      q56_democratie_directe_mieux: 'pensent que la démocratie fonctionnerait mieux si les citoyens étaient associés directement aux grandes décisions (pétitions, tirage au sort)',
+      q56_moins_de_democratie_plus_efficace: 'pensent qu\'il vaudrait mieux moins de démocratie mais plus d\'efficacité',
+      q55_homme_fort_bon: 'jugent bonne l\'idée d\'un homme fort qui n\'aurait à se préoccuper ni du Parlement ni des élections',
+      q55_armee_bon: 'jugent bonne l\'idée que l\'armée dirige le pays',
+    };
+    function drawOpinion() {
+      const O = D.opinion;
+      if (!O) return;
+      const S = O.serie, last = S[S.length - 1], debut = S[0].date.slice(0, 4);
+      const attache = O.autres.q55_systeme_democratique_bon;
+      document.getElementById('reponse-opinion').textContent = (last.bien < 50
+        ? `Ils jugent qu'elle fonctionne mal, sans y renoncer : ${last.mal} % des Français pensent que la démocratie fonctionne mal en France, ${last.bien} % qu'elle fonctionne bien${O.plus_bas ? `, le niveau le plus bas depuis ${debut}` : ''}.`
+        : `Une majorité juge qu'elle fonctionne bien : ${last.bien} % des Français, ${last.mal} % pensent le contraire.`) +
+        (attache ? ` Mais ${attache} % jugent qu'un système démocratique est une bonne façon de gouverner.` : '')
+      document.getElementById('reponse-opinion').textContent = document.getElementById('reponse-opinion').textContent.replace(/ %/g, '\u00a0%');
+      document.getElementById('opinion-question').textContent = `« ${O.question} » Part qui répond « très bien » ou « assez bien », depuis ${debut}.`;
+      const box = document.getElementById('opinion-chart');
+      annualChart(box, S.map(s => ({ ...s, url: O.url })), {
+        x: s => +s.date.slice(0, 4) + (+s.date.slice(5, 7) - 1) / 12, y: s => s.bien, inverted: false, max: 60, etiquetteDessous: true,
+        fmtTick: v => `${v} %`, title: 'Part des Français jugeant que la démocratie fonctionne bien en France, par vague du baromètre du CEVIPOF',
+        tip: s => [{ label: cap(monthLong(s.date + '-01')), strong: true }, { label: `${s.bien} % : fonctionne bien` }, { label: `${s.mal} % : fonctionne mal`, muted: true },
+          ...(s.note ? [{ label: s.note, muted: true }] : [])],
+      });
+      const ul = document.getElementById('opinion-chiffres'); ul.replaceChildren();
+      for (const [k, lib] of Object.entries(OPINION_LIBELLES)) {
+        if (O.autres[k] == null) continue;
+        const li = document.createElement('li'); li.className = 'flex gap-3';
+        li.innerHTML = '<span class="w-12 shrink-0 text-right font-semibold tabular-nums"></span><span class="text-ink2"></span>';
+        li.children[0].textContent = `${O.autres[k]}\u00a0%`; li.children[1].textContent = lib;
+        ul.appendChild(li);
+      }
+      const pays = [...O.pays].sort((a, b) => a.bien - b.bien).map(p => `${p.pays}\u00a0${p.bien}\u00a0%`).join(', ');
+      const li = document.createElement('li'); li.className = 'pt-2 text-ink2';
+      li.textContent = `Démocratie qui fonctionne bien, même question dans d'autres pays : ${pays}.`;
+      ul.appendChild(li);
+      const src = document.getElementById('opinion-source'); src.replaceChildren();
+      src.append(`Source : ${O.source}, ${O.edition}, ${O.terrain}, ${O.echantillon} ; marge d'incertitude d'environ 1 à 2 points. `);
+      const a = document.createElement('a'); a.href = O.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'underline text-ink'; a.textContent = 'Rapport complet';
+      src.append(a, '.');
+    }
+
     // ---- Vue d'ensemble : chaque indicateur situé dans sa propre histoire ---------
-    const SERIE_COURTE = 36;  // mois : en deçà, la position historique pèse peu
+    // Règles de composition et calcul de l'indice : scoring/indice.py (repris dans D.indice).
     const TIERS_HAUT = 2 / 3;
     // Position dans l'historique : part des mois plus bas, plus la moitié des mois égaux (rang moyen).
     // Sans cette correction, un indicateur sans aucun cas (valeur nulle, comme la plupart des mois)
     // serait classé au plus bas jamais observé alors qu'il est à son niveau habituel.
-    // Un indicateur dont le relevé est arrêté (fin_couverture) n'entre pas dans l'indice : sa valeur
-    // actuelle traduirait l'absence de données, pas une situation.
     const dansIndice = d => !d.fin_couverture && !d.hors_indice;
     const raisonHors = d => d.hors_indice || `relevé arrêté au ${dateLong(d.fin_couverture)}`;
     const position = d => d.mensuel.filter(m => m.v < d.actuel).length / d.mensuel.length + 0.5 * d.mensuel.filter(m => m.v === d.actuel).length / d.mensuel.length;
-    function drawIndice(rows) {
-      const v = rows.reduce((a, d) => a + position(d), 0) / rows.length, score = Math.round(v * 100);
-      const box = document.getElementById('dial');
-      const W = Math.max(260, Math.min(460, box.clientWidth)), Hh = Math.round(W * 0.68);
-      const cx = W / 2, cy = Hh - 44, R = W * 0.4, thick = Math.max(16, W * 0.06);
-      const pt = (t, r) => { const a = Math.PI * (1 - t); return [cx + r * Math.cos(a), cy - r * Math.sin(a)]; };
-      const arc = (t0, t1, r) => { const [x0, y0] = pt(t0, r), [x1, y1] = pt(t1, r); return `M${x0},${y0} A${r},${r} 0 0 1 ${x1},${y1}`; };  // demi-cercle : jamais de grand arc
-      const svg = svgIn(box, W, Hh, `Indice illustratif : ${score} sur 100`);
-      el('path', { d: arc(0, 1, R), fill: 'none', stroke: 'var(--band)', 'stroke-width': thick }, svg);
-      // Remplissage coloré selon l'échelle : vert vers 0, jaune autour de 50, orange, rouge puis
-      // rouge sombre vers 100. Dégradé horizontal dont chaque arrêt est placé à l'abscisse de sa
-      // position sur l'arc (x = (1 - cos(πt)) / 2) : la couleur suit la valeur.
-      const grad = el('linearGradient', { id: 'jauge-degrade', gradientUnits: 'userSpaceOnUse', x1: cx - R, y1: 0, x2: cx + R, y2: 0 }, el('defs', {}, svg));
-      for (const [t, c] of [[0, 'bas'], [0.5, 'milieu'], [0.7, 'haut-1'], [0.85, 'haut-2'], [1, 'haut-3']]) {
-        el('stop', { offset: (1 - Math.cos(Math.PI * t)) / 2, style: `stop-color: var(--jauge-${c})` }, grad);
-      }
-      el('path', { d: arc(0, Math.max(0.002, v), R), fill: 'none', stroke: 'url(#jauge-degrade)', 'stroke-width': thick }, svg);
-      const [m1x, m1y] = pt(0.5, R - thick / 2 - 4), [m2x, m2y] = pt(0.5, R + thick / 2 + 4);
-      el('line', { x1: m1x, y1: m1y, x2: m2x, y2: m2y, stroke: 'var(--ink-2)', 'stroke-width': 1.5 }, svg);
-      const [lx, ly] = pt(0.5, R + thick / 2 + 24);
-      text(svg, lx, ly, 'habituel (50)', { 'text-anchor': 'middle', 'font-size': 11 });
-      const [ax, ay] = pt(0, R), [bx, by] = pt(1, R);
-      text(svg, ax, ay + 20, '0', { 'text-anchor': 'middle' });
-      text(svg, bx, by + 20, '100', { 'text-anchor': 'middle' });
-      text(svg, ax, ay + 34, 'plus bas', { 'text-anchor': 'middle', 'font-size': 10 });
-      text(svg, bx, by + 34, 'plus haut', { 'text-anchor': 'middle', 'font-size': 10 });
-      const [n1x, n1y] = pt(v, R - thick / 2 - 10), [n2x, n2y] = pt(v, R + thick / 2 + 4);
-      el('line', { x1: n1x, y1: n1y, x2: n2x, y2: n2y, stroke: 'var(--ink)', 'stroke-width': 3, 'stroke-linecap': 'round' }, svg);
-      text(svg, cx, cy - 14, String(score), { 'text-anchor': 'middle', fill: 'var(--ink)', 'font-size': Math.round(W * 0.16), 'font-weight': 600 });
-      text(svg, cx, cy + 8, 'sur 100', { 'text-anchor': 'middle' });
-      const ecart = score - 50;
-      document.getElementById('t-indice').textContent = Math.abs(ecart) <= 5
-        ? `${score} sur 100 : dans l'ensemble, une situation proche de l'habitude`
-        : ecart > 0 ? `${score} sur 100 : dans l'ensemble, plus haut que d'habitude` : `${score} sur 100 : dans l'ensemble, plus bas que d'habitude`;
+    const signe = n => n > 0 ? `+${n}` : n < 0 ? `−${-n}` : '0';
+    function drawIndice() {
+      const I = D.indice, n = I.nb_indicateurs;
+      document.getElementById('ecart').textContent = signe(I.ecart);
+      document.getElementById('ecart-fourchette').textContent = `de ${signe(I.ecart_min)} à ${signe(I.ecart_max)} selon la méthode de calcul`;
+      document.getElementById('t-indice').textContent = Math.abs(I.ecart) <= 5
+        ? 'Dans l\'ensemble, les indicateurs suivis sont proches de leur niveau habituel'
+        : `Dans l'ensemble, les indicateurs suivis sont plus ${I.ecart > 0 ? 'hauts' : 'bas'} que d'habitude, c'est-à-dire du côté que la grille tient pour ${I.ecart > 0 ? 'plus' : 'moins'} défavorable`;
+      const hors = D.dimensions.filter(d => !dansIndice(d));
       document.getElementById('indice-text').textContent =
-        `Pour chacun des ${rows.length} indicateurs à jour, on regarde où se situent les douze derniers mois par rapport à toute son histoire : ` +
-        `0 si c'est le niveau le plus bas jamais observé, 100 si c'est le plus haut, 50 si c'est un niveau habituel (une valeur partagée par beaucoup de mois, zéro compris, est placée au milieu de ces mois). ` +
-        `L'indice est la moyenne de ces ${rows.length} positions. Un niveau plus haut correspond à ce que la grille tient pour plus défavorable ` +
-        `(plus de recours au 49.3, de dissolutions, de surveillance, un moins bon rang RSF…). Au ${dateLong(D.fin_donnees)}.` +
-        D.dimensions.filter(d => !dansIndice(d)).map(d => ` ${CODE[d.id] || d.code} (${raisonHors(d)}) n'est pas compté.`).join('');
+        `Pour chacun des ${n} indicateurs retenus, on situe la valeur des douze derniers mois parmi tous les mois observés depuis le début de sa série : ` +
+        `0 si elle est plus basse que tous, 100 si elle est plus haute que tous, 50 au milieu ; une valeur partagée par beaucoup de mois (souvent zéro) est placée au milieu de ces mois. ` +
+        `L'écart est la moyenne de ces ${n} positions moins 50 : 0 correspond au niveau habituel, il va de −50 à +50. ` +
+        `Pour chaque indicateur, une valeur plus haute correspond à ce que la grille tient pour plus défavorable (plus de recours au 49.3, de dissolutions, de surveillance, un moins bon rang RSF…). ` +
+        `Au ${dateLong(D.fin_donnees)}. Ne sont pas comptés : ${hors.map(d => CODE[d.id] || d.code).join(', ')} (raisons sous la liste).`;
+      const tb = document.getElementById('variantes'); tb.replaceChildren();
+      for (const v of I.variantes) {
+        const tr = document.createElement('tr'); tr.className = 'border-t border-rule';
+        tr.innerHTML = '<td class="py-1 pr-3"></td><td class="py-1 text-right tabular-nums whitespace-nowrap"></td>';
+        tr.children[0].textContent = v.libelle;
+        tr.children[1].textContent = `${signe(Math.round(v.valeur) - 50)} (${num(v.valeur)} sur 100)`;
+        if (v.id === 'moyenne') tr.children[0].classList.add('font-semibold', 'text-ink');
+        tb.appendChild(tr);
+      }
+    }
+    function ligneIndicateur(d, compte) {
+      const p = position(d);
+      const li = document.createElement('li');
+      const a = document.createElement('a'); a.href = ANCHOR[d.id];
+      a.className = 'grid grid-cols-[minmax(0,1fr),auto] sm:grid-cols-[17rem,minmax(0,1fr),9rem] items-center gap-x-4 gap-y-1 rounded px-1 py-1.5 hover:bg-[var(--band)]';
+      const lab = document.createElement('span'); lab.className = 'text-sm truncate';
+      lab.innerHTML = '<span class="font-semibold text-ink2"></span> <span></span>';
+      lab.children[0].textContent = CODE[d.id] || d.code; lab.children[1].textContent = d.label;
+      const val = document.createElement('span'); val.className = 'text-sm tabular-nums text-right sm:order-3';
+      const montre = compte || d.contre_pouvoir;
+      val.textContent = montre ? `${Math.round(p * 100)}` : 'hors indice';
+      const sub = document.createElement('span'); sub.className = 'block text-xs text-muted'; sub.textContent = UNIT[d.metrique](d.actuel);
+      val.appendChild(sub);
+      a.setAttribute('aria-label', montre
+        ? `${CODE[d.id] || d.code}, ${d.label} : valeur actuelle ${UNIT[d.metrique](d.actuel)}, position ${Math.round(p * 100)} sur 100 dans son historique${compte ? '' : ', hors indice'}`
+        : `${CODE[d.id] || d.code}, ${d.label} : ${raisonHors(d)}, hors indice`);
+      if (!montre) a.style.opacity = '0.6';
+      const track = document.createElement('span'); track.className = 'relative col-span-2 sm:col-span-1 sm:order-2 block h-3';
+      track.innerHTML = '<span class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-1.5 rounded-full" style="background:var(--band)"></span>' +
+        '<span class="absolute top-1/2 -translate-y-1/2 h-1.5 rounded-r-full" style="background:var(--hist);left:66.67%;right:0"></span>' +
+        '<span class="absolute top-0 h-3 w-3 -ml-1.5 rounded-full border-2" style="border-color:var(--surface)"></span>';
+      const dot = track.lastChild; dot.style.left = `${p * 100}%`; dot.style.background = compte ? 'var(--series-1)' : 'var(--muted)';
+      a.append(lab, val, track); li.appendChild(a);
+      return li;
     }
     function drawDial() {
       const host = document.getElementById('overview');
-      drawIndice(D.dimensions.filter(dansIndice));
+      drawIndice();
       const ordre = (a, b) => position(b) - position(a) || (CODE[a.id] || a.code).localeCompare(CODE[b.id] || b.code);
-      const rows = D.dimensions.filter(dansIndice).sort(ordre), hors = D.dimensions.filter(d => !dansIndice(d)).sort(ordre);
+      const rows = D.dimensions.filter(dansIndice).sort(ordre);
+      const cp = D.dimensions.filter(d => d.contre_pouvoir).sort(ordre);
+      const hors = D.dimensions.filter(d => !dansIndice(d) && !d.contre_pouvoir).sort(ordre);
       const haut = rows.filter(d => position(d) >= TIERS_HAUT).length;
       const bas = rows.filter(d => position(d) < 1 / 3).length;
       document.getElementById('t-cadran').textContent =
@@ -1069,39 +1211,18 @@
       document.getElementById('dial-text').textContent =
         `Position de la valeur des douze derniers mois parmi tous les mois observés depuis le début de chaque série ; ` +
         `${bas} indicateur${bas > 1 ? 's sont' : ' est'} dans le tiers le plus bas.`;
-      host.replaceChildren();
-      for (const d of [...rows, ...hors]) {
-        const p = position(d), courte = d.mensuel.length < SERIE_COURTE, exclu = !dansIndice(d);
-        const li = document.createElement('li');
-        const a = document.createElement('a'); a.href = ANCHOR[d.id];
-        a.className = 'grid grid-cols-[minmax(0,1fr),auto] sm:grid-cols-[17rem,minmax(0,1fr),9rem] items-center gap-x-4 gap-y-1 rounded px-1 py-1.5 hover:bg-[var(--band)]';
-        a.setAttribute('aria-label', `${CODE[d.id] || d.code}, ${d.label} : valeur actuelle ${UNIT[d.metrique](d.actuel)}, position ${Math.round(p * 100)} sur 100 dans son historique${courte ? ', série courte' : ''}`);
-        const lab = document.createElement('span'); lab.className = 'text-sm truncate';
-        lab.innerHTML = '<span class="font-semibold text-ink2"></span> <span></span>';
-        lab.children[0].textContent = CODE[d.id] || d.code; lab.children[1].textContent = d.label;
-        const val = document.createElement('span'); val.className = 'text-sm tabular-nums text-right sm:order-3';
-        val.textContent = exclu ? 'hors indice' : `${Math.round(p * 100)}${courte ? '*' : ''}`;
-        if (exclu) { a.style.opacity = '0.6'; a.setAttribute('aria-label', `${CODE[d.id] || d.code}, ${d.label} : ${raisonHors(d)}, hors indice`); }
-        const sub = document.createElement('span'); sub.className = 'block text-xs text-muted'; sub.textContent = UNIT[d.metrique](d.actuel);
-        val.appendChild(sub);
-        const track = document.createElement('span'); track.className = 'relative col-span-2 sm:col-span-1 sm:order-2 block h-3';
-        track.innerHTML = '<span class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-1.5 rounded-full" style="background:var(--band)"></span>' +
-          '<span class="absolute top-1/2 -translate-y-1/2 h-1.5 rounded-r-full" style="background:var(--hist);left:66.67%;right:0"></span>' +
-          '<span class="absolute top-0 h-3 w-3 -ml-1.5 rounded-full border-2" style="border-color:var(--surface)"></span>';
-        const dot = track.lastChild; dot.style.left = `${p * 100}%`; dot.style.background = courte || exclu ? 'var(--muted)' : 'var(--series-1)';
-        a.append(lab, val, track); li.appendChild(a); host.appendChild(li);
-      }
+      host.replaceChildren(...rows.map(d => ligneIndicateur(d, true)), ...hors.map(d => ligneIndicateur(d, false)));
       for (const d of hors) {
         const li = document.createElement('li'); li.className = 'pt-2 text-xs text-ink2';
-        li.textContent = d.fin_couverture ? `${CODE[d.id] || d.code} : relevé arrêté au ${dateLong(d.fin_couverture)}, hors indice tant qu'il n'est pas complété (sa valeur traduirait l'absence de données, pas la situation).` : `${CODE[d.id] || d.code} : ${d.hors_indice} ; hors indice d'ici là (une série incomplète passerait pour une baisse).`;
+        li.textContent = d.fin_couverture
+          ? `${CODE[d.id] || d.code} : relevé arrêté au ${dateLong(d.fin_couverture)}, hors indice tant qu'il n'est pas complété (sa valeur traduirait l'absence de données, pas la situation).`
+          : `${CODE[d.id] || d.code} : ${d.hors_indice}${d.id === 'D7.libertes_en_pratique' ? ' ; hors indice d\'ici là (une série incomplète passerait pour une baisse)' : ''}.`;
         host.appendChild(li);
       }
-      const n = rows.filter(d => d.mensuel.length < SERIE_COURTE);
-      if (n.length) {
-        const li = document.createElement('li'); li.className = 'pt-2 text-xs text-ink2';
-        li.textContent = `* Série de moins de ${SERIE_COURTE} mois (${n.map(d => CODE[d.id] || d.code).join(', ')}) : position peu significative, repère en gris. La bande bleue marque le tiers le plus haut de chaque historique.`;
-        host.appendChild(li);
-      }
+      const li = document.createElement('li'); li.className = 'pt-2 text-xs text-ink2';
+      li.textContent = 'La bande bleue marque le tiers le plus haut de chaque historique.';
+      host.appendChild(li);
+      document.getElementById('contre-pouvoirs').replaceChildren(...cp.map(d => ligneIndicateur(d, false)));
     }
 
     // ---- Jauge historique ------------------------------------------------------
@@ -1657,7 +1778,7 @@
     }
 
     // ---- D5.3 et D6.1 : séries annuelles ------------------------------------------
-    function annualChart(box, rows, { x, y: val, inverted, max, fmtTick, tip, title }) {
+    function annualChart(box, rows, { x, y: val, inverted, max, fmtTick, tip, title, etiquetteDessous }) {
       const W = Math.max(280, box.clientWidth), Hh = 200, m = { l: 44, r: 10, t: 14, b: 24 };
       const xs = rows.map(x), x0 = Math.min(...xs), x1 = Math.max(...xs);
       const X = v => m.l + (x1 === x0 ? 0.5 : (v - x0) / (x1 - x0)) * (W - m.l - m.r);
@@ -1675,7 +1796,7 @@
         const g = el('g', { tabindex: 0, 'aria-label': tip(r).map(t => t.label).join(', ') }, svg);
         el('circle', { cx: X(x(r)), cy: Y(val(r)), r: 10, fill: 'transparent' }, g);
         el('circle', { cx: X(x(r)), cy: Y(val(r)), r: 4, fill: 'var(--series-1)', stroke: 'var(--surface)', 'stroke-width': 1.5 }, g);
-        if (i === rows.length - 1) text(svg, X(x(r)) - 6, Y(val(r)) + (inverted ? 18 : -9), fmtTick(val(r)), { 'text-anchor': 'end', fill: 'var(--ink)', 'font-weight': 600 });
+        if (i === rows.length - 1) text(svg, X(x(r)) - 6, Y(val(r)) + (inverted || etiquetteDessous ? 18 : -9), fmtTick(val(r)), { 'text-anchor': 'end', fill: 'var(--ink)', 'font-weight': 600 });
         g.addEventListener('pointermove', e => showTip(tip(r), e.pageX, e.pageY));
         g.addEventListener('pointerleave', hideTip);
         g.addEventListener('focus', () => { const b = g.getBoundingClientRect(); showTip(tip(r), b.right + window.scrollX, b.top + window.scrollY); });
@@ -2566,7 +2687,7 @@
     // ---- Sommaire -----------------------------------------------------------
     // [catégorie, icône, [[id du titre, libellé, icône]]] (icônes Font Awesome 6, style plein).
     const TOC = [
-      ["Vue d'ensemble", 'gauge-high', [['t-definition', "Ce qu'est une démocratie", 'book-open-reader'], ['t-indice', "Le baromètre aujourd'hui", 'gauge-high'], ['t-dims', 'Indicateurs suivis', 'list-check']]],
+      ["Vue d'ensemble", 'gauge-high', [['t-question', 'Encore une démocratie ?', 'circle-question'], ['t-definition', "Ce qu'est une démocratie", 'book-open-reader'], ['t-indice', "Par rapport à d'habitude", 'gauge-high'], ['t-contre-pouvoirs', 'Contre-pouvoirs', 'scale-balanced'], ['t-dims', 'Indicateurs suivis', 'list-check']]],
       ['D1 · Élections et alternance', 'check-to-slot', [['t-d1', 'D1.1–D1.2 · Règles électorales et reports', 'check-to-slot']]],
       ['D2 · Place du Parlement', 'landmark', [['titre', "D2.1 · L'essentiel", 'landmark'], ['t-evolution', 'Depuis 1959', 'chart-line'], ['t-composantes', 'De quoi est fait le chiffre', 'puzzle-piece'], ['t-leg', 'Législature par législature', 'table-columns'], ['t-493', 'Les recours au 49.3', 'forward'], ['t-d2-2', 'D2.2 · Procédure accélérée', 'bolt'], ['t-d2-3', 'D2.3 · Pétitions citoyennes', 'file-signature'], ['t-d2-4', 'D2.4 · Crédits annulés par décret', 'scissors']]],
       ["D3 · Contre-pouvoirs et État de droit", 'gavel', [['t-d3', "D3.1 · Régimes d'exception", 'triangle-exclamation'], ['t-d3-2', 'D3.2 · Lois censurées', 'gavel']]],
@@ -2653,7 +2774,7 @@
     let spyRaf; addEventListener('scroll', () => { cancelAnimationFrame(spyRaf); spyRaf = requestAnimationFrame(spy); }, { passive: true });
 
     // ---- Rendu -------------------------------------------------------------
-    const render = () => { drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawPetitions(); drawAnnulations(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
+    const render = () => { drawReperes(); drawOpinion(); drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawPetitions(); drawAnnulations(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
     render(); spy();
     let raf; addEventListener('resize', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { render(); current = null; spy(); }); });
   })();

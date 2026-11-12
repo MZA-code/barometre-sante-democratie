@@ -14,8 +14,9 @@ Et on écrit à côté de la page :
   - `.htaccess` (Apache, hébergement mutualisé) : fichiers texte servis en UTF-8 et, si
     `SITE_URL` est en https, redirection permanente vers cette adresse (http et www).
 
-Les positions sont calculées comme dans la page (`position` dans index.html) : part des mois
-plus bas plus la moitié des mois égaux ; indice = moyenne simple × 100.
+Les positions et l'indice viennent de `scoring/indice.py` (règles de composition, écart à
+l'habituel, sensibilité), comme dans la page (`position` dans index.html) : part des mois plus
+bas plus la moitié des mois égaux.
 """
 
 from __future__ import annotations
@@ -26,8 +27,13 @@ import html
 import io
 import json
 import re
+import sys
 from pathlib import Path
 from urllib.parse import urlsplit
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from scoring.indice import dans_indice, position_dim  # noqa: E402
+from scoring.indice import indice as calcul_indice  # noqa: E402
 
 TITRE = "Baromètre de la santé démocratique en France"
 CODE = {
@@ -44,6 +50,9 @@ CODE = {
     "D5.journalistes_inquietes": "D5.2",
     "D6.techniques_renseignement": "D6.1",
     "D4.dissolutions_administratives": "D4.1",
+    "D2.petitions_classees": "D2.3",
+    "D2.annulations_credits": "D2.4",
+    "D7.libertes_en_pratique": "D7",
 }
 ANCRE = {
     "D2.contournement_parlement": "t-evolution",
@@ -59,6 +68,9 @@ ANCRE = {
     "D5.journalistes_inquietes": "d5-2",
     "D6.techniques_renseignement": "d6-1",
     "D4.dissolutions_administratives": "d4",
+    "D2.petitions_classees": "d2-3",
+    "D2.annulations_credits": "d2-4",
+    "D7.libertes_en_pratique": "d7",
 }
 UNITE = {
     "nb_decrets_malgre_reserves": "décret",
@@ -96,16 +108,7 @@ def lire_donnees(data_js: str) -> dict:
 
 
 def position(d: dict) -> float:
-    v = [m["v"] for m in d["mensuel"]]
-    plus_bas = sum(1 for x in v if x < d["actuel"])
-    egaux = sum(1 for x in v if x == d["actuel"])
-    return (plus_bas + 0.5 * egaux) / len(v)
-
-
-def dans_indice(d: dict) -> bool:
-    """Hors indice : relevé arrêté (`fin_couverture`) ou raison explicite (`hors_indice`, par
-    exemple D7 pendant la reprise du passé). Même règle que la page (index.html)."""
-    return not d.get("fin_couverture") and not d.get("hors_indice")
+    return position_dim(d)
 
 
 NOMBRES = {13: "Treize", 14: "Quatorze", 15: "Quinze", 16: "Seize", 17: "Dix-sept", 18: "Dix-huit"}
@@ -119,9 +122,78 @@ def en_toutes_lettres(n: int) -> str:
     return NOMBRES.get(n, str(n))
 
 
-def indice(dimensions: list[dict]) -> int:
-    retenus = [d for d in dimensions if dans_indice(d)]
-    return round(100 * sum(position(d) for d in retenus) / len(retenus))
+def indice(data: dict) -> dict:
+    """Écart à l'habituel et sensibilité : repris de data.js, recalculé si absent."""
+    return data.get("indice") or calcul_indice(data["dimensions"])
+
+
+def signe(n: int) -> str:
+    return f"+{n}" if n > 0 else f"−{-n}" if n < 0 else "0"
+
+
+def ecart_texte(i: dict) -> str:
+    return (
+        f"{signe(i['ecart'])} (de {signe(i['ecart_min'])} à {signe(i['ecart_max'])} "
+        "selon la méthode de calcul ; 0 = niveau habituel)"
+    )
+
+
+def reponse(data: dict) -> str:
+    """Réponse des classements internationaux à « la France est-elle encore une démocratie ? »
+    (même règle que drawReperes dans index.html)."""
+    r = data.get("reperes") or []
+    oui = sum(1 for x in r if x["categorie_democratique"])
+    if not r:
+        return ""
+    if oui == len(r):
+        limite = any("limite" in x["categorie"] for x in r)
+        return (
+            "Oui. Les classements internationaux de référence classent la France parmi les "
+            "démocraties"
+            + (", l'un d'eux à la limite de sa catégorie inférieure" if limite else "")
+            + "."
+        )
+    if oui == 0:
+        return "Non, selon les classements internationaux de référence."
+    return (
+        "Les classements internationaux ne s'accordent pas : "
+        f"{oui} sur {len(r)} classent la France parmi les démocraties."
+    )
+
+
+def reponse_opinion(data: dict) -> str:
+    """Second axe : ce qu'en pensent les Français (même règle que drawOpinion dans index.html)."""
+    o = data.get("opinion")
+    if not o:
+        return ""
+    last, debut = o["serie"][-1], o["serie"][0]["date"][:4]
+    if last["bien"] < 50:
+        txt = (
+            f"Ils jugent qu'elle fonctionne mal, sans y renoncer : {last['mal']} % des Français "
+            f"pensent que la démocratie fonctionne mal en France, {last['bien']} % qu'elle "
+            "fonctionne bien"
+            + (f", le niveau le plus bas depuis {debut}" if o["plus_bas"] else "")
+            + "."
+        )
+    else:
+        txt = (
+            f"Une majorité juge qu'elle fonctionne bien : {last['bien']} % des Français, "
+            f"{last['mal']} % pensent le contraire."
+        )
+    attache = o["autres"].get("q55_systeme_democratique_bon")
+    if attache:
+        txt += (
+            f" Mais {attache} % jugent qu'un système démocratique est une bonne façon de gouverner."
+        )
+    return txt.replace(" %", "\u00a0%")
+
+
+def reperes_texte(data: dict) -> list[str]:
+    return [
+        f"{x['source']} ({x['edition']}, données {x['annee_donnees']}) : {x['categorie']}, "
+        f"{x['valeur']} ({x['echelle']})" + (f", {x['rang']}" if x.get("rang") else "")
+        for x in data.get("reperes") or []
+    ]
 
 
 def date_longue(iso: str) -> str:
@@ -146,10 +218,14 @@ def valeur(d: dict) -> str:
     return nombre(v)
 
 
-def lecture(score: int) -> str:
-    if abs(score - 50) <= 5:
-        return "dans l'ensemble, une situation proche de l'habitude"
-    return f"dans l'ensemble, plus {'haut' if score > 50 else 'bas'} que d'habitude"
+def lecture(ecart: int) -> str:
+    if abs(ecart) <= 5:
+        return "dans l'ensemble, les indicateurs suivis sont proches de leur niveau habituel"
+    sens = "hauts" if ecart > 0 else "bas"
+    return (
+        f"dans l'ensemble, les indicateurs suivis sont plus {sens} que d'habitude, c'est-à-dire "
+        f"du côté que la grille tient pour {'plus' if ecart > 0 else 'moins'} défavorable"
+    )
 
 
 def lignes(data: dict) -> list[dict]:
@@ -166,6 +242,7 @@ def lignes(data: dict) -> list[dict]:
                 "hors_indice": d.get("hors_indice") or "",
                 "position": round(100 * position(d)),
                 "dans_indice": dans_indice(d),
+                "contre_pouvoir": bool(d.get("contre_pouvoir")),
                 "mois_observes": len(d["mensuel"]),
                 "depuis": d["debut_historique"][:4],
                 "ancre": ANCRE.get(d["id"], ""),
@@ -189,14 +266,16 @@ def phrase_exclus(data: dict) -> str:
 
 
 def description(data: dict) -> str:
-    score = indice(data["dimensions"])
+    i = indice(data)
     jour = date_longue(data["fin_donnees"])
     return (
-        f"{nb_indicateurs(data)} indicateurs sourcés sur l'état de la démocratie en France "
-        "(Parlement, "
+        "La France est-elle encore une démocratie ? "
+        + (reponse(data) + " " if reponse(data) else "")
+        + (reponse_opinion(data) + " " if reponse_opinion(data) else "")
+        + f"{nb_indicateurs(data)} indicateurs sourcés sur la démocratie en France (Parlement, "
         "contre-pouvoirs, libertés, pluralisme, surveillance, élections), recalculés "
         "chaque jour depuis les données officielles. "
-        f"Indice illustratif au {jour} : {score} sur 100 (50 = niveau habituel)."
+        f"Écart à l'habituel au {jour} : {ecart_texte(i)}."
     )
 
 
@@ -288,15 +367,18 @@ def entete(data: dict, site_url: str | None) -> str:
 
 
 def vue_statique(data: dict) -> tuple[str, str, str]:
-    """Contenus de #t-indice, #indice-text et #overview, écrits avant le JavaScript."""
-    score = indice(data["dimensions"])
-    titre = f"{score} sur 100 : {lecture(score)}"
-    n = sum(dans_indice(d) for d in data["dimensions"])
+    """Contenus de #reponse, #ecart, #t-indice, #indice-text et #overview, écrits avant le
+    JavaScript."""
+    i = indice(data)
+    titre = lecture(i["ecart"])
+    titre = titre[0].upper() + titre[1:]
+    n = i["nb_indicateurs"]
     texte = (
-        f"Pour chacun des {n} indicateurs à jour, position des douze derniers mois dans toute son "
-        f"histoire : 0 au plus bas jamais observé, 100 au plus haut, 50 à un niveau habituel. "
-        f"L'indice est la moyenne simple de ces positions. Au {date_longue(data['fin_donnees'])}."
-        + phrase_exclus(data)
+        f"Pour chacun des {n} indicateurs retenus, position des douze derniers mois parmi tous "
+        "les mois observés depuis le début de sa série : 0 si elle est plus basse que tous, 100 "
+        "si elle est plus haute que tous ; une valeur partagée par beaucoup de mois (souvent "
+        "zéro) est placée au milieu de ces mois. L'écart est la moyenne de ces positions moins "
+        f"50. Au {date_longue(data['fin_donnees'])} : {ecart_texte(i)}." + phrase_exclus(data)
     )
     items = "".join(
         f'<li><a href="#{r["ancre"]}"><strong>{html.escape(r["code"])}</strong> '
@@ -305,7 +387,14 @@ def vue_statique(data: dict) -> tuple[str, str, str]:
         + f"valeur actuelle {html.escape(r['valeur'])}</a></li>"
         for r in lignes(data)
     )
-    return html.escape(titre), html.escape(texte), items
+    return (
+        html.escape(reponse(data)),
+        html.escape(reponse_opinion(data)),
+        html.escape(signe(i["ecart"])),
+        html.escape(titre),
+        html.escape(texte),
+        items,
+    )
 
 
 def appliquer(page: str, data: dict, site_url: str | None) -> str:
@@ -317,13 +406,16 @@ def appliquer(page: str, data: dict, site_url: str | None) -> str:
         flags=re.S,
     )
     page = page.replace("</title>", "</title>\n  " + entete(data, site_url), 1)
-    titre, texte, items = vue_statique(data)
+    rep, rep_opinion, ecart, titre, texte, items = vue_statique(data)
     for ancre, contenu in (
+        ('<p id="reponse"', rep),
+        ('<p id="reponse-opinion"', rep_opinion),
+        ('<div id="ecart"', ecart),
         ('<h2 id="t-indice"', titre),
         ('<p id="indice-text"', texte),
         ('<ol id="overview"', items),
     ):
-        motif = re.compile(re.escape(ancre) + r"([^>]*)></(h2|p|ol)>")
+        motif = re.compile(re.escape(ancre) + r"([^>]*)></(h2|p|ol|div)>")
         page, n = motif.subn(
             lambda m, a=ancre, c=contenu: f"{a}{m.group(1)}>{c}</{m.group(2)}>", page
         )
@@ -333,34 +425,58 @@ def appliquer(page: str, data: dict, site_url: str | None) -> str:
 
 
 def resume_md(data: dict, site_url: str | None) -> str:
-    score = indice(data["dimensions"])
+    i = indice(data)
     base = site_url.rstrip("/") + "/" if site_url else ""
     out = io.StringIO()
     w = out.write
     w(f"# {TITRE}\n\n")
     w(f"Données arrêtées au {date_longue(data['fin_donnees'])}. Prototype : la grille ")
-    w("d'indicateurs est un brouillon, aucun seuil ni aucune pondération n'est encore fixé par ")
-    w("le comité de méthode ; aucune note officielle n'est produite.\n\n")
-    w("## Indice illustratif\n\n")
-    n = sum(dans_indice(d) for d in data["dimensions"])
-    w(f"**{score} sur 100** : {lecture(score)}. Pour chacun des {n} indicateurs à jour, on situe ")
-    w("la valeur des douze derniers mois dans toute l'histoire de la série (0 = plus bas jamais ")
-    w(f"observé, 50 = habituel, 100 = plus haut). L'indice est la moyenne simple de ces {n} ")
-    w("positions, à poids égaux." + phrase_exclus(data) + " Une position plus haute correspond ")
-    w("à ce que la grille tient ")
+    w("d'indicateurs est un brouillon, aucun seuil ni aucune pondération n'est encore fixé ; ")
+    w("aucune note officielle n'est produite.\n\n")
+    if reponse(data):
+        w("## La France est-elle encore une démocratie ?\n\n")
+        w(f"{reponse(data)} Ce jugement est celui de ces organismes, pas du baromètre :\n\n")
+        for x, t in zip(data["reperes"], reperes_texte(data), strict=True):
+            w(f"- [{t}]({x['url']})\n")
+        w("\n")
+    if reponse_opinion(data):
+        o = data["opinion"]
+        w("### Ce qu'en pensent les Français\n\n")
+        w(f"{reponse_opinion(data)}\n\n")
+        w(f"« {o['question']} » Part « bien » (très bien + assez bien) : ")
+        w(", ".join(f"{s['date']} {s['bien']} %" for s in o["serie"]) + ".\n\n")
+        w(f"Source : [{o['source']}, {o['edition']}]({o['url']}), {o['terrain']}, ")
+        w(f"{o['echantillon']}.\n\n")
+    w("## Écart à l'habituel (indice illustratif)\n\n")
+    n = i["nb_indicateurs"]
+    w(f"**{signe(i['ecart'])}** : {lecture(i['ecart'])}. Pour chacun des {n} indicateurs ")
+    w("retenus, on situe la valeur des douze derniers mois parmi tous les mois observés depuis ")
+    w("le début de la série (0 = plus basse que tous, 100 = plus haute que tous ; une valeur ")
+    w("partagée par beaucoup de mois est placée au milieu de ces mois). L'écart est la moyenne ")
     w(
-        "pour plus défavorable. Cet indice aide à lire l'ensemble ; "
-        "il ne qualifie pas le régime.\n\n"
+        f"simple de ces {n} positions moins 50 : 0 = niveau habituel, de −50 à +50."
+        + phrase_exclus(data)
     )
+    w(" Une position plus haute correspond à ce que la grille tient pour plus défavorable. ")
+    w("0 veut dire « comme d'habitude », pas « tout va bien ».\n\n")
+    w("Le même calcul fait autrement (sensibilité) :\n\n")
+    for v in i["variantes"]:
+        w(f"- {v['libelle']} : {signe(round(v['valeur']) - 50)}\n")
+    w("\n")
     w(f"## Les {nb_indicateurs(data)} indicateurs\n\n")
     w("| Code | Indicateur | Valeur actuelle | Position (sur 100) | Série depuis |\n")
     w("| --- | --- | --- | --- | --- |\n")
     for r in lignes(data):
         lien = f"[{r['indicateur']}]({base}#{r['ancre']})" if r["ancre"] else r["indicateur"]
-        court = " (série courte)" if r["mois_observes"] < 36 else ""
+        court = ""
         if r["fin_couverture"]:
             court += f" ; relevé arrêté au {date_longue(r['fin_couverture'])}"
-        pos = f"{r['position']}{court}" if r["dans_indice"] else f"hors indice{court}"
+        if r["dans_indice"]:
+            pos = f"{r['position']}{court}"
+        elif r["contre_pouvoir"]:
+            pos = f"{r['position']} (contre-pouvoir, hors indice)"
+        else:
+            pos = f"hors indice{court}"
         w(f"| {r['code']} | {lien} | {r['valeur']} | {pos} | {r['depuis']} |\n")
     w("\n## Données de contexte (non notées)\n\n")
     w("Présentées à côté des indicateurs, sans entrer dans l'indice : temps de parole des partis ")
@@ -405,15 +521,19 @@ def indicateurs_csv(data: dict) -> str:
 
 def llms_txt(data: dict, site_url: str | None) -> str:
     base = site_url.rstrip("/") + "/" if site_url else ""
-    score = indice(data["dimensions"])
+    i = indice(data)
     return (
         f"# {TITRE}\n\n"
         f"> {en_toutes_lettres(nb_indicateurs(data))} indicateurs sourcés sur l'état de la "
         "démocratie en France, recalculés chaque "
         f"jour depuis les données officielles (Assemblée nationale, Journal officiel, Conseil "
         f"constitutionnel, CNIL, justice administrative, Arcom, RSF, CNCTR). Prototype : aucun "
-        f"seuil ni aucune pondération n'est encore fixé ; l'indice affiché ({score} sur 100 au "
-        f"{date_longue(data['fin_donnees'])}, 50 = niveau habituel) est illustratif.\n\n"
+        "seuil ni aucune pondération n'est encore fixé ; l'écart à l'habituel affiché "
+        f"({ecart_texte(i)}, au {date_longue(data['fin_donnees'])}) est illustratif. "
+        "À la question « la France est-elle encore une démocratie ? », le site renvoie aux "
+        "classements internationaux (V-Dem, Freedom House) : "
+        + (reponse(data) or "non disponibles.")
+        + "\n\n"
         "Pour citer un chiffre, reprendre sa date et sa source ; ne pas présenter l'indice "
         "illustratif comme une note officielle.\n\n"
         "## Données\n\n"
