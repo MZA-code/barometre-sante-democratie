@@ -24,6 +24,7 @@ from scoring.grid import load_grid  # noqa: E402
 from scoring.indice import composer, indice  # noqa: E402
 from scoring.metrics import load_legislatures  # noqa: E402
 from storage.archive import DEFAULT_RAW_DIR  # noqa: E402
+from storage.csv_public import ligne_sure  # noqa: E402
 from storage.db import DEFAULT_DB_PATH, connect  # noqa: E402
 
 INDICATOR = "D2.contournement_parlement"
@@ -590,7 +591,8 @@ def faits_indicateur(conn, ind_id: str) -> list[dict]:
                 "document_archive": ext or "",
                 "empreinte_sha256": sha or "",
                 "methode": method,
-                "verifie_par_un_humain": "oui" if human else "non",
+                # D7 presse : validé un par un par un compte de config/validateurs_d7.yaml.
+                "verifie_par_un_humain": "oui" if human or ftype == "fait_presse_valide" else "non",
             }
         )
     return out
@@ -610,7 +612,7 @@ def ecrire_donnees(conn, dimensions: list[dict], dossier: Path = DONNEES) -> Non
         with (dossier / f"{d['id']}-faits.csv").open("w", encoding="utf-8", newline="") as f:
             w = csv.DictWriter(f, fieldnames=COLONNES_FAITS, lineterminator="\n")
             w.writeheader()
-            w.writerows(faits_indicateur(conn, d["id"]))
+            w.writerows(ligne_sure(r) for r in faits_indicateur(conn, d["id"]))
 
 
 def avec_categorie_rsf(edition: dict) -> dict:

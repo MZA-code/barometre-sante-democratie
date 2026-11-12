@@ -34,6 +34,7 @@ from urllib.parse import urlsplit
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from scoring.indice import dans_indice, position_dim  # noqa: E402
 from scoring.indice import indice as calcul_indice  # noqa: E402
+from storage.csv_public import ligne_sure  # noqa: E402
 
 TITRE = "Baromètre démocratique"
 SOUS_TITRE = "La démocratie en France, en faits sourcés"
@@ -545,7 +546,7 @@ def indicateurs_csv(data: dict) -> str:
     ]
     writer = csv.DictWriter(out, fieldnames=cols, extrasaction="ignore", lineterminator="\n")
     writer.writeheader()
-    writer.writerows(lignes(data))
+    writer.writerows(ligne_sure(r) for r in lignes(data))
     return out.getvalue()
 
 

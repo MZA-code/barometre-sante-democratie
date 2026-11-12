@@ -68,3 +68,31 @@ def test_donnees_telechargeables(tmp_path):
     assert "2025-05-01,t,Décret X,,https://officiel.example/doc1," in faits
     assert "a" * 64 in faits and faits.rstrip().endswith(",m,non")
     assert "Nom" not in (tmp_path / "d" / f"{export_data.D7}-faits.csv").read_text()
+
+
+def test_csv_faits_sans_formule(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        export_data,
+        "faits_indicateur",
+        lambda conn, i: [dict.fromkeys(export_data.COLONNES_FAITS, "=1+1")],
+    )
+    export_data.ecrire_donnees(None, [{"id": "X", "metrique": "m", "mensuel": []}], tmp_path)
+    assert "'=1+1" in (tmp_path / "X-faits.csv").read_text()
+
+
+def test_fait_presse_d7_marque_verifie(monkeypatch, tmp_path):
+    from storage.db import connect, init_db
+
+    conn = connect(tmp_path / "b.sqlite")
+    init_db(conn)
+    for ftype in ("fait_presse_valide", "constat_institutionnel"):
+        conn.execute(
+            "INSERT INTO facts (indicator_id, fact_type, occurred_on, title, attributes,"
+            " extraction_method) VALUES (?, ?, '2025-05-01', 't', '{}', 'm')",
+            (export_data.D7, ftype),
+        )
+    v = {
+        f["type"]: f["verifie_par_un_humain"]
+        for f in export_data.faits_indicateur(conn, export_data.D7)
+    }
+    assert v == {"fait_presse_valide": "oui", "constat_institutionnel": "non"}
