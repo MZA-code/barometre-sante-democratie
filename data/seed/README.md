@@ -205,7 +205,7 @@ France entière et Paris, **telles qu'annoncées par une autorité** (ministère
 l'Intérieur, préfecture de police, parquet ; « les autorités » ou « la police » quand la source
 ne précise pas, signalé dans `note`). Donnée de contexte, hors grille
 (`contexte.interpellations`). Une ligne par journée, périmètre et mesure (`interpellations`,
-`gardes_a_vue`).
+`gardes_a_vue`, `forces_ordre_blessees`).
 
 - **Relevé du 2026-11-07** : 50 chiffres pour 26 des 46 journées, trouvés par recherche web
   dans des articles en accès libre ; aucun chiffre de mémoire, aucun chiffre d'association ou
@@ -222,6 +222,16 @@ ne précise pas, signalé dans `note`). Donnée de contexte, hors grille
 - **Non retenus** : chiffres sans autorité nommée (ex. 7 et 11 mars 2023, 14 juin 2016,
   6 juin 2023), approximations (« plus d'une centaine »). 2019-2020 : seulement des chiffres
   parisiens retrouvés.
+- **Forces de l'ordre blessées** (relevé du 2026-11-17) : 14 chiffres pour 11 journées,
+  relevés dans les articles déjà cités pour les interpellations, seulement quand une autorité
+  est nommée (ministre ou ministère de l'Intérieur, préfecture de police) ; citation retrouvée
+  mot pour mot dans la page téléchargée. Nombre annoncé, toutes gravités et causes
+  confondues : le ministère n'en publie pas le détail. Le fichier interne des CRS révélé par
+  Mediapart le 13 novembre 2026 (1 233 CRS blessés en octobre, dont 1 167 « blessés légers »
+  selon les reprises) n'est pas repris : article payant, document non publié, chiffres non
+  vérifiés dans leur source. Non retenus : chiffres sans autorité nommée (15 septembre 2016,
+  6 avril 2023 France entière), chiffres locaux (Nantes, Lyon). 17 octobre 2026 : 1 144,
+  chiffre rappelé par le ministère le 25 octobre (une dépêche du 19 octobre titrait « 1 000 »).
 - **À relire** (`a_verifier` = oui pour toutes les lignes) : attributions vagues, bilans
   provisoires, périmètre « agglomération parisienne » du 31 octobre 2026.
 

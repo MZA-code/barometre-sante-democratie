@@ -75,6 +75,28 @@ def test_categorie_surveillance():
     assert r.categorie_texte(texte, CONF) == "surveillance"
 
 
+@pytest.mark.parametrize(
+    "titre, attendu",
+    [
+        ("Un homme mort en garde à vue au commissariat de Brest", "deces"),
+        ("Refus d'obtempérer : un jeune tué par un tir d'un policier", "deces"),
+        ("Le policier tué lors d'un accident de la route", None),  # sans contexte d'intervention
+        ("Contrôles au faciès : la police condamnée pour discrimination", "controles"),
+        ("Des manifestants verbalisés en série par la police", "controles"),
+        ("Contrôle d'identité de routine à la gare", None),  # ni autorité ni contexte
+        ("Militants écologistes assignés à résidence par le préfet", "mesures_administratives"),
+        ("Fermeture administrative d'un restaurant pour hygiène", None),
+        ("Le conseil régional retire sa subvention à une association", "associations_greve"),
+        ("Grève des raffineries : le préfet réquisitionne des grévistes", "associations_greve"),
+        ("Le parquet prononce ses réquisitions au procès", None),
+        # catégorie plus ancienne prioritaire : identifiants des candidats inchangés
+        ("Un manifestant mort après un tir de LBD de la police", "force"),
+    ],
+)
+def test_nouvelles_categories(titre, attendu):
+    assert r.categorie_texte(r.normaliser(titre), CONF) == attendu
+
+
 def test_commune_reconnue_avec_majuscule():
     assert r.commune_de("Brest : la police saisit les trombinoscopes", INDEX) == (
         "29019",

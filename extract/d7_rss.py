@@ -2,7 +2,8 @@
 
 Règles (bloc `rss` de D7 dans la grille, figé avant tout comptage) :
   - catégorie : titre + résumé, en minuscules sans accents, contiennent un mot-clé de la
-    catégorie, plus un terme d'autorité si la catégorie l'exige, plus un terme de contexte si
+    catégorie, plus un terme d'autorité si la catégorie l'exige (liste commune ou
+    termes `autorites_en_plus` propres à la catégorie), plus un terme de contexte si
     la catégorie en fixe ; la première catégorie qui convient, dans l'ordre de la grille ;
   - lieu : première commune de plus de `population_min_commune` habitants citée avec sa
     majuscule (liste INSEE archivée par collectors/rss.py ; homonymes : la plus peuplée) ;
@@ -45,7 +46,11 @@ def categorie_texte(texte: str, conf: dict) -> str | None:
     for cle, cat in conf["categories"].items():
         if not any(m in texte for m in cat["mots_cles"]):
             continue
-        if cat.get("autorite_requise") and not autorite:
+        if (
+            cat.get("autorite_requise")
+            and not autorite
+            and not any(a in texte for a in cat.get("autorites_en_plus", ()))
+        ):
             continue
         if cat.get("contexte") and not any(c in texte for c in cat["contexte"]):
             continue

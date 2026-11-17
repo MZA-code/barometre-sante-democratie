@@ -1044,3 +1044,45 @@ sensibilité et avant application. Données au 11/11/2026.
   supposait un diagnostic que le site ne pose pas ; le nouveau titre est aussi celui du
   domaine. Image de partage régénérée (nouveau titre, sans la jauge colorée retirée de la
   page). Le nom du dépôt GitHub ne change pas.
+
+## 2026-11-17 — D7 : exception à la règle des cinq ans, quatre nouvelles catégories
+
+- **Constat** : les issues validées sur GitHub sont bien comptées (D7 = 30 au 17 novembre,
+  position 97), mais l'écart à l'habituel ne bouge pas. D7 en est exclu deux fois : reprise
+  depuis juillet 2024 pas encore relue, et historique de 2,4 ans, sous les cinq ans exigés
+  depuis le 12 novembre.
+- **Choix de l'auteur** : D7 est exempté de la règle des cinq ans (`EXEMPTES_HISTORIQUE`
+  dans `scoring/indice.py`). Il entre dans l'indice dès que la reprise est relue, pas avant :
+  aujourd'hui, les mois passés sont vides faute de relecture, pas faute de faits, et
+  l'inclure ajouterait environ 3 points d'écart sans rapport avec la situation.
+- **Comparaison** à partir du 30 juin 2025 (`COMPARE_FROM`) : premier mois dont la fenêtre
+  de 365 jours tient entière dans la série ; avant, la fenêtre tronquée ferait passer la
+  valeur actuelle pour une hausse.
+- **Limite connue** : le passé (avant le début des flux RSS, novembre 2026) n'est repéré que
+  par GDELT, le présent par les flux RSS et le signalement manuel. Si les flux RSS repèrent
+  plus de faits que GDELT, D7 paraîtra en hausse par effet de collecte. À surveiller une fois
+  la reprise relue (comparer les candidats GDELT et RSS sur les mêmes jours).
+- **Catégories** : `deces`, `controles`, `mesures_administratives`, `associations_greve`
+  (CHANGELOG-GRILLE.md). Ajoutées après les premiers comptages, ce que la spec D7 déconseille ;
+  admis parce que la grille v0 n'est pas figée, que la métrique notée compte toutes les
+  catégories et que les six premières repèrent exactement les mêmes articles qu'avant. Les
+  étiquettes `cat:` correspondantes sont créées sur GitHub au passage suivant de
+  `ops.issues_d7`.
+
+## 2026-11-17 — Forces de l'ordre blessées, à côté des interpellations
+
+- **Constat** : le nombre de membres des forces de l'ordre blessés est le chiffre le plus
+  repris après chaque journée, sans définition. Le 13 novembre 2026, Mediapart a révélé un
+  fichier interne des CRS : 1 233 CRS blessés en octobre, dont 1 167 classés « blessés
+  légers » selon les reprises de l'article. Le ministère n'en publie pas le détail, et aucun
+  décompte officiel des manifestants blessés n'existe.
+- **Choix** : la mesure `forces_ordre_blessees` s'ajoute au relevé des interpellations
+  (`interpellations_mobilisations.csv`, 14 chiffres, 11 journées). Seuls entrent les chiffres
+  d'une autorité nommée, avec leur phrase recopiée mot pour mot. Sur la page, une définition
+  accompagne le tableau : toutes gravités et toutes causes confondues, détail non publié. Elle
+  renvoie aux séries qui suivent les blessures de manifestants avec d'autres définitions (D7
+  `force`, Défenseur des droits, IGPN) et dit que ces nombres ne se comparent pas entre eux.
+- **Non repris** : les chiffres du fichier des CRS (article payant, document non publié,
+  chiffres non vérifiés dans leur source). À ajouter si le document est publié ou si le
+  ministère publie le détail (par exemple en réponse à une question écrite d'un parlementaire).
+- Pas d'effet sur l'indice (donnée de contexte).

@@ -7,6 +7,9 @@ calcul de leur effet :
   valeur actuelle + la moitié de la part des mois égaux (rang moyen des ex æquo) ;
 - un indicateur n'entre dans l'indice que si son historique compte au moins cinq ans de
   points mensuels (HISTORIQUE_MIN_MOIS) ;
+- exception décidée par l'auteur le 2026-11-17 (EXEMPTES_HISTORIQUE) : D7 entre dans
+  l'indice sans cinq ans d'historique, dès que la reprise depuis juillet 2024 est relue (tant
+  qu'elle ne l'est pas, sa raison d'exclusion est posée avant `composer`) ;
 - les indicateurs à double lecture (CONTRE_POUVOIR) sont présentés à part : une hausse peut
   traduire un contrôle qui fonctionne autant qu'une situation dégradée ;
 - l'indice est la moyenne simple des positions retenues, affichée en écart à 50 (niveau
@@ -18,6 +21,12 @@ from __future__ import annotations
 import statistics
 
 HISTORIQUE_MIN_MOIS = 60
+EXEMPTES_HISTORIQUE = {
+    "D7.libertes_en_pratique": (
+        "série commencée en juillet 2024 (début de la XVIIe législature) : entre dans "
+        "l'indice une fois la reprise relue, sans attendre cinq ans d'historique"
+    ),
+}
 CONTRE_POUVOIR = {
     "D3.lois_censurees": (
         "indicateur de contre-pouvoir : une part élevée de lois censurées peut traduire "
@@ -55,6 +64,8 @@ def composer(dimensions: list[dict]) -> None:
             continue
         if d["contre_pouvoir"]:
             d["hors_indice"] = CONTRE_POUVOIR[d["id"]]
+        elif d["id"] in EXEMPTES_HISTORIQUE:
+            d["exception_historique"] = EXEMPTES_HISTORIQUE[d["id"]]
         elif len(d["mensuel"]) < HISTORIQUE_MIN_MOIS:
             ans = round(len(d["mensuel"]) / 12, 1)
             duree = f"{ans:g} an{'s' if ans >= 2 else ''}".replace(".", ",")

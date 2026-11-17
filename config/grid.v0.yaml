@@ -524,6 +524,49 @@ indicators:
                       "refuse d'appliquer", "ne respecte pas la decision", astreinte,
                       "malgre l'annulation", "malgre la suspension"]
           autorite_requise: false
+        # Ajout du 2026-11-17 (après les premiers comptages) : en fin de liste, et termes
+        # d'autorité propres à chaque nouvelle catégorie (`autorites_en_plus`), pour que les
+        # six premières repèrent exactement les mêmes articles qu'avant : un candidat déjà
+        # ouvert garde sa catégorie et son identifiant (pas d'issue en double).
+        deces:
+          mots_cles: ["mort ", "morte ", "morts ", mortellement, decede, deces, "tue par",
+                      "tuee par", "tue lors", "tuee lors", "succombe"]
+          autorite_requise: true
+          autorites_en_plus: [commissariat, "administration penitentiaire"]
+          contexte: [interpell, "garde a vue", "refus d'obtemperer", "controle de police",
+                     "controle routier", poursuite, course-poursuite, "tir d'un policier",
+                     "tir d'un gendarme", "tir policier", commissariat, cellule, plaquage,
+                     etranglement, taser, "centre de retention"]
+        controles:
+          mots_cles: ["controle d'identite", "controles d'identite", "controle au facies",
+                      "controles au facies", fouille, palpation, "amende forfaitaire",
+                      "amendes forfaitaires", verbalise, verbalisation, contravention]
+          autorite_requise: true
+          autorites_en_plus: [commissariat]
+          contexte: [manifest, rassemblement, militant, lyceen, etudiant, jeunes, mineur,
+                     discrimin, facies, repet, "sans motif", abusi, humili, syndical]
+        mesures_administratives:
+          mots_cles: ["assignation a residence", "assigne a residence", "assignee a residence",
+                      "assignes a residence", "interdiction de paraitre", "interdit de paraitre",
+                      "interdite de paraitre", micas, "perquisition administrative",
+                      "perquisitions administratives", "visite domiciliaire",
+                      "obligation de pointer", "interdiction administrative",
+                      "fermeture administrative"]
+          autorite_requise: false
+          contexte: [militant, manifest, activiste, syndical, association, opinion,
+                     "lieu de culte", ecologiste, "sans condamnation", "sans jugement",
+                     "juge administratif", "tribunal administratif", "conseil d'etat",
+                     "liberte d'aller et venir", "atteinte grave"]
+        associations_greve:
+          mots_cles: [subvention, "contrat d'engagement republicain", "retrait d'agrement",
+                      "retrait de l'agrement", "agrement retire", requisition, requisitionne,
+                      "droit de greve", "piquet de greve", "entrave syndicale",
+                      "liberte syndicale", "delegue syndical", "deleguee syndicale"]
+          autorite_requise: true
+          autorites_en_plus: ["conseil regional", "conseil departemental", "conseil municipal",
+                              "collectivite"]
+          contexte: [greve, grevist, syndica, association, militant, collectif, ong,
+                     "engagement republicain"]
     # Catégories et règles de décision, figées avant tout comptage. Le validateur les
     # applique telles quelles. Le calcul ne les lit pas ; la collecte (codes_cameo), les
     # issues GitHub et le site les reprennent. Codes CAMEO : code exact ou racine (2 chiffres).
@@ -574,6 +617,7 @@ indicators:
         ne_compte_pas:
           - "Affrontements sans blessé grave identifié."
           - "Blessures de membres des forces de l'ordre (autre série, non comptée ici)."
+          - "Décès de la personne : catégorie « Décès lors d'une intervention des forces de l'ordre »."
         codes_cameo: ["175", "18", "19"]
       decisions_ignorees:
         libelle: Décisions de justice ou d'autorités non respectées
@@ -582,4 +626,50 @@ indicators:
           - "Autorité publique qui passe outre un avis contraignant ou une injonction d'une autorité indépendante."
         ne_compte_pas:
           - "Appel ou pourvoi contre une décision (exercice normal d'un recours)."
+        codes_cameo: []
+      # Catégories ajoutées le 2026-11-17 (CHANGELOG-GRILLE.md). Pas de code CAMEO : GDELT ne
+      # les distingue pas ; elles viennent des flux RSS et du signalement manuel.
+      deces:
+        libelle: Décès lors d'une intervention des forces de l'ordre
+        compte:
+          - "Décès d'une personne pendant ou après une interpellation, un contrôle, une poursuite, un refus d'obtempérer, une garde à vue ou une rétention administrative, rapporté par deux groupes de presse."
+          - "Décès attribué par les deux sources à un geste ou une arme des forces de l'ordre (plaquage, clé d'étranglement, tir, Taser), même si l'enquête est en cours."
+        ne_compte_pas:
+          - "Personne qui, selon les deux sources, venait de tuer ou de blesser quelqu'un, ou menaçait une personne avec une arme au moment des faits."
+          - "Décès de membres des forces de l'ordre (autre série, non comptée ici)."
+          - "Décès en détention après condamnation, sans intervention des forces de l'ordre (administration pénitentiaire, autre série)."
+          - "Blessure sans décès : catégorie « Usage disproportionné de la force »."
+        codes_cameo: []
+      controles:
+        libelle: Contrôles, fouilles et verbalisations abusifs
+        compte:
+          - "Contrôles d'identité ou fouilles répétés ou ciblés sur un groupe (âge, origine, lieu de vie, militants), décrits comme discriminatoires ou sans motif par les deux sources, ou jugés tels par un juge ou le Défenseur des droits."
+          - "Au moins 10 amendes ou verbalisations infligées lors d'un même événement à des manifestants, des militants ou des participants à un rassemblement."
+        ne_compte_pas:
+          - "Contrôle isolé sans autre élément."
+          - "Contrôles d'une opération judiciaire décrite comme telle (trafic, recherche d'un suspect)."
+          - "Interpellations ou gardes à vue : catégorie « Interpellations collectives »."
+        codes_cameo: []
+      mesures_administratives:
+        libelle: Mesures administratives sans juge contre des personnes ou des lieux
+        compte:
+          - "Mesure de police administrative (assignation à résidence, interdiction de paraître, MICAS, obligation de pointer, perquisition ou visite domiciliaire, fermeture d'un lieu) visant une personne, un groupe ou un lieu pour une activité militante, syndicale, associative ou une opinion, sans condamnation pénale selon les deux sources."
+          - "Mesure de ce type suspendue ou annulée ensuite par le juge administratif pour atteinte disproportionnée à une liberté."
+        ne_compte_pas:
+          - "Mesure visant une personne poursuivie ou condamnée pour une infraction terroriste ou violente, selon les deux sources."
+          - "Interdiction d'une manifestation : catégorie « Entraves à la réunion et à la manifestation » ou indicateur D4.2*."
+          - "Dissolution d'association par décret : indicateur D4.1."
+          - "Fermeture administrative pour hygiène, sécurité ou fraude, sans lien avec une opinion ou une activité militante."
+        codes_cameo: []
+      associations_greve:
+        libelle: Pressions sur les associations, les syndicats et le droit de grève
+        compte:
+          - "Subvention, agrément, local ou financement retiré ou refusé à une association par une autorité publique en raison de ses prises de position ou de ses actions, ou au nom du contrat d'engagement républicain, selon les deux sources."
+          - "Réquisition de grévistes hors des services essentiels, ou réquisition suspendue par un juge."
+          - "Sanction, mutation ou poursuite disciplinaire d'un agent public en raison de son activité syndicale ou de sa participation à une grève, selon les deux sources."
+        ne_compte_pas:
+          - "Baisse générale de subventions sans ciblage établi par les sources."
+          - "Réquisition jugée légale pour un service essentiel (santé, sécurité, énergie)."
+          - "Dissolution d'association par décret : indicateur D4.1."
+          - "Conflit entre un employeur privé et ses salariés sans intervention d'une autorité publique."
         codes_cameo: []

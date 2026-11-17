@@ -70,3 +70,10 @@ def test_seed_reel_coherent():
     for r in rows:
         assert r["date"] in mob, r["date"]  # seulement des journées du relevé des mobilisations
         assert r["citation"].strip() and r["source_url"].startswith("http") and r["controle"]
+
+
+def test_forces_ordre_blessees(conn, tmp_path):
+    l4 = "2016-05-17;loi Travail 2016;5;France entière;forces_ordre_blessees;15;ministère de l'Intérieur;X;T;https://x/c;quinze policiers ou gendarmes ont été blessés;ok;oui;"
+    put(conn, tmp_path / "raw", L1, l4)
+    (france,) = it.extract(conn, tmp_path / "raw")
+    assert france.attributes["mesures"]["forces_ordre_blessees"]["nombre"] == 15

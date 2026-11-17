@@ -6,6 +6,16 @@ ci-dessous et un recalcul complet de l'historique (`make rebuild GRID=config/gri
 
 ## v0 — 2026-10-26 (brouillon, non figée)
 
+- Ajout du 2026-11-17 (D7, après les premières validations ; aucun seuil, aucune note) :
+  quatre catégories de faits, avec leurs critères (`compte`, `ne_compte_pas`) et leur
+  repérage RSS : `deces` (décès lors d'une intervention des forces de l'ordre), `controles`
+  (contrôles, fouilles et verbalisations abusifs), `mesures_administratives` (mesures
+  administratives sans juge), `associations_greve` (pressions sur les associations, les
+  syndicats et le droit de grève). Pas de code CAMEO (GDELT ne les distingue pas). Placées
+  après les six premières et dotées de termes d'autorité propres (`autorites_en_plus`) :
+  les six premières repèrent exactement les mêmes articles qu'avant, aucun candidat déjà
+  ouvert ne change de catégorie ni d'identifiant. `force` renvoie désormais les décès vers
+  `deces`. Métrique notée inchangée (`nb_atteintes_pratique`, toutes catégories).
 - Ajout du 2026-11-05 (avant tout gel), métriques de contexte pour le dossier des seuils :
   `nb_scrutins_reportes` (D1.2, scrutins distincts, table `config/scrutins_reportes.yaml`) ;
   `categorie_rsf` = `somme_niveaux_categorie_rsf / nb_editions_categorie_rsf` (D5.3,

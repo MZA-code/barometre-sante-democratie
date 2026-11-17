@@ -802,11 +802,21 @@
         <span class="flex items-center gap-2"><svg width="14" height="12" aria-hidden="true"><text x="2" y="10" font-size="11" fill="var(--ink-2)">?</text></svg>Chiffre non retrouvé dans sa source, à vérifier</span>
       </div>
       <p id="mobil-resume" class="mt-4 max-w-3xl text-sm text-ink2"></p>
-      <h3 class="mt-8 font-semibold">Interpellations et gardes à vue annoncées par les autorités</h3>
+      <h3 class="mt-8 font-semibold">Interpellations, gardes à vue et forces de l'ordre blessées, selon les autorités</h3>
       <p id="interp-texte" class="mt-1 max-w-3xl text-sm text-ink2"></p>
       <div class="mt-3 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
         <table class="w-full text-left text-sm" id="interp-table"></table>
       </div>
+      <p class="mt-3 max-w-3xl text-sm text-ink2"><strong class="text-ink">Forces de l'ordre
+        blessées</strong>&nbsp;: nombre de policiers et de gendarmes déclarés blessés, annoncé par
+        le ministère ou la préfecture, toutes gravités et toutes causes confondues&nbsp;; le
+        ministère n'en publie pas le détail (gravité, origine de la blessure). Aucun décompte
+        officiel des manifestants blessés n'existe&nbsp;: les blessures graves sont suivies à part,
+        avec d'autres définitions, par <a class="underline text-ink" href="#d7">D7</a> (usage
+        disproportionné de la force, faits recoupés par la presse), les
+        <a class="underline text-ink" href="#defenseur">décisions du Défenseur des droits</a> et
+        <a class="underline text-ink" href="#force">les séries de l'IGPN</a> (blessés avec au moins
+        9 jours d'ITT). Ces nombres ne se comparent donc pas entre eux.</p>
     </section>
 
     <!-- Contexte : décisions du Défenseur des droits sur le maintien de l'ordre -->
@@ -923,7 +933,8 @@
             habituel, pas le plus bas.</p>
           <p><strong class="text-ink">Écart à l'habituel</strong> = moyenne simple des positions
             des indicateurs retenus − 50, de −50 à +50. Un indicateur est retenu si son historique
-            couvre au moins cinq ans, si son relevé n'est pas arrêté et s'il ne se lit pas dans les
+            couvre au moins cinq ans (sauf D7, retenu dès que sa reprise depuis juillet 2024 est
+            relue), si son relevé n'est pas arrêté et s'il ne se lit pas dans les
             deux sens (D3.2 et D4.2, présentés à part). Les autres façons de combiner les positions,
             et leur résultat, sont publiées <a class="underline text-ink" href="#t-indice">avec l'écart</a>.</p>
           <p><strong class="text-ink">Sens de lecture.</strong> Pour chaque indicateur, une valeur
@@ -1293,7 +1304,7 @@
         const li = document.createElement('li'); li.className = 'pt-2 text-xs text-ink2';
         li.textContent = d.fin_couverture
           ? `${CODE[d.id] || d.code} : relevé arrêté au ${dateLong(d.fin_couverture)}, hors indice tant qu'il n'est pas complété (sa valeur traduirait l'absence de données, pas la situation).`
-          : `${CODE[d.id] || d.code} : ${d.hors_indice}${d.id === 'D7.libertes_en_pratique' ? ' ; hors indice d\'ici là (une série incomplète passerait pour une baisse)' : ''}.`;
+          : `${CODE[d.id] || d.code} : ${d.hors_indice}${d.id === 'D7.libertes_en_pratique' ? ' ; entrera dans l\'indice une fois la reprise relue, par exception à la règle des cinq ans d\'historique (une série incomplète fausserait sa position)' : ''}.`;
         host.appendChild(li);
       }
       const li = document.createElement('li'); li.className = 'pt-2 text-xs text-ink2';
@@ -2530,7 +2541,7 @@
         `pour les ${sans} autres, aucun bilan attribué à une autorité n'a été retrouvé. Les bilans du soir peuvent être révisés ensuite ; relevé à relire.`;
       tbl.replaceChildren();
       const head = tbl.createTHead().insertRow();
-      for (const h of ['Date', 'Mouvement', 'France : interpellations', 'France : gardes à vue', 'Paris : interpellations', 'Paris : gardes à vue']) {
+      for (const h of ['Date', 'Mouvement', 'France : interpellations', 'France : gardes à vue', 'France : forces de l\'ordre blessées', 'Paris : interpellations', 'Paris : gardes à vue', 'Paris : forces de l\'ordre blessées']) {
         const th = document.createElement('th'); th.className = 'py-2 pr-4 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th);
       }
       const body = tbl.createTBody();
@@ -2538,7 +2549,7 @@
         const tr = body.insertRow();
         const cell = c => { const td = tr.insertCell(); td.className = 'py-1.5 pr-4 border-b border-rule'; if (typeof c === 'string') td.textContent = c; else td.appendChild(c); };
         cell(dateLong(date)); cell(j.mouvement);
-        for (const per of ['France entière', 'Paris']) for (const mes of ['interpellations', 'gardes_a_vue']) {
+        for (const per of ['France entière', 'Paris']) for (const mes of ['interpellations', 'gardes_a_vue', 'forces_ordre_blessees']) {
           const m = j[per] && j[per][mes];
           if (!m) { cell('—'); continue; }
           const a = document.createElement('a'); a.href = m.source_url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'underline tabular-nums';

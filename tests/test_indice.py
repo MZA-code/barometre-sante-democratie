@@ -30,6 +30,15 @@ def test_composer_series_courtes_et_contre_pouvoir():
     assert not dims[4].get("hors_indice")
 
 
+def test_d7_exempte_des_cinq_ans_une_fois_la_reprise_relue():
+    dims = [dim("D7.libertes_en_pratique", 3, [0.0] * 17)]
+    composer(dims)
+    assert dans_indice(dims[0]) and dims[0]["exception_historique"]
+    dims = [dim("D7.libertes_en_pratique", 3, [0.0] * 17, hors_indice="reprise en cours")]
+    composer(dims)
+    assert not dans_indice(dims[0])
+
+
 def test_indice_ecart_et_fourchette():
     dims = [
         dim("D1.a", 0, [0, 0, 0, 1]),  # 37,5 (bas 0, haut 75)

@@ -67,8 +67,11 @@ journaliste, aucun contenu payant archivé.
 sur le terrain par une autorité publique. Deux voies : les constats de manquement du Défenseur
 des droits (comptés d'office) et les faits rapportés par au moins deux groupes de presse
 différents (flux RSS, et GDELT pour la reprise depuis juillet 2024), validés un par un sur
-GitHub (issues étiquetées `d7`, critères écrits dans la grille). D7 reste hors de l'indice tant
-que la reprise du passé n'est pas collectée et relue. Conception :
+GitHub (issues étiquetées `d7`, critères écrits dans la grille). Dix catégories : interpellations
+collectives, expression, réunion et manifestation, surveillance, usage de la force, décès lors
+d'une intervention, contrôles abusifs, mesures administratives sans juge, pressions sur les
+associations et le droit de grève, décisions ignorées. D7 entre dans l'indice dès que la reprise
+du passé est collectée et relue, par exception à la règle des cinq ans d'historique. Conception :
 [docs/superpowers/specs/2026-11-10-libertes-en-pratique-design.md](docs/superpowers/specs/2026-11-10-libertes-en-pratique-design.md) ;
 mise en service et validation : [ops/README-d7.md](ops/README-d7.md).
 

@@ -69,7 +69,9 @@ MOIS = (
 )
 # Début de la comparaison historique quand il diffère du début de la série : avant la
 # réforme du 29 octobre 1974, les lois ordinaires sont rarement déférées (petits effectifs).
-COMPARE_FROM = {"D3.lois_censurees": "1975-01-01"}
+# D7 : premier mois dont la fenêtre de 365 jours tient entière après le début de la série
+# (1er juillet 2024) ; avant, la fenêtre tronquée ferait passer l'actuel pour une hausse.
+COMPARE_FROM = {"D3.lois_censurees": "1975-01-01", "D7.libertes_en_pratique": "2025-06-30"}
 # Fin de couverture des relevés manuels bornés dans le temps : au-delà, une valeur nulle
 # traduirait l'absence de relevé, pas l'absence de cas. La carte affiche la valeur à cette date.
 COVERAGE_END = {"D5.journalistes_inquietes": "2025-12-31"}

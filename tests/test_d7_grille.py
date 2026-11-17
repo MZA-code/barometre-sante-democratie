@@ -21,7 +21,24 @@ CATEGORIES = {
     "surveillance",
     "force",
     "decisions_ignorees",
+    "deces",
+    "controles",
+    "mesures_administratives",
+    "associations_greve",
 }
+
+
+def test_anciennes_categories_en_tete():
+    """Les catégories ajoutées le 2026-11-17 viennent après les six premières (repérage RSS :
+    la première qui convient ; un candidat déjà ouvert garde son identifiant)."""
+    rss = load_raw(DEFAULT_GRID_PATH)["indicators"][D7]["rss"]["categories"]
+    assert list(rss)[:6] == [
+        "interpellations", "expression", "reunion", "surveillance", "force", "decisions_ignorees"
+    ]  # fmt: skip
+    cats = load_raw(DEFAULT_GRID_PATH)["indicators"][D7]["categories"]
+    assert set(rss) == set(cats)
+    for cle in list(rss)[:6]:
+        assert "autorites_en_plus" not in rss[cle]
 
 
 def test_d7_dans_la_grille():

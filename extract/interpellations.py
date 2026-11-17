@@ -4,7 +4,8 @@ Voir data/seed/README.md (`interpellations_mobilisations.csv`). Chiffres annonc�
 autorité (ministère de l'Intérieur, préfecture de police, parquet), relevés dans des articles en
 accès libre, chacun avec la phrase qui le porte. Un fait `interpellations_journee` par journée
 et par périmètre (France entière, Paris), avec les mesures connues (interpellations, gardes à
-vue). Donnée de contexte : elle n'entre dans aucun calcul du baromètre.
+vue, membres des forces de l'ordre blessés : nombre annoncé, toutes gravités confondues).
+Donnée de contexte : elle n'entre dans aucun calcul du baromètre.
 """
 
 from __future__ import annotations
@@ -36,7 +37,7 @@ COLONNES = (
     "a_verifier",
     "note",
 )
-MESURES = ("interpellations", "gardes_a_vue")
+MESURES = ("interpellations", "gardes_a_vue", "forces_ordre_blessees")
 PERIMETRES = ("France entière", "Paris")
 
 
