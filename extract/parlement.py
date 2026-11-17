@@ -51,6 +51,8 @@ from extract import (
     mobilisations,
     onu,
     petitions,
+    questions_ecrites,
+    regles_chomage,
     rsf,
     scrutins,
     seed,
@@ -211,6 +213,8 @@ def extract_all(conn: sqlite3.Connection, raw_dir: Path) -> list[FactDraft]:
         + d7.extract(conn, raw_dir)
         + petitions.extract(conn, raw_dir)
         + budget.extract(conn, raw_dir)
+        + questions_ecrites.extract(conn, raw_dir)
+        + regles_chomage.extract(conn, raw_dir)
     )
 
 

@@ -63,6 +63,7 @@ MARQUANTS: dict[str, tuple[str, Callable[[dict], bool]]] = {
         lambda a: bool(a.get("moins_d_un_an")),
     ),
     "periode_regime_exception": ("Régimes d'exception", _always),
+    "periode_regles_chomage_etat": ("Règles d'assurance chômage fixées par l'État", _always),
     "decision_dc_loi": (
         "Lois censurées par le Conseil constitutionnel",
         lambda a: bool(a.get("au_fond") and a.get("censure")),

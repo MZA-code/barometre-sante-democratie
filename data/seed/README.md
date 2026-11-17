@@ -235,6 +235,26 @@ ne précise pas, signalé dans `note`). Donnée de contexte, hors grille
 - **À relire** (`a_verifier` = oui pour toutes les lignes) : attributions vagues, bilans
   provisoires, périmètre « agglomération parisienne » du 31 octobre 2026.
 
+## `regles_assurance_chomage.csv`
+
+Périodes où les règles de l'assurance chômage en vigueur ont été fixées par décret de l'État,
+faute de convention négociée par les organisations syndicales et patronales puis agréée
+(indicateur D3.3, `D3.regles_chomage_etat`). Une ligne par période : du décret qui fixe les
+règles (`texte_debut`, `cid_debut`) à la veille de l'arrêté d'agrément de la convention
+suivante (`texte_fin`, `cid_fin`) ; identifiants JORFTEXT, liens Légifrance.
+
+- **Relevé du 2026-11-17** : balayage des titres de toutes les archives JORF de la DILA
+  (1990-2026) contenant « assurance chômage », « indemnisation du chômage » ou « revenus de
+  remplacement » ; 1 600 textes, dont les arrêtés d'agrément des conventions (1990, 1993,
+  1994, 1997, 2001, 2004, 2006, 2009, 2011, 2014, 2017, 2024) et les décrets fixant les
+  règles faute d'accord (2000, 2016, 2019 à 2024). Les décrets d'application d'une
+  convention agréée (durées d'indemnisation, taux de contribution) n'ouvrent pas de période.
+- **Trois périodes** : 30 juin – 3 décembre 2000 ; 29 juin 2016 – 3 mai 2017 ; 26 juillet
+  2019 – 18 décembre 2024 (dont le refus d'agrément de l'accord du 27 novembre 2023, arrêté du
+  10 mai 2024).
+- **À relire** (`a_verifier` = oui) : 2000 et 2016, lues dans les titres seulement ; le
+  texte des décrets reste à relire pour confirmer qu'ils fixent les règles faute d'accord.
+
 ## `usage_force_annuel.csv`
 
 Séries annuelles officielles sur l'usage de la force, relevées dans les rapports annuels publiés

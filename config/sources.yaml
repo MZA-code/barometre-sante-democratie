@@ -8,6 +8,11 @@ sources:
     url: https://data.assemblee-nationale.fr
     licence: Licence Ouverte Etalab 2.0
 
+  - id: an_questions
+    name: Open data de l'Assemblée nationale — questions écrites
+    url: https://data.assemblee-nationale.fr/travaux-parlementaires/questions/questions-ecrites
+    licence: Licence Ouverte Etalab 2.0
+
   - id: dila_legi
     name: Open data DILA — fonds LEGI
     url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/

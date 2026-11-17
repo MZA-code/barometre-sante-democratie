@@ -40,8 +40,10 @@ DIMENSIONS = (
     "D2.procedure_acceleree",
     "D2.petitions_classees",
     "D2.annulations_credits",
+    "D2.questions_ecrites",
     "D3.regimes_exception",
     "D3.lois_censurees",
+    "D3.regles_chomage_etat",
     "D4.interdictions_manifester_juge",
     "D4.dissolutions_administratives",
     "D5.temps_parole_executif",
@@ -152,6 +154,49 @@ def bloc_d7(conn, raw_dir: Path) -> tuple[dict, str | None]:
         "issues_url": f"https://github.com/{DEPOT_PUBLIC}/issues?q=label%3Ad7",
     }
     return bloc, hors_indice_d7(etat)
+
+
+def questions_ecrites(conn) -> dict:
+    """D2.5 : par année d'échéance (questions, sans réponse dans le délai, sans réponse à ce
+    jour, délai médian des réponses) et par ministère sur les 365 derniers jours. Agrégats
+    seulement : les questions une par une sont dans le fichier des faits."""
+    import statistics
+
+    annees: dict[str, dict] = {}
+    delais: dict[str, list[int]] = {}
+    lignes = conn.execute(
+        "SELECT occurred_on, fact_type, json_extract(attributes, '$.reponse'),"
+        " json_extract(attributes, '$.delai_jours'), json_extract(attributes, '$.ministere')"
+        " FROM facts WHERE indicator_id = 'D2.questions_ecrites' ORDER BY occurred_on"
+    ).fetchall()
+    for day, fact_type, reponse, delai, _ in lignes:
+        a = annees.setdefault(
+            day[:4],
+            {"annee": int(day[:4]), "echues": 0, "sans_reponse_delai": 0, "sans_reponse": 0},
+        )
+        a["echues"] += 1
+        a["sans_reponse_delai"] += fact_type == "question_ecrite_sans_reponse_delai"
+        a["sans_reponse"] += reponse is None
+        if delai is not None:
+            delais.setdefault(day[:4], []).append(delai)
+    for k, a in annees.items():
+        a["delai_median"] = round(statistics.median(delais[k])) if delais.get(k) else None
+    ministeres: dict[str, dict] = {}
+    if lignes:
+        debut = str(_minus_days(lignes[-1][0], 364))
+        for day, fact_type, _, _, ministere in lignes:
+            if day < debut:
+                continue
+            m = ministeres.setdefault(
+                ministere or "non précisé",
+                {"ministere": ministere or "non précisé", "echues": 0, "sans_reponse_delai": 0},
+            )
+            m["echues"] += 1
+            m["sans_reponse_delai"] += fact_type == "question_ecrite_sans_reponse_delai"
+    return {
+        "par_annee": [annees[k] for k in sorted(annees)],
+        "par_ministere": sorted(ministeres.values(), key=lambda m: (-m["echues"], m["ministere"])),
+    }
 
 
 def petitions_500k(lignes) -> list[dict]:
@@ -347,6 +392,14 @@ def main(argv=None) -> int:
             for d, ref, t, a in conn.execute(
                 "SELECT occurred_on, official_ref, title, attributes FROM facts"
                 " WHERE indicator_id = 'D2.annulations_credits' ORDER BY occurred_on DESC"
+            )
+        ],
+        "questions_ecrites": questions_ecrites(conn),
+        "regles_chomage": [
+            {"debut": d, "texte": t, "cid": ref, **json.loads(a)}
+            for d, t, ref, a in conn.execute(
+                "SELECT occurred_on, title, official_ref, attributes FROM facts"
+                " WHERE indicator_id = 'D3.regles_chomage_etat' ORDER BY occurred_on"
             )
         ],
         "petitions": petitions_500k(

@@ -74,6 +74,7 @@ COLLECTES = (
     ("collect-rss", ()),
     # D2.3 : pétitions de l'Assemblée nationale (≈ 1 requête par pétition suivie)
     ("collect-petitions", ()),
+    ("collect-questions", ()),
     ("collect-decisions", ()),
     # Défenseur des droits : nouvelles fiches seulement (30 s entre deux requêtes, robots.txt)
     ("collect-ddd", ()),

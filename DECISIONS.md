@@ -1086,3 +1086,37 @@ sensibilité et avant application. Données au 11/11/2026.
   chiffres non vérifiés dans leur source). À ajouter si le document est publié ou si le
   ministère publie le détail (par exemple en réponse à une question écrite d'un parlementaire).
 - Pas d'effet sur l'indice (donnée de contexte).
+
+## 2026-11-17 — D2.5 questions écrites, D3.3 démocratie sociale
+
+- **D2.5** : part des questions écrites des députés sans réponse du Gouvernement à
+  l'échéance de deux mois (article 135 du règlement de l'Assemblée nationale ; deux mois
+  depuis la résolution du 28 novembre 2014, un mois prolongeable d'un mois avant : même
+  échéance maximale sur toute la période). Fait daté de l'échéance ; ni nom ni groupe de
+  l'auteur conservés. Écartées : questions closes sans réponse avant l'échéance (fin de
+  mandat, retrait), caduques à la fin de la législature, ou encore en délai à la date de
+  collecte. Premiers chiffres (législatures 15 à 17, et un échantillon de 23 000 questions de
+  la 14e) : 80 à 87 % sans réponse dans le délai en 2012-2016, 76 à 77 % en 2017-2019, 82 à
+  90 % depuis 2020. Le retard est ancien ; la période récente est dans le haut de la
+  fourchette.
+- **Collecte** : source `an_questions` distincte d'`an_opendata` (que lit
+  `extract/parlement.py`). Le serveur de l'Assemblée coupe les gros téléchargements et bride
+  les reprises : lecture par plages (en-tête Range), législatures closes téléchargées une
+  seule fois (le fichier de la 14e, 134 Mo, peut prendre plus d'une heure). Le JSON unique de
+  la 14e (575 Mo décompressé) est lu en flux, une question à la fois.
+- **D3.3** : jours où les règles de l'assurance chômage viennent d'un décret de l'État plutôt
+  que d'une convention négociée et agréée. Mesure qui décide, pas le contenu des règles (le
+  baromètre ne juge pas les politiques sociales). Trois périodes depuis 1990 : 2000 (5 mois),
+  2016-2017 (10 mois), 2019-2024 (5 ans et 5 mois, dont un refus d'agrément de l'accord des
+  partenaires en mai 2024). Valeur actuelle nulle : la convention du 15 novembre 2024 est
+  agréée. Limites : le document de cadrage imposé par l'État avant chaque négociation depuis
+  2018 n'est pas compté (une convention négociée dans ce cadre compte comme négociée) ; les
+  prélèvements de l'État sur les recettes de l'Unédic (12,05 milliards d'euros depuis 2023
+  selon ses dirigeants, lettre du 23 juillet 2026 rapportée par franceinfo) sont cités sur la
+  page, hors calcul.
+- **Hors champ** : « le recul du social » (niveau des droits, des allocations) relève du
+  jugement politique sur des choix de politique publique ; le baromètre mesure le
+  fonctionnement démocratique (qui décide, selon quelle procédure), pas le contenu des
+  décisions.
+- Les deux indicateurs ont plus de cinq ans d'historique : ils entrent dans l'écart à
+  l'habituel dès leur premier calcul.

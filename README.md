@@ -42,7 +42,7 @@ journaliste, aucun contenu payant archivé.
 
 ## Ce que mesure le baromètre
 
-### Indicateurs de la grille (16)
+### Indicateurs de la grille (18)
 
 | Code | Indicateur | Depuis |
 | --- | --- | --- |
@@ -52,8 +52,10 @@ journaliste, aucun contenu payant archivé.
 | D2.2 | Procédure accélérée | 1978 |
 | D2.3 | Pétitions citoyennes de 500 000 signatures ou plus classées sans examen | 2020 |
 | D2.4 | Crédits votés par le Parlement puis annulés par décret | 2006 |
+| D2.5 | Questions écrites des députés sans réponse dans le délai de deux mois | 2012 |
 | D3.1 | Régimes d'exception | 1958 |
 | D3.2 | Lois censurées par le Conseil constitutionnel | 1958 |
+| D3.3 | Règles de l'assurance chômage fixées par décret de l'État, faute d'accord des partenaires sociaux | 1990 |
 | D4.1 | Dissolutions administratives | 1990 |
 | D4.2* | Interdictions de manifester contestées devant le juge (approximation) | 2022 |
 | D5.1 | Temps de parole de l'exécutif | 2025 |
@@ -88,6 +90,7 @@ de la force (séries annuelles de l'IGPN).
 | Source | Accès | Mise à jour |
 | --- | --- | --- |
 | [Assemblée nationale](https://data.assemblee-nationale.fr) | open data | automatique |
+| [Assemblée nationale : questions écrites](https://data.assemblee-nationale.fr/travaux-parlementaires/questions/questions-ecrites) (D2.5) | open data | automatique (législatures closes : une fois) |
 | [DILA](https://echanges.dila.gouv.fr/OPENDATA/) : LEGI, JORF, CONSTIT, CNIL | open data | automatique |
 | [Sénat](https://data.senat.fr/dosleg/) (Dosleg) | open data | automatique (hebdomadaire) |
 | [Justice administrative](https://opendata.justice-administrative.fr/) | open data | automatique |

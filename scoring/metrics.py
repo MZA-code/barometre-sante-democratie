@@ -76,6 +76,8 @@ COUNT_METRICS = (
     "nb_scrutins_reportes",
     "nb_journalistes_mesures",
     "nb_journalistes_convoques",
+    "nb_questions_echues",
+    "nb_questions_sans_reponse_delai",
 )
 
 
@@ -126,6 +128,11 @@ DAILY_METRICS = {
     # D2.3 : pétitions citoyennes de 500 000 signatures ou plus, et celles classées sans examen.
     "nb_petitions_500k": ("count", lambda e: e.fact_type.startswith("petition_500k_")),
     "nb_petitions_500k_classees": ("count", lambda e: e.fact_type == "petition_500k_classee"),
+    # D3.3 : jours sous des règles d'assurance chômage fixées par décret de l'État.
+    "jours_regles_chomage_etat": (
+        "coverage",
+        lambda e: e.fact_type == "periode_regles_chomage_etat",
+    ),
     # D2.4 : décrets d'annulation de crédits, nombre et montant (crédits de paiement, Md€).
     "nb_decrets_annulation": ("count", lambda e: e.fact_type == "decret_annulation_credits"),
     "montant_annule_cp_md": ("sum", lambda e: e.fact_type == "decret_annulation_credits"),
@@ -247,6 +254,11 @@ class WindowState:
         elif event.fact_type == "surveillance_annee":
             self.counts["somme_personnes_surveillees"] += delta * event.personnes
             self.counts["nb_annees_cnctr"] += delta
+        elif event.fact_type.startswith("question_ecrite_"):
+            # D2.5 : questions arrivées à échéance, dont sans réponse dans le délai.
+            self.counts["nb_questions_echues"] += delta
+            if event.fact_type == "question_ecrite_sans_reponse_delai":
+                self.counts["nb_questions_sans_reponse_delai"] += delta
         elif event.fact_type == "texte_electoral":
             self.counts["nb_textes_electoraux"] += delta
             self.counts["nb_textes_electoraux_avant_scrutin"] += delta * event.avant_scrutin

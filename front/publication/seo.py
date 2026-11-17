@@ -44,6 +44,7 @@ CODE = {
     "D2.procedure_acceleree": "D2.2",
     "D3.regimes_exception": "D3.1",
     "D3.lois_censurees": "D3.2",
+    "D3.regles_chomage_etat": "D3.3",
     "D4.interdictions_manifester_juge": "D4.2",
     "D6.traitements_malgre_reserves": "D6.2",
     "D5.temps_parole_executif": "D5.1",
@@ -55,6 +56,7 @@ CODE = {
     "D4.dissolutions_administratives": "D4.1",
     "D2.petitions_classees": "D2.3",
     "D2.annulations_credits": "D2.4",
+    "D2.questions_ecrites": "D2.5",
     "D7.libertes_en_pratique": "D7",
 }
 ANCRE = {
@@ -62,6 +64,7 @@ ANCRE = {
     "D2.procedure_acceleree": "d2-2",
     "D3.regimes_exception": "d3",
     "D3.lois_censurees": "d3-2",
+    "D3.regles_chomage_etat": "d3-3",
     "D4.interdictions_manifester_juge": "d4-2",
     "D6.traitements_malgre_reserves": "d6-2",
     "D5.temps_parole_executif": "d5-1",
@@ -73,6 +76,7 @@ ANCRE = {
     "D4.dissolutions_administratives": "d4",
     "D2.petitions_classees": "d2-3",
     "D2.annulations_credits": "d2-4",
+    "D2.questions_ecrites": "d2-5",
     "D7.libertes_en_pratique": "d7",
 }
 UNITE = {
@@ -81,6 +85,7 @@ UNITE = {
     "nb_reports_scrutin": "report",
     "nb_journalistes_mesures": "journaliste",
     "jours_exception": "jour",
+    "jours_regles_chomage_etat": "jour",
     "nb_dissolutions": "dissolution",
 }
 # Icône d'onglet : demi-cadran et repère, sans texte.

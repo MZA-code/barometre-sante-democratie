@@ -465,6 +465,33 @@
       <p class="mt-3 max-w-3xl text-xs text-ink2">Montants en crédits de paiement, en euros courants, ni corrigés de l'inflation ni rapportés à la taille du budget. Les décrets d'avance, qui annulent des crédits pour en ouvrir d'autres, ne sont pas comptés.</p>
     </section>
 
+    <!-- D2.5 · Questions écrites -->
+    <section id="d2-5" class="py-10 border-b border-rule" aria-labelledby="t-d2-5">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D2.5 · Place du Parlement</p>
+      <h2 id="t-d2-5" class="mt-2 font-serif text-2xl font-semibold">Les questions des députés laissées sans réponse</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Chaque député peut poser par écrit une question à un ministre&nbsp;; la question et la réponse
+        sont publiées au Journal officiel. Le règlement de l'Assemblée nationale (article 135) donne
+        au ministre deux mois pour répondre. On mesure la part des questions restées sans réponse à
+        cette échéance. Ni l'auteur ni son groupe n'entrent dans le calcul&nbsp;: seulement les dates
+        de publication et le ministère interrogé.
+      </p>
+      <p id="questions-resume" class="mt-4 max-w-3xl text-sm text-ink2"></p>
+      <div class="mt-4 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+        <table class="w-full text-left text-sm" id="questions-annees"></table>
+      </div>
+      <details class="mt-4 text-sm">
+        <summary class="text-ink2 flex items-center gap-2">
+          <i class="chev fa-solid fa-chevron-right text-xs text-muted transition-transform" aria-hidden="true"></i>
+          Par ministère, sur les douze derniers mois
+        </summary>
+        <div class="mt-3 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+          <table class="w-full text-left text-sm" id="questions-ministeres"></table>
+        </div>
+      </details>
+      <p class="mt-3 max-w-3xl text-xs text-ink2">Assemblée nationale seulement, depuis juin 2012 (début de l'open data). Écartées&nbsp;: questions closes avant l'échéance sans réponse (fin de mandat de l'auteur, retrait), devenues caduques à la fin d'une législature, ou dont le délai court encore. « Sans réponse à ce jour »&nbsp;: les questions récentes peuvent encore recevoir une réponse.</p>
+    </section>
+
     <section id="d3" class="py-10 border-b border-rule" aria-labelledby="t-d3">
       <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D3.1 · Contre-pouvoirs et État de droit</p>
       <h2 id="t-d3" class="mt-2 font-serif text-2xl font-semibold">Les régimes d'exception depuis 1958</h2>
@@ -514,6 +541,31 @@
           <table class="w-full text-left" id="c-table"></table>
         </div>
       </details>
+    </section>
+
+    <!-- D3.3 · Démocratie sociale : qui fixe les règles de l'assurance chômage -->
+    <section id="d3-3" class="py-10 border-b border-rule" aria-labelledby="t-d3-3">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D3.3 · Contre-pouvoirs et démocratie sociale</p>
+      <h2 id="t-d3-3" class="mt-2 font-serif text-2xl font-semibold">Qui fixe les règles de l'assurance chômage</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        L'assurance chômage est gérée par les organisations syndicales et patronales&nbsp;: elles en
+        négocient les règles dans une convention, que l'État agrée. Faute d'accord agréé, l'État les
+        fixe lui-même par décret. On compte les jours où les règles en vigueur viennent d'un décret
+        de l'État plutôt que d'une convention négociée. L'indicateur mesure qui décide, pas le
+        contenu des règles.
+      </p>
+      <div class="mt-4 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+        <table class="w-full text-left text-sm" id="chomage-table"></table>
+      </div>
+      <p class="mt-3 max-w-3xl text-sm text-ink2">Depuis la loi du 5 septembre 2018 (décret n°&nbsp;2018-791 du
+        14 septembre 2018), l'État encadre aussi les négociations par un document de cadrage
+        (objectifs et trajectoire financière) avant qu'elles commencent&nbsp;; une convention
+        négociée dans ce cadre compte ici comme négociée. Selon les représentants des salariés et
+        des employeurs qui dirigent l'Unédic, la réduction de la compensation par l'État des
+        exonérations de cotisations atteint 12,05&nbsp;milliards d'euros depuis 2023
+        (<a class="underline text-ink" href="https://www.franceinfo.fr/economie/info-franceinfo-l-unedic-alerte-sebastien-lecornu-sur-une-dette-aggravee-par-les-prelevements-de-l-etat_8121008.html" target="_blank" rel="noopener">lettre au Premier ministre du 23 juillet 2026, franceinfo</a>)&nbsp;;
+        ce montant n'entre pas dans l'indicateur.</p>
+      <p class="mt-3 max-w-3xl text-xs text-ink2">Relevé à la main à partir des titres du Journal officiel depuis 1990 (archives de la DILA), chaque période citant les textes qui l'ouvrent et la ferment. Les périodes marquées «&nbsp;à vérifier&nbsp;» n'ont pas encore été relues dans le texte des décrets.</p>
     </section>
 
     <!-- 5 ter. Interdictions de manifester contestées -->
@@ -1617,6 +1669,8 @@
       ratio_censure: v => pct(v),
       ratio_procedure_acceleree: v => pct(v),
       ratio_interdictions_censurees: v => pct(v),
+      ratio_questions_sans_reponse_delai: v => pct(v),
+      jours_regles_chomage_etat: v => `${num(v)} jour${v > 1 ? 's' : ''}`,
       nb_decrets_malgre_reserves: v => `${num(v)} décret${v > 1 ? 's' : ''}`,
       part_executif: v => pct(v),
       nb_textes_electoraux_avant_scrutin: v => `${num(v)} loi${v > 1 ? 's' : ''}`,
@@ -1637,6 +1691,8 @@
       ratio_censure: 'des lois soumises au Conseil constitutionnel censurées en tout ou partie',
       ratio_procedure_acceleree: 'des lois adoptées après engagement de la procédure accélérée',
       ratio_interdictions_censurees: "des interdictions de manifester contestées suspendues ou annulées par le juge",
+      jours_regles_chomage_etat: "sous des règles d'assurance chômage fixées par décret de l'État, faute de convention négociée agréée",
+      ratio_questions_sans_reponse_delai: 'des questions écrites des députés sans réponse du Gouvernement dans le délai de deux mois',
       nb_decrets_malgre_reserves: "créant un fichier publiés après un avis réservé de la CNIL",
       part_executif: "du temps de parole politique à la télévision et à la radio revient à l'exécutif",
       nb_textes_electoraux_avant_scrutin: "modifiant les règles d'un scrutin national moins d'un an avant",
@@ -1649,8 +1705,8 @@
       personnes_surveillees: "personnes surveillées par des techniques de renseignement dans l'année (CNCTR)",
       nb_dissolutions: "d'associations ou de groupements par décret",
     };
-    const ANCHOR = { 'D2.contournement_parlement': '#t-evolution', 'D2.procedure_acceleree': '#d2-2', 'D3.regimes_exception': '#d3', 'D3.lois_censurees': '#d3-2', 'D4.interdictions_manifester_juge': '#d4-2', 'D6.traitements_malgre_reserves': '#d6-2', 'D5.temps_parole_executif': '#d5-1', 'D1.regles_electorales_avant_scrutin': '#d1', 'D1.scrutins_reportes': '#d1-table', 'D5.classement_rsf': '#d5-3', 'D5.journalistes_inquietes': '#d5-2', 'D6.techniques_renseignement': '#d6-1', 'D4.dissolutions_administratives': '#d4', 'D7.libertes_en_pratique': '#d7', 'D2.petitions_classees': '#d2-3', 'D2.annulations_credits': '#d2-4' };
-    const CODE = { 'D2.contournement_parlement': 'D2.1', 'D2.procedure_acceleree': 'D2.2', 'D3.regimes_exception': 'D3.1', 'D3.lois_censurees': 'D3.2', 'D4.interdictions_manifester_juge': 'D4.2', 'D6.traitements_malgre_reserves': 'D6.2', 'D5.temps_parole_executif': 'D5.1', 'D1.regles_electorales_avant_scrutin': 'D1.1', 'D1.scrutins_reportes': 'D1.2', 'D5.classement_rsf': 'D5.3', 'D5.journalistes_inquietes': 'D5.2', 'D6.techniques_renseignement': 'D6.1', 'D4.dissolutions_administratives': 'D4.1', 'D7.libertes_en_pratique': 'D7', 'D2.petitions_classees': 'D2.3', 'D2.annulations_credits': 'D2.4' };
+    const ANCHOR = { 'D2.contournement_parlement': '#t-evolution', 'D2.procedure_acceleree': '#d2-2', 'D3.regimes_exception': '#d3', 'D3.lois_censurees': '#d3-2', 'D4.interdictions_manifester_juge': '#d4-2', 'D6.traitements_malgre_reserves': '#d6-2', 'D5.temps_parole_executif': '#d5-1', 'D1.regles_electorales_avant_scrutin': '#d1', 'D1.scrutins_reportes': '#d1-table', 'D5.classement_rsf': '#d5-3', 'D5.journalistes_inquietes': '#d5-2', 'D6.techniques_renseignement': '#d6-1', 'D4.dissolutions_administratives': '#d4', 'D7.libertes_en_pratique': '#d7', 'D2.petitions_classees': '#d2-3', 'D2.annulations_credits': '#d2-4', 'D2.questions_ecrites': '#d2-5', 'D3.regles_chomage_etat': '#d3-3' };
+    const CODE = { 'D2.contournement_parlement': 'D2.1', 'D2.procedure_acceleree': 'D2.2', 'D3.regimes_exception': 'D3.1', 'D3.lois_censurees': 'D3.2', 'D4.interdictions_manifester_juge': 'D4.2', 'D6.traitements_malgre_reserves': 'D6.2', 'D5.temps_parole_executif': 'D5.1', 'D1.regles_electorales_avant_scrutin': 'D1.1', 'D1.scrutins_reportes': 'D1.2', 'D5.classement_rsf': 'D5.3', 'D5.journalistes_inquietes': 'D5.2', 'D6.techniques_renseignement': 'D6.1', 'D4.dissolutions_administratives': 'D4.1', 'D7.libertes_en_pratique': 'D7', 'D2.petitions_classees': 'D2.3', 'D2.annulations_credits': 'D2.4', 'D2.questions_ecrites': 'D2.5', 'D3.regles_chomage_etat': 'D3.3' };
     function drawDims() {
       document.getElementById('t-dims').textContent = `${D.dimensions.length} indicateurs suivis`;
       const host = document.getElementById('dims');
@@ -2026,6 +2082,42 @@
         const l = document.createElement('a'); l.href = a.url; l.target = '_blank'; l.rel = 'noopener'; l.className = 'hover:underline'; l.textContent = `n° ${a.numero}`; c1.appendChild(l);
         const c2 = tr.insertCell(); c2.className = 'py-1.5 px-3 border-b border-rule align-top tabnum whitespace-nowrap'; c2.textContent = `${md(a.montant_cp_md)} Md€`;
       }
+    }
+
+    // ---- D3.3 : règles de l'assurance chômage --------------------------------------
+    function drawChomage() {
+      const R = D.regles_chomage || [], tbl = document.getElementById('chomage-table');
+      if (!tbl || tbl.rows.length) return;
+      const head = tbl.createTHead().insertRow();
+      for (const h of ['Période', 'Durée', 'Ouverte par', 'Close par']) { const th = document.createElement('th'); th.className = 'sticky top-0 bg-surface py-2 px-3 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th); }
+      const body = tbl.createTBody();
+      const lien = (url, txt) => { const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'hover:underline'; a.textContent = txt; return a; };
+      for (const r of [...R].reverse()) {
+        const tr = body.insertRow(); const c = () => { const td = tr.insertCell(); td.className = 'py-1.5 px-3 border-b border-rule align-top'; return td; };
+        c().textContent = `${dateLong(r.debut)} – ${r.fin ? dateLong(r.fin) : 'en cours'}${r.a_verifier ? ' (à vérifier)' : ''}`;
+        const jours = Math.round(((r.fin ? new Date(r.fin) : new Date()) - new Date(r.debut)) / 864e5) + 1;
+        const td = c(); td.className += ' tabnum whitespace-nowrap'; td.textContent = `${num(jours)} jours`;
+        const o = c(); o.appendChild(lien(r.url, r.texte)); if (r.note) { const n = document.createElement('p'); n.className = 'text-xs text-ink2 mt-1'; n.textContent = r.note; o.appendChild(n); }
+        const f = c(); if (r.url_fin) f.appendChild(lien(r.url_fin, r.texte_fin)); else f.textContent = '—';
+      }
+    }
+
+    // ---- D2.5 : questions écrites ------------------------------------------------
+    function drawQuestions() {
+      const Q = D.questions_ecrites; if (!Q) return;
+      const ta = document.getElementById('questions-annees'), tm = document.getElementById('questions-ministeres');
+      if (!ta || ta.rows.length) return;
+      const pc = (a, b) => b ? pct(a / b) : '—';
+      const der = Q.par_annee[Q.par_annee.length - 1];
+      document.getElementById('questions-resume').textContent = Q.par_annee.length
+        ? `${num(Q.par_annee.reduce((s, a) => s + a.echues, 0))} questions arrivées à échéance depuis ${Q.par_annee[0].annee}. En ${der.annee}, ${pc(der.sans_reponse_delai, der.echues)} n'avaient pas de réponse dans le délai.`
+        : 'Collecte en cours.';
+      const tete = (tbl, cols) => { const h = tbl.createTHead().insertRow(); for (const c of cols) { const th = document.createElement('th'); th.className = 'sticky top-0 bg-surface py-2 px-3 font-medium text-ink2 border-b border-rule'; th.textContent = c; h.appendChild(th); } };
+      const ligne = (tbl, vals) => { const tr = tbl.tBodies[0].insertRow(); vals.forEach((v, i) => { const td = tr.insertCell(); td.className = 'py-1.5 px-3 border-b border-rule' + (i ? ' tabnum whitespace-nowrap' : ''); td.textContent = v; }); };
+      tete(ta, ['Échéance en', 'Questions', 'Sans réponse dans le délai', 'Sans réponse à ce jour', 'Délai médian de réponse']); ta.createTBody();
+      for (const a of [...Q.par_annee].reverse()) ligne(ta, [String(a.annee), num(a.echues), pc(a.sans_reponse_delai, a.echues), pc(a.sans_reponse, a.echues), a.delai_median != null ? `${num(a.delai_median)} jours` : '—']);
+      tete(tm, ['Ministère interrogé', 'Questions', 'Sans réponse dans le délai']); tm.createTBody();
+      for (const m of Q.par_ministere) ligne(tm, [m.ministere, num(m.echues), pc(m.sans_reponse_delai, m.echues)]);
     }
 
     // ---- D2.3 : pétitions citoyennes --------------------------------------------
@@ -2770,8 +2862,8 @@
     const TOC = [
       ["Vue d'ensemble", 'gauge-high', [['t-question', 'Encore une démocratie ?', 'circle-question'], ['t-definition', "Ce qu'est une démocratie", 'book-open-reader'], ['t-indice', "Par rapport à d'habitude", 'gauge-high'], ['t-contre-pouvoirs', 'Contre-pouvoirs', 'scale-balanced'], ['t-dims', 'Indicateurs suivis', 'list-check']]],
       ['D1 · Élections et alternance', 'check-to-slot', [['t-d1', 'D1.1–D1.2 · Règles électorales et reports', 'check-to-slot']]],
-      ['D2 · Place du Parlement', 'landmark', [['titre', "D2.1 · L'essentiel", 'landmark'], ['t-evolution', 'Depuis 1959', 'chart-line'], ['t-composantes', 'De quoi est fait le chiffre', 'puzzle-piece'], ['t-leg', 'Législature par législature', 'table-columns'], ['t-493', 'Les recours au 49.3', 'forward'], ['t-d2-2', 'D2.2 · Procédure accélérée', 'bolt'], ['t-d2-3', 'D2.3 · Pétitions citoyennes', 'file-signature'], ['t-d2-4', 'D2.4 · Crédits annulés par décret', 'scissors']]],
-      ["D3 · Contre-pouvoirs et État de droit", 'gavel', [['t-d3', "D3.1 · Régimes d'exception", 'triangle-exclamation'], ['t-d3-2', 'D3.2 · Lois censurées', 'gavel']]],
+      ['D2 · Place du Parlement', 'landmark', [['titre', "D2.1 · L'essentiel", 'landmark'], ['t-evolution', 'Depuis 1959', 'chart-line'], ['t-composantes', 'De quoi est fait le chiffre', 'puzzle-piece'], ['t-leg', 'Législature par législature', 'table-columns'], ['t-493', 'Les recours au 49.3', 'forward'], ['t-d2-2', 'D2.2 · Procédure accélérée', 'bolt'], ['t-d2-3', 'D2.3 · Pétitions citoyennes', 'file-signature'], ['t-d2-4', 'D2.4 · Crédits annulés par décret', 'scissors'], ['t-d2-5', 'D2.5 · Questions écrites sans réponse', 'envelope-open-text']]],
+      ["D3 · Contre-pouvoirs et État de droit", 'gavel', [['t-d3', "D3.1 · Régimes d'exception", 'triangle-exclamation'], ['t-d3-2', 'D3.2 · Lois censurées', 'gavel'], ['t-d3-3', 'D3.3 · Règles du chômage fixées par l\'État', 'handshake-slash']]],
       ['D4 · Libertés publiques', 'people-group', [['t-d4-2', 'D4.2 · Interdictions de manifester', 'ban'], ['t-d4', 'D4.1 · Dissolutions', 'users-slash']]],
       ['Regards extérieurs (non noté)', 'binoculars', [['t-onu', "Déclarations de l'ONU", 'globe'], ['t-presse', 'Presse étrangère', 'newspaper']]],
       ['D5 · Pluralisme et information', 'tower-broadcast', [['t-d5-1', 'D5.1 · Temps de parole', 'microphone-lines'], ['t-partis', 'Temps de parole par parti', 'microphone-lines'], ['t-d5-2', 'D5.2 · Journalistes inquiétés', 'pen-nib'], ['t-annuels', 'D5.3 · Classement RSF', 'ranking-star']]],
@@ -2856,7 +2948,7 @@
     let spyRaf; addEventListener('scroll', () => { cancelAnimationFrame(spyRaf); spyRaf = requestAnimationFrame(spy); }, { passive: true });
 
     // ---- Rendu -------------------------------------------------------------
-    const render = () => { drawReperes(); drawOpinion(); drawTelechargements(); drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawPetitions(); drawAnnulations(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
+    const render = () => { drawReperes(); drawOpinion(); drawTelechargements(); drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawPetitions(); drawAnnulations(); drawQuestions(); drawChomage(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
     render(); spy();
     let raf; addEventListener('resize', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { render(); current = null; spy(); }); });
   })();

@@ -145,6 +145,38 @@ indicators:
     thresholds: [null, null, null, null]
     weight: null
 
+  D2.questions_ecrites:
+    label: Questions écrites sans réponse dans le délai
+    description: >-
+      Part des questions écrites des députés auxquelles le Gouvernement n'a pas répondu dans
+      le délai de deux mois fixé par l'article 135 du règlement de l'Assemblée nationale (deux
+      mois depuis 2014 ; avant, un mois prolongeable d'un mois au plus). Chaque question est
+      datée de son échéance. Écartées : questions closes avant l'échéance sans réponse (fin de
+      mandat de l'auteur, retrait), devenues caduques à la fin de la législature, ou dont le
+      délai court encore. Mesure le contrôle du Gouvernement par le Parlement ; ni l'auteur ni
+      son groupe n'entrent dans le calcul. Assemblée nationale seulement (open data depuis
+      juin 2012).
+    fact_types:
+      - question_ecrite_repondue_delai
+      - question_ecrite_sans_reponse_delai
+    history_start: 2012-06-20   # ouverture de la XIVe législature (début de l'open data)
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - nb_questions_echues              # questions arrivées à échéance dans la fenêtre
+      - nb_questions_sans_reponse_delai  # dont sans réponse publiée à l'échéance
+      - ratio_questions_sans_reponse_delai
+    ratios:
+      ratio_questions_sans_reponse_delai:
+        numerateur: [nb_questions_sans_reponse_delai]
+        denominateur: [nb_questions_echues]
+    scored_metric: ratio_questions_sans_reponse_delai
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
   D3.regimes_exception:
     label: Régimes d'exception
     description: >-
@@ -200,6 +232,31 @@ indicators:
         numerateur: [nb_lois_ordinaires_censurees]
         denominateur: [nb_lois_ordinaires_deferees]
     scored_metric: ratio_censure
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
+  D3.regles_chomage_etat:
+    label: Règles de l'assurance chômage fixées par l'État
+    description: >-
+      Jours où les règles de l'assurance chômage en vigueur ont été fixées par décret de
+      l'État et non par une convention négociée par les organisations syndicales et
+      patronales puis agréée (démocratie sociale : le régime est géré par les partenaires
+      sociaux, l'État n'en fixe les règles qu'à défaut d'accord agréé). Une période va du
+      décret qui fixe les règles à la veille de l'agrément de la convention suivante ; les
+      décrets d'application d'une convention agréée n'en ouvrent pas. Mesure qui décide, pas
+      le contenu des règles. Relevé à la main depuis les titres du Journal officiel
+      (data/seed/regles_assurance_chomage.csv).
+    fact_types:
+      - periode_regles_chomage_etat
+    history_start: 1990-01-01   # début des archives JORF de la DILA
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - jours_regles_chomage_etat
+    scored_metric: jours_regles_chomage_etat
     direction: increasing
     thresholds: [null, null, null, null]
     weight: null

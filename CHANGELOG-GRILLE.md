@@ -6,6 +6,17 @@ ci-dessous et un recalcul complet de l'historique (`make rebuild GRID=config/gri
 
 ## v0 — 2026-10-26 (brouillon, non figée)
 
+- Ajout du 2026-11-17 (avant tout gel ; aucun seuil, aucune note) :
+  - **D2.5 — Questions écrites sans réponse dans le délai** (`D2.questions_ecrites`) :
+    `ratio_questions_sans_reponse_delai = nb_questions_sans_reponse_delai /
+    nb_questions_echues` ; une question par fait, datée de son échéance (publication + deux
+    mois, article 135 du règlement de l'Assemblée nationale) ; questions closes sans réponse
+    avant l'échéance, caduques ou encore en délai écartées. Historique depuis le 20 juin 2012
+    (open data de l'Assemblée nationale).
+  - **D3.3 — Règles de l'assurance chômage fixées par l'État** (`D3.regles_chomage_etat`) :
+    `jours_regles_chomage_etat`, jours couverts par une période où les règles viennent d'un
+    décret de l'État faute de convention négociée agréée (seed
+    `regles_assurance_chomage.csv`). Historique depuis 1990.
 - Ajout du 2026-11-17 (D7, après les premières validations ; aucun seuil, aucune note) :
   quatre catégories de faits, avec leurs critères (`compte`, `ne_compte_pas`) et leur
   repérage RSS : `deces` (décès lors d'une intervention des forces de l'ordre), `controles`
