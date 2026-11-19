@@ -145,7 +145,7 @@ Chiffres annuels de la Commission nationale de contrôle des techniques de rense
 ## `journalistes_inquietes.csv`
 
 Mesures des autorités visant des journalistes dans l'exercice de leur métier, pour
-l'indicateur D5.2. **Relevé pilote 2023-2025, non exhaustif.**
+l'indicateur D5.2. **Relevé pilote 2023-2026, non exhaustif.**
 
 - **Sources** : communiqués de RSF et des syndicats de journalistes (SNJ, SNJ-CGT), presse en
   accès libre. Les cas ont été repérés par recherche, puis chaque source ouverte et lue.
@@ -154,7 +154,13 @@ l'indicateur D5.2. **Relevé pilote 2023-2025, non exhaustif.**
 - **Contrôle** : la colonne `extrait` cite une phrase de la source établissant la mesure ; un
   script vérifie qu'elle y figure mot pour mot (18 lignes sur 18, 2026-11-05). Les 10 lignes
   ajoutées le 2026-11-05 (recherche dans les communiqués RSF, SNJ, EFJ et la presse en accès
-  libre, 2023-2025) ont été vérifiées de la même façon.
+  libre, 2023-2025) ont été vérifiées de la même façon. Mise à jour du 2026-11-19 : 6 lignes
+  (2 cas de 2026, 4 cas de 2025 manqués au premier passage), repérées dans la liste complète
+  des communiqués du SNJ de 2025-2026 et par recherche (RSF, presse en accès libre), extraits
+  retrouvés mot pour mot (6 sur 6). Écartés : violences et entraves en manifestation (autre
+  nature de fait, voir D7), assignation civile d'un cadre municipal à titre personnel
+  (Castres), garde à vue d'un animateur de radio interpellé comme militant (Lyon), mesures
+  prises à l'étranger.
 - **Colonnes** : `date` (jour de la mesure), `date_approximative` (oui si la source ne donne pas
   le jour exact ; voir `note`), `mesure` (`garde_a_vue`, `interpellation`, `poursuite`,
   `mise_en_examen`, `condamnation`, `convocation`), `nb_journalistes`, `media`, `autorite`,

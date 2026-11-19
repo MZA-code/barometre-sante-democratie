@@ -26,7 +26,7 @@ et peut désormais être mise en ligne automatiquement sur un hébergement stati
 | D4.1 | Dissolutions administratives | Journal officiel | 1990 |
 | D4.2* | Interdictions de manifester contestées devant le juge | justice administrative | 2022 |
 | D5.1 | Temps de parole de l'exécutif | Arcom | 2025 |
-| D5.2 | Journalistes inquiétés (relevé pilote 2023-2025) | seed vérifié | 2023 |
+| D5.2 | Journalistes inquiétés (relevé pilote 2023-2026) | seed vérifié | 2023 |
 | D5.3 | Classement RSF | RSF | 2002 |
 | D6.1 | Techniques de renseignement | CNCTR | 2016 |
 | D6.2 | Fichiers créés malgré les réserves de la CNIL | DILA CNIL, Journal officiel | 1983 |
