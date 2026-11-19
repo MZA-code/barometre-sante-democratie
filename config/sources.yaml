@@ -58,6 +58,11 @@ sources:
     url: https://juridique.defenseurdesdroits.fr/
     licence: Documents publiés par le Défenseur des droits (informations publiques, réutilisation libre selon le code des relations entre le public et l'administration ; à confirmer)
 
+  - id: eurostat_cofog
+    name: Eurostat — dépenses des administrations publiques par fonction (COFOG, gov_10a_exp)
+    url: https://ec.europa.eu/eurostat/databrowser/view/gov_10a_exp/default/table
+    licence: Politique de réutilisation de la Commission européenne (décision 2011/833/UE), réutilisation libre avec mention de la source
+
   - id: rapports_annuels
     name: Rapports annuels officiels cités par les relevés manuels (IGPN, Défenseur des droits ; vie-publique.fr)
     url: https://www.vie-publique.fr/rapports

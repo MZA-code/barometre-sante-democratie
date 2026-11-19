@@ -9,7 +9,7 @@ GRID ?= config/grid.v0.yaml
 AN_LEGISLATURES ?= 17 16 15 14
 RUN  := uv run --frozen
 
-.PHONY: css help install init collect collect-seed collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-an collect-datagouv collect-gdelt collect-gdelt-trad collect-titres collect-rss collect-petitions collect-questions collect-decisions publier-issues collect-ddd collect-rapports verify-raw extract metrics score \
+.PHONY: css help install init collect collect-seed collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-an collect-datagouv collect-gdelt collect-gdelt-trad collect-titres collect-rss collect-petitions collect-questions collect-decisions publier-issues collect-ddd collect-rapports collect-eurostat verify-raw extract metrics score \
 	rebuild reproducible controle echantillon prototype prototype-data publication publication-web deployer nouveautes quotidien planifier deplanifier etat lint test
 
 help:
@@ -25,7 +25,7 @@ install:
 init:
 	$(RUN) python -m storage.db init --db $(DB)
 
-collect: collect-seed collect-an collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-datagouv collect-gdelt collect-gdelt-trad collect-titres collect-rss collect-petitions collect-questions collect-ddd collect-rapports
+collect: collect-seed collect-an collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-datagouv collect-gdelt collect-gdelt-trad collect-titres collect-rss collect-petitions collect-questions collect-ddd collect-rapports collect-eurostat
 
 collect-seed: init
 	$(RUN) python -m collectors.seed --db $(DB) --raw-dir $(RAW)
@@ -86,6 +86,10 @@ collect-gdelt-trad: init
 
 collect-arcom: init
 	$(RUN) python -m collectors.arcom --db $(DB) --raw-dir $(RAW)
+
+# Contexte : dépenses publiques par fonction (Eurostat COFOG), archivé si le contenu change.
+collect-eurostat: init
+	$(RUN) python -m collectors.eurostat --db $(DB) --raw-dir $(RAW)
 
 collect-rsf: init
 	$(RUN) python -m collectors.rsf --db $(DB) --raw-dir $(RAW)

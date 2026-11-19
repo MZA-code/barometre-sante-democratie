@@ -1141,3 +1141,21 @@ sensibilité et avant application. Données au 11/11/2026.
   les deux n'est comptée qu'une fois (clé juridiction + fichier, déjà en place).
 - **Page** : le trimestre en cours reste marqué « en cours », avec la date de la dernière
   collecte (« données au 19 novembre 2026 »).
+
+## 2026-11-19 — Contexte : où va l'argent public
+
+- **Demande** du porteur de projet : montrer la répartition des dépenses publiques (police,
+  armée, enseignement, santé...) « sans prendre parti, juste en informatif ».
+- **Choix** : contexte non noté. Le baromètre mesure qui décide et selon quelle procédure, pas
+  le contenu des décisions (voir 2026-11-17, « hors champ ») ; relier une répartition
+  budgétaire à une orientation politique serait un jugement que les données ne portent pas.
+  La page montre les chiffres et laisse le lecteur conclure.
+- **Source** : Eurostat `gov_10a_exp` (COFOG), dépenses totales des administrations
+  publiques (État, collectivités, Sécurité sociale), 1995 à la dernière année publiée, France,
+  Allemagne, Italie, Espagne et moyenne de l'UE à 27 ; dix divisions, plus les intérêts de la
+  dette, la police, l'incendie et les secours, les tribunaux et les prisons. Trois lectures :
+  part du PIB (publiée par Eurostat, au dixième), part des dépenses publiques (calculée sur les
+  montants), milliards d'euros courants.
+- **Collecte** : un fichier (≈ 500 ko) chaque jour, archivé seulement s'il change.
+- **Page** : la section est placée avec D3.3 sous « Argent public et démocratie sociale »,
+  D3.3 n'étant plus seul entre les contre-pouvoirs et les libertés publiques.

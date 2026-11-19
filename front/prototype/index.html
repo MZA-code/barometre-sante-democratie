@@ -543,6 +543,37 @@
       </details>
     </section>
 
+    <!-- Contexte : dépenses publiques par fonction (Eurostat, COFOG) -->
+    <section id="budget" class="py-10 border-b border-rule" aria-labelledby="t-budget">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Contexte · non noté</p>
+      <h2 id="t-budget" class="mt-2 font-serif text-2xl font-semibold">Où va l'argent public</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Ce que dépensent l'État, les collectivités et la Sécurité sociale, fonction par fonction,
+        depuis 1995, d'après la classification internationale des fonctions des administrations
+        publiques (Eurostat). La France est comparée à la moyenne de l'Union européenne. Le
+        baromètre ne note pas ces choix&nbsp;: il les montre, chacun en tire ses conclusions.
+      </p>
+      <div class="mt-5 flex flex-wrap gap-2 text-xs" id="budget-unites" role="group" aria-label="Unité"></div>
+      <p id="budget-resume" class="mt-3 max-w-3xl text-sm text-ink2"></p>
+      <div id="budget-multiples" class="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4"></div>
+      <div class="mt-3 flex flex-wrap gap-5 text-xs text-ink2">
+        <span class="flex items-center gap-2"><svg width="18" height="10" aria-hidden="true"><line x1="1" y1="5" x2="17" y2="5" stroke="var(--series-1)" stroke-width="2"/></svg>France</span>
+        <span class="flex items-center gap-2"><svg width="18" height="10" aria-hidden="true"><line x1="1" y1="5" x2="17" y2="5" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4 3"/></svg>Moyenne de l'Union européenne (27 pays)</span>
+      </div>
+      <h3 class="mt-8 font-semibold" id="budget-titre-table">Comparaison avec nos voisins</h3>
+      <div class="mt-3 overflow-x-auto rounded-lg border border-rule bg-surface">
+        <table class="w-full text-left text-sm" id="budget-table"></table>
+      </div>
+      <p class="mt-3 max-w-3xl text-xs text-ink2">
+        Source&nbsp;: Eurostat, jeu <a class="underline" href="https://ec.europa.eu/eurostat/databrowser/view/gov_10a_exp/default/table" target="_blank" rel="noopener">gov_10a_exp</a>
+        (dépenses totales des administrations publiques, toutes administrations confondues),
+        téléchargé chaque jour et archivé à chaque mise à jour. Les dernières années sont
+        provisoires. Les montants sont en euros courants, non corrigés de l'inflation&nbsp;; la part
+        du PIB est celle publiée par Eurostat (arrondie au dixième). Les lignes «&nbsp;dont&nbsp;» sont
+        comprises dans la fonction qui les précède.
+      </p>
+    </section>
+
     <!-- D3.3 · Démocratie sociale : qui fixe les règles de l'assurance chômage -->
     <section id="d3-3" class="py-10 border-b border-rule" aria-labelledby="t-d3-3">
       <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D3.3 · Contre-pouvoirs et démocratie sociale</p>
@@ -2103,6 +2134,92 @@
       }
     }
 
+    // ---- Contexte : dépenses publiques par fonction (Eurostat COFOG) -------------
+    let budgetUnite = 'PC_GDP';
+    function drawBudget() {
+      const B = D.depenses_publiques, host = document.getElementById('budget-multiples');
+      if (!B || !B.annees.length) { host.replaceChildren(); return; }
+      const U = { PC_GDP: 'Part du PIB', PART: 'Part des dépenses publiques', MIO_EUR: 'Milliards d\'euros courants' };
+      const lib = B.libelles;
+      const serie = pays => B.annees.filter(a => a.pays === pays).sort((a, b) => a.annee - b.annee);
+      const fr = serie('FR'), ue = serie('EU27_2020');
+      const val = (a, f) => {
+        const v = a && a.valeurs[f]; if (!v) return null;
+        if (budgetUnite === 'PART') return v.MIO_EUR != null && a.valeurs.TOTAL?.MIO_EUR ? 100 * v.MIO_EUR / a.valeurs.TOTAL.MIO_EUR : null;
+        if (budgetUnite === 'MIO_EUR') return v.MIO_EUR != null ? v.MIO_EUR / 1000 : null;
+        return v.PC_GDP ?? null;
+      };
+      const fmt = v => v == null ? '—' : budgetUnite === 'MIO_EUR' ? `${num(Math.round(v))} Md€` : `${v.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} %`;
+      // Unités
+      document.getElementById('budget-unites').replaceChildren(...Object.entries(U).map(([u, l]) => {
+        const b = document.createElement('button'); b.type = 'button'; b.textContent = l;
+        b.className = 'rounded-full border px-3 py-1 ' + (budgetUnite === u ? 'border-[var(--series-1)] text-ink font-semibold' : 'border-rule text-ink2');
+        b.setAttribute('aria-pressed', String(budgetUnite === u));
+        b.addEventListener('click', () => { budgetUnite = u; drawBudget(); });
+        return b;
+      }));
+      const der = fr[fr.length - 1];
+      document.getElementById('budget-resume').textContent =
+        `En ${der.annee}${der.provisoire ? ' (données provisoires)' : ''}, les administrations publiques françaises ont dépensé ${num(Math.round(der.valeurs.TOTAL.MIO_EUR / 1000))} milliards d'euros, soit ${fmt2(der.valeurs.TOTAL.PC_GDP)} % du PIB${ue.length ? ` (moyenne de l'UE : ${fmt2(ue[ue.length - 1].valeurs.TOTAL.PC_GDP)} %)` : ''}.`;
+      function fmt2(v) { return v.toLocaleString('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }); }
+      // Petits multiples : une fonction par carte, France et moyenne de l'UE, échelle propre à chaque carte (depuis 0).
+      const FONCTIONS = ['GF10', 'GF07', 'GF09', 'GF04', 'GF01', 'GF03', 'GF02', 'GF05', 'GF06', 'GF08'];
+      host.replaceChildren();
+      for (const f of FONCTIONS) {
+        const card = document.createElement('figure'); card.className = 'rounded-lg border border-rule bg-surface p-3';
+        const cap = document.createElement('figcaption'); cap.className = 'text-sm font-semibold'; cap.textContent = lib[f];
+        const v = document.createElement('p'); v.className = 'text-xs text-ink2 tabnum';
+        v.textContent = `${der.annee} : ${fmt(val(der, f))} en France${ue.length && budgetUnite !== 'MIO_EUR' ? `, ${fmt(val(ue[ue.length - 1], f))} dans l'UE` : ''}`;
+        const box = document.createElement('div'); box.className = 'viz relative mt-2';
+        card.append(cap, v, box); host.appendChild(card);
+        const W = Math.max(200, box.clientWidth), H = 110, m = { t: 8, r: 6, b: 18, l: 34 };
+        const lignes = [[fr, 'var(--series-1)', null, 'France']];
+        if (budgetUnite !== 'MIO_EUR') lignes.push([ue, 'var(--muted)', '4 3', 'UE']);
+        const tout = lignes.flatMap(([s]) => s.map(a => val(a, f))).filter(x => x != null);
+        if (!tout.length) continue;
+        const a0 = fr[0].annee, a1 = der.annee, haut = Math.max(...tout) * 1.1;
+        const svg = svgIn(box, W, H, `${lib[f]} : ${fmt(val(fr[0], f))} en ${a0}, ${fmt(val(der, f))} en ${a1}`);
+        const x = a => m.l + (a - a0) / (a1 - a0) * (W - m.l - m.r), y = t => H - m.b - t / haut * (H - m.t - m.b);
+        el('line', { x1: m.l, x2: W - m.r, y1: y(0), y2: y(0), stroke: 'var(--axis)', 'stroke-width': 1 }, svg);
+        el('line', { x1: m.l, x2: W - m.r, y1: y(haut / 1.1), y2: y(haut / 1.1), stroke: 'var(--rule)', 'stroke-width': 1 }, svg);
+        text(svg, m.l - 4, y(0) + 4, '0', { 'text-anchor': 'end', 'font-size': 10 });
+        text(svg, m.l - 4, y(haut / 1.1) + 4, budgetUnite === 'MIO_EUR' ? num(Math.round(haut / 1.1)) : (haut / 1.1).toLocaleString('fr-FR', { maximumFractionDigits: 1 }), { 'text-anchor': 'end', 'font-size': 10 });
+        text(svg, m.l, H - 4, String(a0), { 'font-size': 10 });
+        text(svg, W - m.r, H - 4, String(a1), { 'text-anchor': 'end', 'font-size': 10 });
+        for (const [s, coul, dash] of [...lignes].reverse()) {
+          const pts = s.map(a => [a.annee, val(a, f)]).filter(([, t]) => t != null);
+          el('path', { d: pts.map(([a, t], i) => `${i ? 'L' : 'M'}${x(a)},${y(t)}`).join(''), fill: 'none', stroke: coul, 'stroke-width': 2, ...(dash ? { 'stroke-dasharray': dash } : {}) }, svg);
+        }
+        const guide = el('line', { y1: m.t, y2: H - m.b, stroke: 'var(--axis)', 'stroke-width': 1, opacity: 0 }, svg);
+        const hit = el('rect', { x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: 'transparent' }, svg);
+        hit.addEventListener('pointermove', e => {
+          const r = svg.getBoundingClientRect(), px = (e.clientX - r.left) * W / r.width;
+          const a = Math.max(a0, Math.min(a1, Math.round(a0 + (px - m.l) / (W - m.l - m.r) * (a1 - a0))));
+          guide.setAttribute('x1', x(a)); guide.setAttribute('x2', x(a)); guide.setAttribute('opacity', 1);
+          const af = fr.find(z => z.annee === a), au = ue.find(z => z.annee === a);
+          const rows = [{ label: `${lib[f]}, ${a}${af?.provisoire ? ' (provisoire)' : ''}`, strong: true }, { value: fmt(val(af, f)), label: 'France' }];
+          if (budgetUnite !== 'MIO_EUR') rows.push({ value: fmt(val(au, f)), label: 'moyenne de l\'UE' });
+          for (const sub of Object.keys(lib).filter(k => k.startsWith(f) && k !== f)) rows.push({ value: fmt(val(af, sub)), label: `${lib[sub]} (France)` });
+          showTip(rows, e.pageX, e.pageY);
+        });
+        hit.addEventListener('pointerleave', () => { guide.setAttribute('opacity', 0); hideTip(); });
+      }
+      // Tableau : dernière année commune, France, UE et trois voisins.
+      const PAYS = [['FR', 'France'], ['EU27_2020', 'UE (27)'], ['DE', 'Allemagne'], ['IT', 'Italie'], ['ES', 'Espagne']];
+      const annee = Math.min(...PAYS.map(([p]) => Math.max(0, ...serie(p).map(a => a.annee))).filter(Boolean));
+      const ligne = p => B.annees.find(a => a.pays === p && a.annee === annee);
+      document.getElementById('budget-titre-table').textContent = `Comparaison avec nos voisins en ${annee} (${{ PC_GDP: 'en part du PIB', PART: 'en part des dépenses publiques', MIO_EUR: 'en milliards d\'euros courants' }[budgetUnite]})`;
+      const tbl = document.getElementById('budget-table'); tbl.replaceChildren();
+      const head = tbl.createTHead().insertRow();
+      for (const h of ['Fonction', ...PAYS.map(([, n]) => n)]) { const th = document.createElement('th'); th.className = 'py-2 px-3 font-medium text-ink2 border-b border-rule'; th.textContent = h; head.appendChild(th); }
+      const body = tbl.createTBody();
+      for (const f of Object.keys(lib).filter(k => k !== 'TOTAL' || budgetUnite !== 'PART')) {
+        const tr = body.insertRow(), sous = /^dont /.test(lib[f]);
+        const c0 = tr.insertCell(); c0.className = 'py-1.5 px-3 border-b border-rule' + (sous ? ' pl-8 text-ink2' : f === 'TOTAL' ? ' font-semibold' : ''); c0.textContent = lib[f];
+        for (const [p] of PAYS) { const td = tr.insertCell(); td.className = 'py-1.5 px-3 border-b border-rule tabnum whitespace-nowrap' + (sous ? ' text-ink2' : ''); td.textContent = fmt(val(ligne(p), f)); }
+      }
+    }
+
     // ---- D2.5 : questions écrites ------------------------------------------------
     function drawQuestions() {
       const Q = D.questions_ecrites; if (!Q) return;
@@ -2864,7 +2981,8 @@
       ["Vue d'ensemble", 'gauge-high', [['t-question', 'Encore une démocratie ?', 'circle-question'], ['t-definition', "Ce qu'est une démocratie", 'book-open-reader'], ['t-indice', "Par rapport à d'habitude", 'gauge-high'], ['t-contre-pouvoirs', 'Contre-pouvoirs', 'scale-balanced'], ['t-dims', 'Indicateurs suivis', 'list-check']]],
       ['D1 · Élections et alternance', 'check-to-slot', [['t-d1', 'D1.1–D1.2 · Règles électorales et reports', 'check-to-slot']]],
       ['D2 · Place du Parlement', 'landmark', [['titre', "D2.1 · L'essentiel", 'landmark'], ['t-evolution', 'Depuis 1959', 'chart-line'], ['t-composantes', 'De quoi est fait le chiffre', 'puzzle-piece'], ['t-leg', 'Législature par législature', 'table-columns'], ['t-493', 'Les recours au 49.3', 'forward'], ['t-d2-2', 'D2.2 · Procédure accélérée', 'bolt'], ['t-d2-3', 'D2.3 · Pétitions citoyennes', 'file-signature'], ['t-d2-4', 'D2.4 · Crédits annulés par décret', 'scissors'], ['t-d2-5', 'D2.5 · Questions écrites sans réponse', 'envelope-open-text']]],
-      ["D3 · Contre-pouvoirs et État de droit", 'gavel', [['t-d3', "D3.1 · Régimes d'exception", 'triangle-exclamation'], ['t-d3-2', 'D3.2 · Lois censurées', 'gavel'], ['t-d3-3', 'D3.3 · Règles du chômage fixées par l\'État', 'handshake-slash']]],
+      ["D3 · Contre-pouvoirs et État de droit", 'gavel', [['t-d3', "D3.1 · Régimes d'exception", 'triangle-exclamation'], ['t-d3-2', 'D3.2 · Lois censurées', 'gavel']]],
+      ['Argent public et démocratie sociale', 'coins', [['t-budget', "Où va l'argent public (contexte)", 'coins'], ['t-d3-3', 'D3.3 · Règles du chômage fixées par l\'État', 'handshake-slash']]],
       ['D4 · Libertés publiques', 'people-group', [['t-d4-2', 'D4.2 · Interdictions de manifester', 'ban'], ['t-d4', 'D4.1 · Dissolutions', 'users-slash']]],
       ['Regards extérieurs (non noté)', 'binoculars', [['t-onu', "Déclarations de l'ONU", 'globe'], ['t-presse', 'Presse étrangère', 'newspaper']]],
       ['D5 · Pluralisme et information', 'tower-broadcast', [['t-d5-1', 'D5.1 · Temps de parole', 'microphone-lines'], ['t-partis', 'Temps de parole par parti', 'microphone-lines'], ['t-d5-2', 'D5.2 · Journalistes inquiétés', 'pen-nib'], ['t-annuels', 'D5.3 · Classement RSF', 'ranking-star']]],
@@ -2904,7 +3022,7 @@
           const [cl, texte] = decoupe(label);
           const t = document.createElement('span'); t.textContent = texte;
           if (cl) { const sc = document.createElement('span'); sc.className = 'code'; sc.textContent = cl; a.append(sc, t); } else a.append(t);
-          if (!cl && codes) a.classList.add('toc-sub');  // sous-partie de l'entrée codée qui précède
+          if (!cl && codes && liste.querySelector('.code')) a.classList.add('toc-sub');  // sous-partie de l'entrée codée qui précède
           liste.appendChild(a); tocLinks.push(a);
         }
         g.appendChild(liste); host.appendChild(g);
@@ -2949,7 +3067,7 @@
     let spyRaf; addEventListener('scroll', () => { cancelAnimationFrame(spyRaf); spyRaf = requestAnimationFrame(spy); }, { passive: true });
 
     // ---- Rendu -------------------------------------------------------------
-    const render = () => { drawReperes(); drawOpinion(); drawTelechargements(); drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawPetitions(); drawAnnulations(); drawQuestions(); drawChomage(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
+    const render = () => { drawReperes(); drawOpinion(); drawTelechargements(); drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawPetitions(); drawAnnulations(); drawQuestions(); drawChomage(); drawBudget(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
     render(); spy();
     let raf; addEventListener('resize', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { render(); current = null; spy(); }); });
   })();

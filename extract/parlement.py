@@ -40,6 +40,7 @@ from extract import (
     constit,
     d7,
     ddd,
+    depenses_publiques,
     dila,
     elections,
     exception,
@@ -215,6 +216,7 @@ def extract_all(conn: sqlite3.Connection, raw_dir: Path) -> list[FactDraft]:
         + budget.extract(conn, raw_dir)
         + questions_ecrites.extract(conn, raw_dir)
         + regles_chomage.extract(conn, raw_dir)
+        + depenses_publiques.extract(conn, raw_dir)
     )
 
 

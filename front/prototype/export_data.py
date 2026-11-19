@@ -20,6 +20,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from extract.depenses_publiques import LIBELLES as LIBELLES_COFOG  # noqa: E402
 from scoring.grid import load_grid  # noqa: E402
 from scoring.indice import composer, indice  # noqa: E402
 from scoring.metrics import load_legislatures  # noqa: E402
@@ -523,6 +524,16 @@ def main(argv=None) -> int:
                 " ORDER BY occurred_on, id"
             )
         ],
+        "depenses_publiques": {
+            "libelles": LIBELLES_COFOG,
+            "annees": [
+                json.loads(a)
+                for (a,) in conn.execute(
+                    "SELECT attributes FROM facts WHERE fact_type = 'depenses_fonction_annee'"
+                    " ORDER BY occurred_on, id"
+                )
+            ],
+        },
         "defenseur_droits": [
             {"date": d, "titre": t, **json.loads(a)}
             for d, t, a in conn.execute(

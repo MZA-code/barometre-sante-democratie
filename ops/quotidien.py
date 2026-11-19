@@ -79,6 +79,7 @@ COLLECTES = (
     # Défenseur des droits : nouvelles fiches seulement (30 s entre deux requêtes, robots.txt)
     ("collect-ddd", ()),
     ("collect-rapports", ()),  # PDF cités par les relevés manuels, archivés une fois
+    ("collect-eurostat", ()),  # dépenses publiques par fonction (≈ 500 ko, si changé)
 )
 # Sources interrogées pour savoir si le réseau répond (une seule suffit).
 HOTES_TEST = ("echanges.dila.gouv.fr", "www.data.gouv.fr")
