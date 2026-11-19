@@ -1,6 +1,6 @@
 # Feuille de route
 
-Mise à jour : 7 novembre 2026. Choix détaillés et constats : [DECISIONS.md](DECISIONS.md).
+Mise à jour : 19 novembre 2026. Choix détaillés et constats : [DECISIONS.md](DECISIONS.md).
 
 ## Où en est le projet
 
@@ -21,8 +21,11 @@ et peut désormais être mise en ligne automatiquement sur un hébergement stati
 | D1.2 | Scrutins reportés (y compris dans le corps des lois) | Journal officiel | 1990 |
 | D2.1 | Contournement du Parlement (49.3, ordonnances) | Assemblée nationale + seed avant 2012 | 1958 |
 | D2.2 | Procédure accélérée | Assemblée nationale, Sénat | 1978 |
+| D2.6 | Décrets d'application non publiés six mois après la loi | baromètre de l'application des lois (AN) | 2002 |
 | D3.1 | Régimes d'exception | Journal officiel + seed | 1958 |
 | D3.2 | Lois censurées par le Conseil constitutionnel | DILA CONSTIT | 1958 |
+| D3.4 | Condamnations par la Cour européenne des droits de l'homme | HUDOC | 1981 |
+| D3.5 | Actes du Gouvernement annulés par le Conseil d'État (contre-pouvoir) | justice administrative | 2021 |
 | D4.1 | Dissolutions administratives | Journal officiel | 1990 |
 | D4.2* | Interdictions de manifester contestées devant le juge | justice administrative | 2022 |
 | D5.1 | Temps de parole de l'exécutif | Arcom | 2025 |
@@ -45,6 +48,10 @@ et peut désormais être mise en ligne automatiquement sur un hébergement stati
   (10 et 18 septembre, 2 octobre 2025 ; 17, 24, 31 octobre et 5 novembre 2026), chaque chiffre
   retrouvé avec son attribution dans un article en accès libre.
 - [x] Participation aux élections législatives.
+- [x] **Où va l'argent public** (19 novembre) : dépenses publiques par fonction 1995-2024
+  (Eurostat COFOG), France, UE, Allemagne, Italie, Espagne ; rangé avec D3.3.
+- [x] **Prisons** (19 novembre) : taux d'occupation depuis 2008 (Eurostat), mois de 2026
+  (ministère de la Justice), classement des pays de l'UE.
 - [x] **Défenseur des droits** (7 novembre) : décisions et rappels à la loi classés « Manifestation »
   ou « Maintien de l'ordre public », collectés chaque jour (30 s entre deux requêtes).
 - [x] **Usage de la force** (7 novembre) : LBD et grenades de désencerclement 2017-2024 (IGPN),
@@ -131,6 +138,13 @@ les saisies manuelles aient été relues.
 - [ ] **Alerte** : signaler dans `nouveautes.md` les jours où la presse étrangère parle beaucoup
   de manifestations en France, pour savoir quand compléter les relevés manuels.
 - [ ] Nouvelles sources : CNCDH, Défenseur des droits, CGLPL.
+- [ ] **Vote bloqué (art. 44.3)** : absent des données structurées de l'Assemblée (dossiers,
+  scrutins) ; relevé manuel dans les comptes rendus des deux chambres à faire.
+- [ ] **Avis du CSM sur les nominations du parquet** : aucun passé outre depuis 2008 selon les
+  rapports parlementaires ; relever les avis défavorables année par année dans les rapports
+  d'activité du CSM (PDF).
+- [ ] **Concentration des médias** : pas de série ouverte des audiences par propriétaire ;
+  `config/medias_groupes.yaml` (D7) reste à vérifier avant toute réutilisation.
 - [ ] Historique plus long : participation 2002-2012, journalistes inquiétés avant 2023, temps de
   parole avant 2025.
 - [ ] Performance : cache du scan CNIL, factorisation des caches de scan (reconstruction ≈ 15 s,
