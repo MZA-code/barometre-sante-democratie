@@ -128,14 +128,16 @@ def issue(solution: str, appel_administration: bool = False) -> str:
     return "autre"
 
 
+def prefiltre(data: bytes) -> bool:
+    """Pré-filtre sur les octets : la très grande majorité des décisions n'en parle pas. Une
+    décision peut ne parler que de « cortèges, défilés et rassemblements » (TA Paris,
+    n° 2306532, 28 mars 2023) : ces mots ouvrent aussi la lecture ; la sélection reste celle
+    de motifs(). Sert aussi à l'extrait du mois en cours (collectors/justice_admin.py)."""
+    return b"211-4" in data or (b"nterdi" in data and any(m in data for m in PREFILTRE_MANIF))
+
+
 def scan_xml(data: bytes) -> dict | None:
-    # Pré-filtre sur les octets : la très grande majorité des décisions n'en parle pas. Une
-    # décision peut ne parler que de « cortèges, défilés et rassemblements » (TA Paris,
-    # n° 2306532, 28 mars 2023) : ces mots ouvrent aussi la lecture ; la sélection reste celle
-    # de motifs().
-    if b"211-4" not in data and not (
-        b"nterdi" in data and any(mot in data for mot in PREFILTRE_MANIF)
-    ):
+    if not prefiltre(data):
         return None
     root = ET.fromstring(data)
     node = root.find(".//Texte_Integral")

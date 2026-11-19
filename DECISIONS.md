@@ -344,7 +344,7 @@ Choix de conception et réponses aux questions ouvertes du brief (§10).
   tribunaux administratifs depuis juin 2022 (≈ 75 Mo par mois) ; 117 archives, 3,6 Go au
   5 novembre 2026. Licence Ouverte 2.0 et CGU (ne pas dénaturer, ne pas réidentifier). Les
   cours d'appel ne sont pas collectées (l'appel d'un référé-liberté va au Conseil d'État).
-  **Seuls les mois terminés** sont archivés, une fois chacun : l'archive du mois en cours
+  **Seuls les mois terminés** sont archivés (mois en cours : voir 2026-11-19), une fois chacun : l'archive du mois en cours
   grossit chaque jour (≈ 27 Go par an en quotidien). Constat : les archives passées sont
   régénérées de temps en temps (décisions de mars 2023 datées de septembre 2026) ; elles ne
   sont pas retéléchargées.
@@ -1120,3 +1120,24 @@ sensibilité et avant application. Données au 11/11/2026.
   décisions.
 - Les deux indicateurs ont plus de cinq ans d'historique : ils entrent dans l'écart à
   l'habituel dès leur premier calcul.
+
+## 2026-11-19 — D4.2* : décisions du mois en cours
+
+- **Constat** : au 19 novembre, aucune décision de novembre n'apparaissait, alors que la
+  justice administrative en avait déjà publié 71 (68 des tribunaux, 3 du Conseil d'État). Seuls
+  les mois terminés étaient archivés : un mois n'apparaissait qu'au début du suivant.
+- **Choix** : chaque jour, l'archive du mois en cours est téléchargée (≈ 25 Mo à mi-mois pour
+  les tribunaux) mais seules les décisions qui passent le pré-filtre de
+  `extract/manifestations.py` (`prefiltre`, ≈ 2 % des fichiers, ≈ 2,4 Mo à mi-mois) sont
+  archivées, dans `<archive>.extrait.zip`. Chaque décision y est copiée **octet pour octet** ;
+  le zip est construit de façon déterministe et une version n'est ajoutée que si son contenu
+  change (`store_if_content_changed`). Coût : quelques centaines de Mo par an au plus, au lieu
+  des ≈ 27 Go d'un archivage complet quotidien.
+- **Écart assumé** à « le fichier archivé est l'original reçu » : l'enveloppe zip est la nôtre,
+  pas son contenu. Le pré-filtre étant plus large que la sélection, une évolution de
+  `motifs()` reste rejouable sur l'extrait ; un élargissement du pré-filtre, lui, ne vaudrait
+  que pour les mois terminés (archives complètes) et les jours suivants.
+- **Mois terminé** : l'archive complète est collectée comme avant ; une décision présente dans
+  les deux n'est comptée qu'une fois (clé juridiction + fichier, déjà en place).
+- **Page** : le trimestre en cours reste marqué « en cours », avec la date de la dernière
+  collecte (« données au 19 novembre 2026 »).

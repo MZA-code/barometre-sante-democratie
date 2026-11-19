@@ -868,16 +868,21 @@ def interdictions_manifester(conn) -> dict:
                 "issue": a["issue"],
             }
         )
-    # Dernier mois couvert : le plus récent des mois archivés (AAAAMM dans le nom des archives).
-    months = [
-        m.group(1)
-        for (ext,) in conn.execute(
-            "SELECT external_id FROM raw_documents WHERE source_id = 'justice_admin'"
-        )
-        if (m := re.search(r"_(\d{6})\.zip$", ext))
-    ]
+    # Dernier mois couvert : le plus récent des mois archivés (AAAAMM dans le nom des archives,
+    # complètes ou extrait du mois en cours). Pour un mois en cours, « à jour au » donne la date
+    # de la dernière collecte de son extrait.
+    months: dict[str, str | None] = {}
+    for ext, fetched in conn.execute(
+        "SELECT external_id, fetched_at FROM raw_documents WHERE source_id = 'justice_admin'"
+    ):
+        if m := re.search(r"_(\d{6})(\.extrait)?\.zip$", ext):
+            if m.group(2) is None:
+                months[m.group(1)] = None  # mois complet
+            elif months.get(m.group(1), "") is not None:
+                months[m.group(1)] = max(months.get(m.group(1), ""), fetched[:10])
     dernier = max(months) if months else None
     return {
+        "a_jour_au": months[dernier] if dernier else None,
         # Tribunaux administratifs publiés depuis juin 2022 : avant le 3e trimestre 2022, la
         # série ne contient que le Conseil d'État et paraîtrait faible à tort.
         "trimestres": [trimestres[k] for k in sorted(trimestres) if k >= "2022-T3"],

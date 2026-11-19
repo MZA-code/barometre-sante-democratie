@@ -578,7 +578,8 @@
         Conseil d'État depuis juin 2021). On ne voit ici que les interdictions contestées en
         justice, pas toutes les interdictions&nbsp;; une même interdiction peut donner lieu à
         plusieurs décisions. Le graphique commence au troisième trimestre 2022, premier trimestre
-        couvert par les deux sources&nbsp;; un mois n'est intégré qu'une fois terminé.
+        couvert par les deux sources&nbsp;; les décisions du mois en cours sont ajoutées chaque
+        jour, au fil de leur publication.
       </p>
       <p class="mt-2 max-w-3xl text-sm text-ink2">
         <strong class="text-ink">Une approximation.</strong> Le nombre total d'interdictions de
@@ -2314,7 +2315,7 @@
         }
         if (partiel) text(svg, Math.min(cx, W - m.r - 22), y(total(t)) - 6, 'en cours', { 'text-anchor': 'middle' });
         const rows = () => [{ label: `${q === 'T1' ? '1er' : q.slice(1) + 'e'} trimestre ${yr} : ${total(t)} décision${total(t) > 1 ? 's' : ''}`, strong: true },
-          ...(partiel ? [{ label: `Trimestre incomplet : données jusqu'à ${monthLong(M.dernier_mois + '-01')}`, muted: true }] : []),
+          ...(partiel ? [{ label: `Trimestre incomplet : données ${M.a_jour_au ? `au ${dateLong(M.a_jour_au)}` : `jusqu'à ${monthLong(M.dernier_mois + '-01')}`}`, muted: true }] : []),
           ...Object.entries(LAB).filter(([k]) => t[k]).map(([k, l]) => ({ label: `${t[k]} ${l}`, muted: true }))];
         g.addEventListener('pointermove', e => showTip(rows(), e.pageX, e.pageY));
         g.addEventListener('pointerleave', hideTip);

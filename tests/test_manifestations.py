@@ -253,18 +253,48 @@ INDEX = """
 """
 
 
+def zip_of(files: dict[str, bytes]) -> bytes:
+    out = io.BytesIO()
+    with zipfile.ZipFile(out, "w") as z:
+        for name, data in files.items():
+            z.writestr(name, data)
+    return out.getvalue()
+
+
+MANIF_XML = b"<D>l'arr\xc3\xaat\xc3\xa9 interdisant la manifestation</D>"
+AUTRE_XML = b"<D>permis de construire</D>"
+
+
 def test_only_completed_months_are_collected_once(conn, tmp_path):
-    calls = []
+    novembre = {"DTA_1.xml": MANIF_XML, "DTA_2.xml": AUTRE_XML}
 
     @contextmanager
     def web(url):
-        calls.append(url)
-        yield io.BytesIO(INDEX.encode() if url.endswith("/DTA/") else b"zip " + url.encode())
+        if url.endswith("/DTA/"):
+            yield io.BytesIO(INDEX.encode())
+        elif url.endswith("TA_202611.zip"):
+            yield io.BytesIO(zip_of(novembre))
+        else:
+            yield io.BytesIO(b"zip " + url.encode())
 
     today = D(2026, 11, 5)
-    got = justice_admin.collect(conn, tmp_path / "raw", ("DTA",), opener=web, today=today)
-    assert got == ["TA_202609.zip", "TA_202610.zip"]  # novembre 2026 n'est pas terminé
-    assert justice_admin.collect(conn, tmp_path / "raw", ("DTA",), opener=web, today=today) == []
+    raw = tmp_path / "raw"
+    got = justice_admin.collect(conn, raw, ("DTA",), opener=web, today=today)
+    # novembre 2026 n'est pas terminé : seul son extrait est archivé
+    assert got == ["TA_202609.zip", "TA_202610.zip", "TA_202611.extrait.zip"]
+    assert justice_admin.collect(conn, raw, ("DTA",), opener=web, today=today) == []
+    path = conn.execute(
+        "SELECT path FROM raw_documents WHERE external_id = 'TA_202611.extrait.zip'"
+    ).fetchone()[0]
+    with zipfile.ZipFile(raw / path) as z:
+        assert z.namelist() == ["DTA_1.xml"]  # seule la décision qui parle de manifestation
+        assert z.read("DTA_1.xml") == MANIF_XML  # copiée octet pour octet
+
+    novembre["DTA_3.xml"] = MANIF_XML  # l'archive du mois grossit : nouvelle version
+    got = justice_admin.collect(conn, raw, ("DTA",), opener=web, today=today)
+    assert got == ["TA_202611.extrait.zip"]
+    novembre["DTA_4.xml"] = AUTRE_XML  # rien de pertinent en plus : pas de nouvelle version
+    assert justice_admin.collect(conn, raw, ("DTA",), opener=web, today=today) == []
 
 
 def test_decision_without_the_word_manifestation_is_read():

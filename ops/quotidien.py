@@ -57,7 +57,7 @@ COLLECTES = (
     ("collect-jorf", ()),
     ("collect-constit", ()),
     ("collect-cnil", ()),
-    ("collect-justice", ()),  # seulement les mois terminés : un téléchargement par mois
+    ("collect-justice", ()),  # mois terminés une fois ; extrait du mois en cours chaque jour
     ("collect-arcom", ()),  # un fichier par mois, publié ≈ 3 mois après la diffusion
     ("collect-rsf", ()),  # une édition par an
     ("collect-cnctr", ()),  # un rapport par an
