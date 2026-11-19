@@ -96,3 +96,14 @@ def test_fait_presse_d7_marque_verifie(monkeypatch, tmp_path):
         for f in export_data.faits_indicateur(conn, export_data.D7)
     }
     assert v == {"fait_presse_valide": "oui", "constat_institutionnel": "non"}
+
+
+def test_version_code_hors_git(tmp_path):
+    import sys
+
+    sys.path.insert(0, "front/prototype")
+    import export_data
+
+    assert export_data.version_code(tmp_path) is None
+    v = export_data.version_code()
+    assert v is None or (len(v["commit"]) >= 7 and v["commit_complet"].startswith(v["commit"]))

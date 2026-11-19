@@ -2810,9 +2810,19 @@
       span.appendChild(document.createTextNode(` — ${s.licence}`));
       li.append(i, span); src.appendChild(li);
     }
-    document.getElementById('footer').textContent =
+    const pied = document.getElementById('footer');
+    pied.textContent =
       `Prototype. Données arrêtées au ${dateLong(D.fin_donnees)}, archive du ${dateLong(g.etat_archive.slice(0, 10))}. ` +
       `Chaque chiffre est reconstruit à l'identique depuis les documents officiels archivés.`;
+    if (g.version) {
+      const v = document.createElement('p'); v.className = 'mt-1';
+      const quand = new Date(g.version.date).toLocaleString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' });
+      const a = document.createElement('a'); a.className = 'underline tabular-nums';
+      a.href = `https://github.com/MZA-code/barometre-sante-democratie/commit/${g.version.commit_complet}`; a.target = '_blank'; a.rel = 'noopener';
+      a.textContent = g.version.commit;
+      v.append('Version du code : ', a, ` du ${quand}.`);
+      pied.appendChild(v);
+    }
 
     // ---- Date de mise à jour (dernière collecte) ----------------------------------
     const majDate = (month) => new Date(g.etat_archive).toLocaleDateString('fr-FR', { day: 'numeric', month, year: 'numeric', timeZone: 'Europe/Paris' });

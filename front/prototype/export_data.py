@@ -14,6 +14,7 @@ import csv
 import json
 import re
 import statistics
+import subprocess
 import sys
 from pathlib import Path
 
@@ -89,6 +90,23 @@ SERIES = (
     "nb_ordonnances_art38",
     "nb_lois_hors_conventions",
 )
+
+
+def version_code(racine: Path = ROOT) -> dict | None:
+    """Commit du code qui a produit la page (identifiant court et date), ou None hors git."""
+    try:
+        sortie = subprocess.run(
+            ["git", "-C", str(racine), "log", "-1", "--format=%h %H %cI"],
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=10,
+        ).stdout.split()
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if len(sortie) != 3:
+        return None
+    return {"commit": sortie[0], "commit_complet": sortie[1], "date": sortie[2]}
 
 
 def date_longue(iso: str) -> str:
@@ -369,6 +387,7 @@ def main(argv=None) -> int:
             "seuils_figes": indicator.thresholds_frozen,
             "echelle": grid.scale_meaning,
             "etat_archive": conn.execute("SELECT max(fetched_at) FROM raw_documents").fetchone()[0],
+            "version": version_code(),
         },
         "formule": {"numerateur": list(ratio.numerator), "denominateur": list(ratio.denominator)},
         "fin_donnees": end,
