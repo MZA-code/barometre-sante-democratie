@@ -43,6 +43,7 @@ DIMENSIONS = (
     "D2.petitions_classees",
     "D2.annulations_credits",
     "D2.questions_ecrites",
+    "D2.application_lois",
     "D3.regimes_exception",
     "D3.lois_censurees",
     "D3.condamnations_cedh",
@@ -527,6 +528,7 @@ def main(argv=None) -> int:
             )
         ],
         "cedh": condamnations_cedh(conn),
+        "application_lois": application_lois(conn),
         "depenses_publiques": {
             "libelles": LIBELLES_COFOG,
             "annees": [
@@ -854,6 +856,40 @@ def traitements_cnil(conn) -> dict:
         "decrets_reserves": reserves,
         "nb_avis": avis[0] or 0,
         "nb_avis_reserves": avis[1] or 0,
+    }
+
+
+def application_lois(conn) -> dict:
+    """D2.6 : mesures par année d'échéance, lois qui attendent le plus de décrets."""
+    par_annee: dict[int, dict] = {}
+    lois: dict[str, dict] = {}
+    for day, ftype, attrs in conn.execute(
+        "SELECT occurred_on, fact_type, attributes FROM facts"
+        " WHERE indicator_id = 'D2.application_lois'"
+    ):
+        a = json.loads(attrs)
+        annee = int(day[:4])
+        e = par_annee.setdefault(
+            annee, {"annee": annee, "echues": 0, "hors_delai": 0, "en_attente": 0, "delais": []}
+        )
+        e["echues"] += 1
+        e["hors_delai"] += ftype == "mesure_non_appliquee_delai"
+        if a["etat"] != "appliqué":
+            e["en_attente"] += 1
+            loi = lois.setdefault(
+                a["loi"],
+                {"titre": a["loi_titre"], "publication": a["publication"], "url": a["url"], "n": 0},
+            )
+            loi["n"] += 1
+        elif a["delai_jours"] is not None:
+            e["delais"].append(a["delai_jours"])
+    for e in par_annee.values():
+        delais = e.pop("delais")
+        e["delai_median"] = statistics.median(delais) if delais else None
+    return {
+        "par_annee": sorted(par_annee.values(), key=lambda e: e["annee"]),
+        "lois_en_attente": sorted(lois.values(), key=lambda v: (-v["n"], v["publication"]))[:25],
+        "nb_lois_en_attente": len(lois),
     }
 
 

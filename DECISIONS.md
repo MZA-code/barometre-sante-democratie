@@ -1178,3 +1178,20 @@ sensibilité et avant application. Données au 11/11/2026.
   requête, n'est pas comparé). Comme pour l'extrait D4.2*, l'enveloppe est la nôtre, chaque
   résultat est recopié tel que reçu.
 - **Indice** : plus de cinq ans d'historique, l'indicateur entre dans l'écart à l'habituel.
+
+## 2026-11-19 — D2.6 : application des lois
+
+- **Mesure** : part des mesures d'application (décrets attendus) non publiées six mois après
+  la loi, délai que le Gouvernement s'est fixé (circulaire du 29 février 2008). Une loi votée
+  sans ses décrets ne s'applique pas : l'indicateur mesure le respect de la volonté du
+  Parlement par l'exécutif.
+- **Source** : baromètre de l'application des lois de l'Assemblée nationale (LexImpact,
+  Licence Ouverte 2.0) : 2 065 lois depuis juin 2002, 15 278 mesures. Au 19 novembre 2026,
+  14 249 mesures arrivées à échéance, dont 69 % non publiées dans les six mois ; de 40 %
+  (2018) à 85 % (2014) selon l'année.
+- **Écartées** : mesures « sans objet » (706), mesures dont l'échéance n'est pas passée à la
+  date du relevé, mesures appliquées sans délai renseigné (une dizaine).
+- **Collecte** : deux CSV (≈ 8,5 Mo) republiés chaque jour à la même adresse ; relevé une
+  fois par mois (28 jours), archivé seulement s'il change.
+- **Limites** : une loi de finances ou de financement de la sécurité sociale prévoit beaucoup
+  de mesures et pèse plus qu'une loi courte ; chaque mesure compte pour une.

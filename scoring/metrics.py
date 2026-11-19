@@ -77,6 +77,8 @@ COUNT_METRICS = (
     "nb_journalistes_mesures",
     "nb_journalistes_convoques",
     "nb_questions_echues",
+    "nb_mesures_echues",
+    "nb_mesures_non_appliquees_delai",
     "nb_questions_sans_reponse_delai",
 )
 
@@ -262,6 +264,11 @@ class WindowState:
             self.counts["nb_questions_echues"] += delta
             if event.fact_type == "question_ecrite_sans_reponse_delai":
                 self.counts["nb_questions_sans_reponse_delai"] += delta
+        elif event.fact_type in ("mesure_appliquee_delai", "mesure_non_appliquee_delai"):
+            # D2.6 : mesures d'application arrivées à l'échéance de six mois.
+            self.counts["nb_mesures_echues"] += delta
+            if event.fact_type == "mesure_non_appliquee_delai":
+                self.counts["nb_mesures_non_appliquees_delai"] += delta
         elif event.fact_type == "texte_electoral":
             self.counts["nb_textes_electoraux"] += delta
             self.counts["nb_textes_electoraux_avant_scrutin"] += delta * event.avant_scrutin

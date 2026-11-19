@@ -9,7 +9,7 @@ GRID ?= config/grid.v0.yaml
 AN_LEGISLATURES ?= 17 16 15 14
 RUN  := uv run --frozen
 
-.PHONY: css help install init collect collect-seed collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-an collect-datagouv collect-gdelt collect-gdelt-trad collect-titres collect-rss collect-petitions collect-questions collect-decisions publier-issues collect-ddd collect-rapports collect-eurostat collect-cedh verify-raw extract metrics score \
+.PHONY: css help install init collect collect-seed collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-an collect-datagouv collect-gdelt collect-gdelt-trad collect-titres collect-rss collect-petitions collect-questions collect-decisions publier-issues collect-ddd collect-rapports collect-eurostat collect-cedh collect-application verify-raw extract metrics score \
 	rebuild reproducible controle echantillon prototype prototype-data publication publication-web deployer nouveautes quotidien planifier deplanifier etat lint test
 
 help:
@@ -25,7 +25,7 @@ install:
 init:
 	$(RUN) python -m storage.db init --db $(DB)
 
-collect: collect-seed collect-an collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-datagouv collect-gdelt collect-gdelt-trad collect-titres collect-rss collect-petitions collect-questions collect-ddd collect-rapports collect-eurostat collect-cedh
+collect: collect-seed collect-an collect-legi collect-jorf collect-constit collect-cnil collect-senat collect-justice collect-arcom collect-rsf collect-cnctr collect-datagouv collect-gdelt collect-gdelt-trad collect-titres collect-rss collect-petitions collect-questions collect-ddd collect-rapports collect-eurostat collect-cedh collect-application
 
 collect-seed: init
 	$(RUN) python -m collectors.seed --db $(DB) --raw-dir $(RAW)
@@ -94,6 +94,10 @@ collect-eurostat: init
 # D3.4 : arrêts de la Cour européenne des droits de l'homme contre la France (HUDOC).
 collect-cedh: init
 	$(RUN) python -m collectors.cedh --db $(DB) --raw-dir $(RAW)
+
+# D2.6 : baromètre de l'application des lois (Assemblée nationale), une fois par mois.
+collect-application: init
+	$(RUN) python -m collectors.application_lois --db $(DB) --raw-dir $(RAW)
 
 collect-rsf: init
 	$(RUN) python -m collectors.rsf --db $(DB) --raw-dir $(RAW)

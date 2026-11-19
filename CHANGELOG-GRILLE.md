@@ -7,6 +7,12 @@ ci-dessous et un recalcul complet de l'historique (`make rebuild GRID=config/gri
 ## v0 — 2026-10-26 (brouillon, non figée)
 
 - Ajout du 2026-11-19 (avant tout gel ; aucun seuil, aucune note) :
+  - **D2.6 — Lois non appliquées six mois après leur publication** (`D2.application_lois`) :
+    `ratio_mesures_non_appliquees_delai = nb_mesures_non_appliquees_delai /
+    nb_mesures_echues` ; une mesure d'application par fait, datée de son échéance
+    (publication de la loi + six mois) ; mesures sans objet, en délai ou sans délai
+    renseigné écartées. Historique depuis décembre 2002 (baromètre de l'application des lois
+    de l'Assemblée nationale).
   - **D3.4 — Condamnations par la Cour européenne des droits de l'homme**
     (`D3.condamnations_cedh`) : `nb_arrets_cedh_violation`, arrêts rendus contre la France
     constatant au moins une violation (base HUDOC, un arrêt par ECLI) ; contexte

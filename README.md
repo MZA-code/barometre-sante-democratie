@@ -53,6 +53,7 @@ journaliste, aucun contenu payant archivé.
 | D2.3 | Pétitions citoyennes de 500 000 signatures ou plus classées sans examen | 2020 |
 | D2.4 | Crédits votés par le Parlement puis annulés par décret | 2006 |
 | D2.5 | Questions écrites des députés sans réponse dans le délai de deux mois | 2012 |
+| D2.6 | Décrets d'application des lois non publiés six mois après la loi | 2002 |
 | D3.1 | Régimes d'exception | 1958 |
 | D3.2 | Lois censurées par le Conseil constitutionnel | 1958 |
 | D3.3 | Règles de l'assurance chômage fixées par décret de l'État, faute d'accord des partenaires sociaux | 1990 |

@@ -492,6 +492,29 @@
       <p class="mt-3 max-w-3xl text-xs text-ink2">Assemblée nationale seulement, depuis juin 2012 (début de l'open data). Écartées&nbsp;: questions closes avant l'échéance sans réponse (fin de mandat de l'auteur, retrait), devenues caduques à la fin d'une législature, ou dont le délai court encore. « Sans réponse à ce jour »&nbsp;: les questions récentes peuvent encore recevoir une réponse.</p>
     </section>
 
+    <!-- D2.6 · Application des lois -->
+    <section id="d2-6" class="py-10 border-b border-rule" aria-labelledby="t-d2-6">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D2.6 · Place du Parlement</p>
+      <h2 id="t-d2-6" class="mt-2 font-serif text-2xl font-semibold">Les lois votées qui attendent leurs décrets d'application</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Beaucoup de lois ne s'appliquent qu'une fois publiés les décrets qu'elles prévoient&nbsp;:
+        tant que le Gouvernement ne les prend pas, la loi votée par le Parlement reste lettre
+        morte. Le Gouvernement s'est fixé un délai de six mois (circulaire du Premier ministre du
+        29 février 2008). On compte la part des mesures attendues qui ne sont pas publiées à cette
+        échéance.
+      </p>
+      <p id="application-resume" class="mt-3 max-w-3xl text-sm text-ink2"></p>
+      <div class="mt-4 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+        <table class="w-full text-left text-sm" id="application-annees"></table>
+      </div>
+      <h3 class="mt-8 font-semibold">Les lois qui attendent le plus de décrets</h3>
+      <p class="mt-1 text-sm text-ink2">Mesures toujours en attente alors que l'échéance de six mois est passée.</p>
+      <div class="mt-3 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+        <table class="w-full text-left text-sm" id="application-lois"></table>
+      </div>
+      <p class="mt-3 max-w-3xl text-xs text-ink2">Source&nbsp;: <a class="underline" href="https://www.assemblee-nationale.fr/dyn/taux-application-lois/" target="_blank" rel="noopener">baromètre de l'application des lois</a> de l'Assemblée nationale (lois promulguées depuis juin 2002, données publiées sur data.gouv.fr), relevé une fois par mois. Les mesures «&nbsp;sans objet&nbsp;» et celles dont le délai court encore sont écartées.</p>
+    </section>
+
     <section id="d3" class="py-10 border-b border-rule" aria-labelledby="t-d3">
       <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D3.1 · Contre-pouvoirs et État de droit</p>
       <h2 id="t-d3" class="mt-2 font-serif text-2xl font-semibold">Les régimes d'exception depuis 1958</h2>
@@ -1752,6 +1775,7 @@
       jours_exception: v => `${num(v)} jour${v > 1 ? 's' : ''}`,
       nb_dissolutions: v => `${num(v)} dissolution${v > 1 ? 's' : ''}`,
       nb_arrets_cedh_violation: v => `${num(v)} arrêt${v > 1 ? 's' : ''}`,
+      ratio_mesures_non_appliquees_delai: v => pct(v),
     };
     const FEMININ = new Set(['nb_textes_electoraux_avant_scrutin', 'nb_dissolutions']);
     const WHAT = {
@@ -1773,10 +1797,11 @@
       montant_annule_cp_md: "de crédits votés par le Parlement puis annulés par décret, sans nouveau vote",
       personnes_surveillees: "personnes surveillées par des techniques de renseignement dans l'année (CNCTR)",
       nb_dissolutions: "d'associations ou de groupements par décret",
+      ratio_mesures_non_appliquees_delai: "des décrets d'application attendus par les lois non publiés dans les six mois",
       nb_arrets_cedh_violation: "de la Cour européenne des droits de l'homme constatant au moins une violation par la France",
     };
-    const ANCHOR = { 'D2.contournement_parlement': '#t-evolution', 'D2.procedure_acceleree': '#d2-2', 'D3.regimes_exception': '#d3', 'D3.lois_censurees': '#d3-2', 'D4.interdictions_manifester_juge': '#d4-2', 'D6.traitements_malgre_reserves': '#d6-2', 'D5.temps_parole_executif': '#d5-1', 'D1.regles_electorales_avant_scrutin': '#d1', 'D1.scrutins_reportes': '#d1-table', 'D5.classement_rsf': '#d5-3', 'D5.journalistes_inquietes': '#d5-2', 'D6.techniques_renseignement': '#d6-1', 'D4.dissolutions_administratives': '#d4', 'D7.libertes_en_pratique': '#d7', 'D2.petitions_classees': '#d2-3', 'D2.annulations_credits': '#d2-4', 'D2.questions_ecrites': '#d2-5', 'D3.regles_chomage_etat': '#d3-3', 'D3.condamnations_cedh': '#d3-4' };
-    const CODE = { 'D2.contournement_parlement': 'D2.1', 'D2.procedure_acceleree': 'D2.2', 'D3.regimes_exception': 'D3.1', 'D3.lois_censurees': 'D3.2', 'D4.interdictions_manifester_juge': 'D4.2', 'D6.traitements_malgre_reserves': 'D6.2', 'D5.temps_parole_executif': 'D5.1', 'D1.regles_electorales_avant_scrutin': 'D1.1', 'D1.scrutins_reportes': 'D1.2', 'D5.classement_rsf': 'D5.3', 'D5.journalistes_inquietes': 'D5.2', 'D6.techniques_renseignement': 'D6.1', 'D4.dissolutions_administratives': 'D4.1', 'D7.libertes_en_pratique': 'D7', 'D2.petitions_classees': 'D2.3', 'D2.annulations_credits': 'D2.4', 'D2.questions_ecrites': 'D2.5', 'D3.regles_chomage_etat': 'D3.3', 'D3.condamnations_cedh': 'D3.4' };
+    const ANCHOR = { 'D2.contournement_parlement': '#t-evolution', 'D2.procedure_acceleree': '#d2-2', 'D3.regimes_exception': '#d3', 'D3.lois_censurees': '#d3-2', 'D4.interdictions_manifester_juge': '#d4-2', 'D6.traitements_malgre_reserves': '#d6-2', 'D5.temps_parole_executif': '#d5-1', 'D1.regles_electorales_avant_scrutin': '#d1', 'D1.scrutins_reportes': '#d1-table', 'D5.classement_rsf': '#d5-3', 'D5.journalistes_inquietes': '#d5-2', 'D6.techniques_renseignement': '#d6-1', 'D4.dissolutions_administratives': '#d4', 'D7.libertes_en_pratique': '#d7', 'D2.petitions_classees': '#d2-3', 'D2.annulations_credits': '#d2-4', 'D2.questions_ecrites': '#d2-5', 'D3.regles_chomage_etat': '#d3-3', 'D3.condamnations_cedh': '#d3-4', 'D2.application_lois': '#d2-6' };
+    const CODE = { 'D2.contournement_parlement': 'D2.1', 'D2.procedure_acceleree': 'D2.2', 'D3.regimes_exception': 'D3.1', 'D3.lois_censurees': 'D3.2', 'D4.interdictions_manifester_juge': 'D4.2', 'D6.traitements_malgre_reserves': 'D6.2', 'D5.temps_parole_executif': 'D5.1', 'D1.regles_electorales_avant_scrutin': 'D1.1', 'D1.scrutins_reportes': 'D1.2', 'D5.classement_rsf': 'D5.3', 'D5.journalistes_inquietes': 'D5.2', 'D6.techniques_renseignement': 'D6.1', 'D4.dissolutions_administratives': 'D4.1', 'D7.libertes_en_pratique': 'D7', 'D2.petitions_classees': 'D2.3', 'D2.annulations_credits': 'D2.4', 'D2.questions_ecrites': 'D2.5', 'D3.regles_chomage_etat': 'D3.3', 'D3.condamnations_cedh': 'D3.4', 'D2.application_lois': 'D2.6' };
     function drawDims() {
       document.getElementById('t-dims').textContent = `${D.dimensions.length} indicateurs suivis`;
       const host = document.getElementById('dims');
@@ -2296,6 +2321,29 @@
         const tr = body.insertRow(), sous = /^dont /.test(lib[f]);
         const c0 = tr.insertCell(); c0.className = 'py-1.5 px-3 border-b border-rule' + (sous ? ' pl-8 text-ink2' : f === 'TOTAL' ? ' font-semibold' : ''); c0.textContent = lib[f];
         for (const [p] of PAYS) { const td = tr.insertCell(); td.className = 'py-1.5 px-3 border-b border-rule tabnum whitespace-nowrap' + (sous ? ' text-ink2' : ''); td.textContent = fmt(val(ligne(p), f)); }
+      }
+    }
+
+    // ---- D2.6 : application des lois ---------------------------------------------
+    function drawApplication() {
+      const P = D.application_lois, ta = document.getElementById('application-annees'), tl = document.getElementById('application-lois');
+      if (!P || !ta || ta.rows.length) return;
+      const A = P.par_annee;
+      if (!A.length) { document.getElementById('application-resume').textContent = 'Collecte en cours.'; return; }
+      const tot = A.reduce((s, e) => s + e.echues, 0), hd = A.reduce((s, e) => s + e.hors_delai, 0);
+      document.getElementById('application-resume').textContent = `${num(tot)} mesures d'application arrivées à échéance depuis ${A[0].annee} : ${pct(hd / tot)} n'étaient pas publiées dans les six mois. ${num(P.nb_lois_en_attente)} lois attendent encore au moins un décret après l'échéance.`;
+      const tete = (tbl, cols) => { const h = tbl.createTHead().insertRow(); for (const c of cols) { const th = document.createElement('th'); th.className = 'sticky top-0 bg-surface py-2 px-3 font-medium text-ink2 border-b border-rule'; th.textContent = c; h.appendChild(th); } return tbl.createTBody(); };
+      const cell = (tr, v, cls = '') => { const td = tr.insertCell(); td.className = 'py-1.5 px-3 border-b border-rule align-top ' + cls; if (v instanceof Node) td.appendChild(v); else td.textContent = v; };
+      let b = tete(ta, ['Échéance en', 'Mesures attendues', 'Non publiées dans les six mois', 'Toujours en attente', 'Délai médian de publication']);
+      for (const e of [...A].reverse()) {
+        const tr = b.insertRow(); cell(tr, String(e.annee));
+        cell(tr, num(e.echues), 'tabnum'); cell(tr, pct(e.hors_delai / e.echues), 'tabnum'); cell(tr, e.en_attente ? `${num(e.en_attente)} (${pct(e.en_attente / e.echues)})` : '—', 'tabnum whitespace-nowrap');
+        cell(tr, e.delai_median != null ? `${num(Math.round(e.delai_median))} jours` : '—', 'tabnum whitespace-nowrap');
+      }
+      b = tete(tl, ['Loi', 'Publiée le', 'Mesures en attente']);
+      for (const l of P.lois_en_attente) {
+        const tr = b.insertRow(); const a = document.createElement('a'); a.href = l.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'hover:underline'; a.textContent = l.titre;
+        cell(tr, a); cell(tr, dateLong(l.publication), 'whitespace-nowrap'); cell(tr, num(l.n), 'tabnum');
       }
     }
 
@@ -3059,7 +3107,7 @@
     const TOC = [
       ["Vue d'ensemble", 'gauge-high', [['t-question', 'Encore une démocratie ?', 'circle-question'], ['t-definition', "Ce qu'est une démocratie", 'book-open-reader'], ['t-indice', "Par rapport à d'habitude", 'gauge-high'], ['t-contre-pouvoirs', 'Contre-pouvoirs', 'scale-balanced'], ['t-dims', 'Indicateurs suivis', 'list-check']]],
       ['D1 · Élections et alternance', 'check-to-slot', [['t-d1', 'D1.1–D1.2 · Règles électorales et reports', 'check-to-slot']]],
-      ['D2 · Place du Parlement', 'landmark', [['titre', "D2.1 · L'essentiel", 'landmark'], ['t-evolution', 'Depuis 1959', 'chart-line'], ['t-composantes', 'De quoi est fait le chiffre', 'puzzle-piece'], ['t-leg', 'Législature par législature', 'table-columns'], ['t-493', 'Les recours au 49.3', 'forward'], ['t-d2-2', 'D2.2 · Procédure accélérée', 'bolt'], ['t-d2-3', 'D2.3 · Pétitions citoyennes', 'file-signature'], ['t-d2-4', 'D2.4 · Crédits annulés par décret', 'scissors'], ['t-d2-5', 'D2.5 · Questions écrites sans réponse', 'envelope-open-text']]],
+      ['D2 · Place du Parlement', 'landmark', [['titre', "D2.1 · L'essentiel", 'landmark'], ['t-evolution', 'Depuis 1959', 'chart-line'], ['t-composantes', 'De quoi est fait le chiffre', 'puzzle-piece'], ['t-leg', 'Législature par législature', 'table-columns'], ['t-493', 'Les recours au 49.3', 'forward'], ['t-d2-2', 'D2.2 · Procédure accélérée', 'bolt'], ['t-d2-3', 'D2.3 · Pétitions citoyennes', 'file-signature'], ['t-d2-4', 'D2.4 · Crédits annulés par décret', 'scissors'], ['t-d2-5', 'D2.5 · Questions écrites sans réponse', 'envelope-open-text'], ['t-d2-6', 'D2.6 · Lois sans décrets d\'application', 'file-circle-exclamation']]],
       ["D3 · Contre-pouvoirs et État de droit", 'gavel', [['t-d3', "D3.1 · Régimes d'exception", 'triangle-exclamation'], ['t-d3-2', 'D3.2 · Lois censurées', 'gavel'], ['t-d3-4', 'D3.4 · Condamnations par la CEDH', 'building-columns']]],
       ['Argent public et démocratie sociale', 'coins', [['t-budget', "Où va l'argent public (contexte)", 'coins'], ['t-d3-3', 'D3.3 · Règles du chômage fixées par l\'État', 'handshake-slash']]],
       ['D4 · Libertés publiques', 'people-group', [['t-d4-2', 'D4.2 · Interdictions de manifester', 'ban'], ['t-d4', 'D4.1 · Dissolutions', 'users-slash']]],
@@ -3146,7 +3194,7 @@
     let spyRaf; addEventListener('scroll', () => { cancelAnimationFrame(spyRaf); spyRaf = requestAnimationFrame(spy); }, { passive: true });
 
     // ---- Rendu -------------------------------------------------------------
-    const render = () => { drawReperes(); drawOpinion(); drawTelechargements(); drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawPetitions(); drawAnnulations(); drawQuestions(); drawChomage(); drawCedh(); drawBudget(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
+    const render = () => { drawReperes(); drawOpinion(); drawTelechargements(); drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawPetitions(); drawAnnulations(); drawQuestions(); drawApplication(); drawChomage(); drawCedh(); drawBudget(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
     render(); spy();
     let raf; addEventListener('resize', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { render(); current = null; spy(); }); });
   })();

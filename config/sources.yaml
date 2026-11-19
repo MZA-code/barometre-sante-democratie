@@ -68,6 +68,11 @@ sources:
     url: https://hudoc.echr.coe.int/
     licence: Contenu de HUDOC librement réutilisable à des fins non commerciales, avec mention de la source (conditions du site de la Cour)
 
+  - id: an_application_lois
+    name: Assemblée nationale — baromètre de l'application des lois (lois et mesures d'application, LexImpact)
+    url: https://www.data.gouv.fr/fr/datasets/donnees-du-barometre-de-lapplication-des-lois/
+    licence: Licence Ouverte Etalab 2.0
+
   - id: rapports_annuels
     name: Rapports annuels officiels cités par les relevés manuels (IGPN, Défenseur des droits ; vie-publique.fr)
     url: https://www.vie-publique.fr/rapports

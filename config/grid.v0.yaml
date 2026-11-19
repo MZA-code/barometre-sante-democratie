@@ -177,6 +177,38 @@ indicators:
     thresholds: [null, null, null, null]
     weight: null
 
+  D2.application_lois:
+    label: Lois non appliquées six mois après leur publication
+    description: >-
+      Part des mesures d'application prévues par les lois (décrets attendus) qui ne sont pas
+      publiées six mois après la loi, délai que le Gouvernement s'est fixé (circulaire du
+      Premier ministre du 29 février 2008). Chaque mesure est datée de son échéance
+      (publication de la loi + six mois). Écartées : mesures « sans objet », mesures dont le
+      délai court encore, mesures appliquées sans délai renseigné. Mesure le respect, par le
+      Gouvernement, de la volonté du Parlement : une loi votée mais sans décret ne s'applique
+      pas. Source : baromètre de l'application des lois de l'Assemblée nationale (lois
+      promulguées depuis juin 2002).
+    fact_types:
+      - mesure_appliquee_delai
+      - mesure_non_appliquee_delai
+    history_start: 2002-12-19   # premières échéances des lois de la XIIe législature
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - nb_mesures_echues                 # mesures dont l'échéance de six mois tombe dans la fenêtre
+      - nb_mesures_non_appliquees_delai   # dont non appliquées à l'échéance
+      - ratio_mesures_non_appliquees_delai
+    ratios:
+      ratio_mesures_non_appliquees_delai:
+        numerateur: [nb_mesures_non_appliquees_delai]
+        denominateur: [nb_mesures_echues]
+    scored_metric: ratio_mesures_non_appliquees_delai
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
   D3.regimes_exception:
     label: Régimes d'exception
     description: >-
