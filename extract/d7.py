@@ -179,6 +179,20 @@ def constate_manquement(resume: str) -> bool:
     return False
 
 
+ARTICLE = re.compile(
+    r"^- (?P<media>[\w.-]+) \([^)]*\) · \d{4}-\d{2}-\d{2} · (?P<url>https?://\S+)$"
+)
+
+
+def articles(corps: str) -> list[dict]:
+    """Articles cités dans le corps d'une issue (« - domaine (groupe) · date · lien »)."""
+    out = []
+    for ligne in (corps or "").splitlines():
+        if (m := ARTICLE.match(ligne.strip())) and "github.com" not in m["url"]:
+            out.append({"media": m["media"], "url": m["url"]})
+    return out
+
+
 def faits_presse(conn: sqlite3.Connection, raw_dir: Path) -> list[FactDraft]:
     comptes, categories, serveur = validateurs(), categories_d7(), comptes_serveur()
     out = []
@@ -201,6 +215,7 @@ def faits_presse(conn: sqlite3.Connection, raw_dir: Path) -> list[FactDraft]:
                     "categorie": cat,
                     "lieu": lieu,
                     "issue": inst["numero"],
+                    "articles": articles(inst["corps"]),
                     "valide_par": pose["par"],
                     "valide_le": pose["le"],
                 },

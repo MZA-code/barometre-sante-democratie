@@ -1142,13 +1142,8 @@
             officiel, l'empreinte SHA-256 de la copie archivée et l'indication d'une relecture humaine).</p>
           <ul id="telechargements" class="space-y-1"></ul>
           <p>Résumé de tous les indicateurs&nbsp;: <a class="underline text-ink" href="indicateurs.csv">indicateurs.csv</a>
-            et <a class="underline text-ink" href="barometre.md">barometre.md</a>. Code source complet, qui
-            recalcule tout à l'identique depuis les documents archivés&nbsp;:
-            <a class="underline text-ink" href="https://github.com/MZA-code/barometre-sante-democratie">github.com/MZA-code/barometre-sante-democratie</a>.</p>
-          <h3 class="pt-2 font-semibold text-ink">Signaler une erreur</h3>
-          <p>Un chiffre faux, une source mal lue, un lien cassé, une formulation trompeuse&nbsp;:
-            <a class="underline text-ink" href="https://github.com/MZA-code/barometre-sante-democratie/issues/new?template=erreur.md">ouvrir un signalement</a>
-            (compte GitHub nécessaire). Chaque correction est datée dans le journal des modifications.</p>
+            et <a class="underline text-ink" href="barometre.md">barometre.md</a>. Tout est recalculé à
+            l'identique, chaque jour, depuis les documents officiels archivés.</p>
           <h3 class="pt-2 font-semibold text-ink">Outils et contrôle humain</h3>
           <p>Le code de ce site est écrit avec l'aide d'un assistant d'intelligence artificielle
             (Claude, d'Anthropic), sous la direction de l'éditeur, qui décide de chaque évolution et
@@ -2496,9 +2491,7 @@
       if (!B.reprise_complete) txt += ` Reprise depuis juillet 2024 en cours : ${num(B.candidats_sans_decision)} fait${B.candidats_sans_decision > 1 ? 's' : ''} candidat${B.candidats_sans_decision > 1 ? 's' : ''} à relire${B.reprise_relue_jusqu_au ? `, relue jusqu'au ${dateLong(B.reprise_relue_jusqu_au)}` : ''} ; D7 n'entre pas encore dans l'indice d'ensemble.`;
       document.getElementById('d7-resume').textContent = txt;
       const rel = document.getElementById('d7-relecteurs');
-      rel.textContent = B.validateurs === 1 ? 'Faits de presse validés par un seul relecteur pour le moment ; toutes les décisions sont publiques : ' : 'Toutes les décisions de relecture sont publiques : ';
-      const lien = document.createElement('a'); lien.href = B.issues_url; lien.className = 'underline text-ink'; lien.textContent = 'fiches de validation'; lien.target = '_blank'; lien.rel = 'noopener';
-      rel.append(lien, '.');
+      rel.textContent = B.validateurs === 1 ? 'Faits de presse validés par un seul relecteur pour le moment ; chaque décision de relecture est archivée, et chaque fait renvoie aux articles qui le rapportent.' : 'Chaque décision de relecture est archivée, et chaque fait renvoie aux articles qui le rapportent.';
       const tbl = document.getElementById('d7-table');
       if (!tbl.rows.length) {
         const head = tbl.createTHead().insertRow();
@@ -2512,8 +2505,12 @@
           const c1 = tr.insertCell(); c1.className = 'py-1.5 px-3 border-b border-rule align-top'; c1.textContent = B.categories[f.categorie] || f.categorie;
           const c2 = tr.insertCell(); c2.className = 'py-1.5 px-3 border-b border-rule align-top text-ink2'; c2.textContent = f.lieu || '—';
           const c3 = tr.insertCell(); c3.className = 'py-1.5 px-3 border-b border-rule align-top';
-          const a = document.createElement('a'); a.href = f.url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'hover:underline';
-          a.textContent = f.voie === 'presse' ? 'Presse, fiche validée' : 'Défenseur des droits'; c3.appendChild(a);
+          const lien = (url, txt) => { const a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.className = 'hover:underline'; a.textContent = txt; return a; };
+          if (f.voie === 'presse') {
+            const arts = f.articles || [];
+            if (!arts.length) c3.textContent = 'Presse';
+            arts.forEach((x, i) => { if (i) c3.append(', '); c3.appendChild(lien(x.url, x.media)); });
+          } else c3.appendChild(lien(f.url, 'Défenseur des droits'));
         }
         if (!B.faits.length) { const tr = body.insertRow(); const c = tr.insertCell(); c.colSpan = 4; c.className = 'py-3 px-3 text-ink2'; c.textContent = 'Aucun fait compté pour le moment.'; }
       }

@@ -58,6 +58,7 @@ def test_faits_sans_nom():
                     "categorie": "force",
                     "lieu": "Lyon",
                     "issue": 3,
+                    "articles": [{"media": "lemonde.fr", "url": "https://www.lemonde.fr/a"}],
                     "valide_par": "MZA-code",
                     "valide_le": "2026-11-10T10:00:00Z",
                 }
@@ -77,7 +78,7 @@ def test_faits_sans_nom():
             ),
         ),
     ]
-    faits = export_data.faits_d7(lignes, "MZA-code/barometre-sante-democratie")
+    faits = export_data.faits_d7(lignes)
     assert faits[0] == {
         "date": "2025-04-01",
         "voie": "institution",
@@ -90,8 +91,9 @@ def test_faits_sans_nom():
         "voie": "presse",
         "categorie": "force",
         "lieu": "Lyon",
-        "url": "https://github.com/MZA-code/barometre-sante-democratie/issues/3",
+        "articles": [{"media": "lemonde.fr", "url": "https://www.lemonde.fr/a"}],
     }
+    assert "github" not in json.dumps(faits)
 
 
 def test_hors_indice_tant_que_la_collecte_du_passe_n_est_pas_remontee():
@@ -153,3 +155,45 @@ def test_export_petitions():
         "commission": "Commission des lois",
         "url": "u1",
     }
+
+
+def test_csv_des_faits_d7_sans_fiche_de_validation(tmp_path):
+    from extract.common import FactDraft, write_facts
+    from storage.archive import store
+    from storage.db import connect, init_db
+
+    conn = connect(tmp_path / "t.sqlite")
+    init_db(conn)
+    doc = store(
+        conn,
+        tmp_path / "raw",
+        source_id="github_d7",
+        external_id="issue-3.json",
+        url="https://api.github.com/repos/x/y/issues/3",
+        fetched_at="2026-11-10T10:00:00Z",
+        chunks=[b"{}"],
+        suffix=".json",
+    )
+    write_facts(
+        conn,
+        [
+            FactDraft(
+                indicator_id=export_data.D7,
+                fact_type="fait_presse_valide",
+                occurred_on="2025-03-01",
+                title="Usage de la force · Lyon",
+                official_ref="github#3",
+                extraction_method="d7@1",
+                raw_document_ids=(doc.id,),
+                attributes={
+                    "categorie": "force",
+                    "issue": 3,
+                    "articles": [{"media": "lemonde.fr", "url": "https://www.lemonde.fr/a"}],
+                },
+            )
+        ],
+    )
+    (ligne,) = export_data.faits_indicateur(conn, export_data.D7)
+    assert ligne["lien"] == "https://www.lemonde.fr/a"
+    assert "github" not in json.dumps(ligne).lower()
+    conn.close()

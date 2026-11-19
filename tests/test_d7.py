@@ -151,7 +151,14 @@ def test_extract_presse(conn, tmp_path):
     (fait,) = [f for f in d7.extract(conn, raw) if f.fact_type == "fait_presse_valide"]
     assert fait.occurred_on == "2026-11-01"
     assert fait.indicator_id == "D7.libertes_en_pratique"
-    assert set(fait.attributes) == {"categorie", "lieu", "issue", "valide_par", "valide_le"}
+    assert set(fait.attributes) == {
+        "categorie",
+        "lieu",
+        "issue",
+        "articles",
+        "valide_par",
+        "valide_le",
+    }
     assert fait.attributes["issue"] == 1 and fait.attributes["categorie"] == "force"
 
 
@@ -356,3 +363,18 @@ def test_reprise_incomplete_tant_que_la_collecte_n_est_pas_remontee():
     assert etat["reprise_complete"] is False
     assert etat["reprise_collectee_depuis"] == "2026-11-07"
     assert d7.etat_reprise([], {}, jour, couverture_debut=None)["reprise_complete"] is False
+
+
+def test_articles_lus_dans_le_corps_de_l_issue():
+    from extract.d7 import articles
+
+    corps = (
+        "**Lieu :** Lyon\n\n### Articles (au moins deux groupes de presse)\n\n"
+        "- lemonde.fr (groupe_le_monde) · 2025-03-01 · https://www.lemonde.fr/a\n"
+        "- liberation.fr (liberation) · 2025-03-02 · https://www.liberation.fr/b\n"
+        "- github.com (x) · 2025-03-02 · https://github.com/x/y\n\n### Décision\n"
+    )
+    assert articles(corps) == [
+        {"media": "lemonde.fr", "url": "https://www.lemonde.fr/a"},
+        {"media": "liberation.fr", "url": "https://www.liberation.fr/b"},
+    ]

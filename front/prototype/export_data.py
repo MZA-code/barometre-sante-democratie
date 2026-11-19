@@ -60,7 +60,6 @@ DIMENSIONS = (
     "D7.libertes_en_pratique",
 )
 D7 = "D7.libertes_en_pratique"
-DEPOT_PUBLIC = "MZA-code/barometre-sante-democratie"
 MOIS = (
     "janvier",
     "février",
@@ -133,22 +132,25 @@ def hors_indice_d7(etat: dict) -> str | None:
     return None
 
 
-def faits_d7(lignes, depot: str) -> list[dict]:
-    """Faits D7, du plus récent au plus ancien : date, voie, catégorie, lieu, lien. Aucun nom
-    (ni validateur ni personne citée)."""
+def faits_d7(lignes) -> list[dict]:
+    """Faits D7, du plus récent au plus ancien : date, voie, catégorie, lieu, et liens vers les
+    articles de presse ou la décision du Défenseur des droits. Aucun nom (ni validateur ni
+    personne citée), aucun lien vers les fiches de validation."""
     out = []
     for day, fact_type, ref, attrs in lignes:
         a = json.loads(attrs)
         presse = fact_type == "fait_presse_valide"
-        out.append(
-            {
-                "date": day,
-                "voie": "presse" if presse else "institution",
-                "categorie": a["categorie"],
-                "lieu": a.get("lieu"),
-                "url": f"https://github.com/{depot}/issues/{a['issue']}" if presse else ref,
-            }
-        )
+        fait = {
+            "date": day,
+            "voie": "presse" if presse else "institution",
+            "categorie": a["categorie"],
+            "lieu": a.get("lieu"),
+        }
+        if presse:
+            fait["articles"] = a.get("articles", [])
+        else:
+            fait["url"] = ref
+        out.append(fait)
     return sorted(out, key=lambda f: f["date"], reverse=True)
 
 
@@ -164,7 +166,7 @@ def bloc_d7(conn, raw_dir: Path) -> tuple[dict, str | None]:
         " WHERE indicator_id = ? AND occurred_on >= '2024-07-01'",
         (D7,),
     ).fetchall()
-    faits = faits_d7(lignes, DEPOT_PUBLIC)
+    faits = faits_d7(lignes)
     bloc = {
         "categories": {k: c["libelle"] for k, c in categories_d7().items()},
         "faits": faits,
@@ -174,7 +176,6 @@ def bloc_d7(conn, raw_dir: Path) -> tuple[dict, str | None]:
         "reprise_complete": etat["reprise_complete"],
         "reprise_relue_jusqu_au": etat["reprise_relue_jusqu_au"],
         "candidats_sans_decision": etat["candidats_sans_decision"],
-        "issues_url": f"https://github.com/{DEPOT_PUBLIC}/issues?q=label%3Ad7",
     }
     return bloc, hors_indice_d7(etat)
 
@@ -599,7 +600,10 @@ def main(argv=None) -> int:
         ],
         "sources": [
             {"nom": r[0], "url": r[1], "licence": r[2]}
-            for r in conn.execute("SELECT name, url, licence FROM sources ORDER BY id")
+            for r in conn.execute(
+                # Les fiches de validation D7 (dépôt de code) ne sont pas publiées sur la page.
+                "SELECT name, url, licence FROM sources WHERE id NOT IN ('github_d7') ORDER BY id"
+            )
         ],
     }
     conn.close()
@@ -688,6 +692,12 @@ def faits_indicateur(conn, ind_id: str) -> list[dict]:
     ):
         day, ftype, title, ref, attrs, method, human, url, ext, sha, source = tuple(row)
         a = json.loads(attrs)
+        if ftype == "fait_presse_valide":
+            # Fiche de validation tenue dans le dépôt de code : non publiée ; le fait renvoie
+            # aux articles de presse qui le rapportent.
+            ref = ""
+            url = " ".join(x["url"] for x in a.get("articles", []))
+            source, ext, sha = "Presse (fait recoupé et validé)", "", ""
         out.append(
             {
                 "date": day,
