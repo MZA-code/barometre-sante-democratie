@@ -47,6 +47,7 @@ DIMENSIONS = (
     "D3.regimes_exception",
     "D3.lois_censurees",
     "D3.condamnations_cedh",
+    "D3.actes_annules_conseil_etat",
     "D3.regles_chomage_etat",
     "D4.interdictions_manifester_juge",
     "D4.dissolutions_administratives",
@@ -528,6 +529,7 @@ def main(argv=None) -> int:
             )
         ],
         "cedh": condamnations_cedh(conn),
+        "actes_annules": actes_annules(conn),
         "application_lois": application_lois(conn),
         "prisons": {
             "pays": [
@@ -906,6 +908,39 @@ def application_lois(conn) -> dict:
         "par_annee": sorted(par_annee.values(), key=lambda e: e["annee"]),
         "lois_en_attente": sorted(lois.values(), key=lambda v: (-v["n"], v["publication"]))[:25],
         "nb_lois_en_attente": len(lois),
+    }
+
+
+def actes_annules(conn) -> dict:
+    """D3.5 : recours par trimestre et par nature d'acte, liste des annulations."""
+    par_trimestre: dict[str, dict] = {}
+    par_nature: dict[str, dict] = {}
+    annulations = []
+    for day, titre, attrs in conn.execute(
+        "SELECT occurred_on, title, attributes FROM facts"
+        " WHERE indicator_id = 'D3.actes_annules_conseil_etat' ORDER BY occurred_on DESC, id"
+    ):
+        a = json.loads(attrs)
+        t = f"{day[:4]}-T{(int(day[5:7]) - 1) // 3 + 1}"
+        for cle, table in ((t, par_trimestre), (a["nature"], par_nature)):
+            e = table.setdefault(cle, {"cle": cle, "recours": 0, "annules": 0})
+            e["recours"] += 1
+            e["annules"] += a["annule"]
+        if a["annule"]:
+            annulations.append(
+                {
+                    "date": day,
+                    "titre": titre,
+                    "solution": a["solution"],
+                    "nature": a["nature"],
+                    "conclusions": a["conclusions"],
+                    "url": a["url"],
+                }
+            )
+    return {
+        "par_trimestre": sorted(par_trimestre.values(), key=lambda e: e["cle"]),
+        "par_nature": sorted(par_nature.values(), key=lambda e: -e["recours"]),
+        "annulations": annulations,
     }
 
 

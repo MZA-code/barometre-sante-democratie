@@ -32,6 +32,10 @@ CONTRE_POUVOIR = {
         "indicateur de contre-pouvoir : une part élevée de lois censurées peut traduire "
         "un contrôle constitutionnel qui fonctionne autant que des lois plus fragiles"
     ),
+    "D3.actes_annules_conseil_etat": (
+        "indicateur de contre-pouvoir : une part élevée d'actes du Gouvernement annulés peut "
+        "traduire un juge qui contrôle autant que des actes plus souvent illégaux"
+    ),
     "D4.interdictions_manifester_juge": (
         "indicateur de contre-pouvoir : une part élevée d'interdictions annulées peut traduire "
         "un juge qui protège la liberté de manifester autant que des interdictions abusives"

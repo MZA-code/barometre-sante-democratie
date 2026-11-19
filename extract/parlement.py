@@ -33,6 +33,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from extract import (
+    actes_annules,
     application_lois,
     arcom,
     budget,
@@ -223,6 +224,7 @@ def extract_all(conn: sqlite3.Connection, raw_dir: Path) -> list[FactDraft]:
         + cedh.extract(conn, raw_dir)
         + application_lois.extract(conn, raw_dir)
         + prisons.extract(conn, raw_dir)
+        + actes_annules.extract(conn, raw_dir)
     )
 
 

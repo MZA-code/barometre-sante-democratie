@@ -1210,3 +1210,21 @@ sensibilité et avant application. Données au 11/11/2026.
 - Les deux capacités ne sont pas définies de la même façon (129 % en 2024 selon Eurostat,
   142 % au 1er septembre 2026 selon le ministère) : la page le dit.
 - `extract/elections.xlsx_rows` lit désormais une feuille nommée (`feuille="Tab6"`).
+
+## 2026-11-19 — D3.5 : actes du Gouvernement annulés par le Conseil d'État
+
+- **Mesure** : part des recours pour excès de pouvoir contre un décret, une ordonnance, ou un
+  arrêté, une circulaire ou une instruction d'un ministre, jugés au fond par le Conseil
+  d'État (« Rejet », « Satisfaction partielle », « Satisfaction totale »), qui aboutissent à
+  une annulation totale ou partielle.
+- **Repérage** : archives mensuelles du Conseil d'État déjà collectées pour D4.2* ;
+  décisions de type « Décision » sur un recours pour excès de pouvoir, dont les conclusions
+  (le texte qui suit « demande au Conseil d'État ») visent un de ces actes. Les circulaires
+  d'organismes (assurance maladie...) et les arrêtés préfectoraux sont écartés (« ministre »
+  ou « garde des sceaux » exigé près de l'acte). Sur la copie locale (juin 2021 - octobre
+  2026) : 884 recours, 117 annulations (13 %), dont 58 décrets sur 657 et 49 arrêtés
+  ministériels sur 170.
+- **Contre-pouvoir** : lecture double, comme D3.2 et D4.2* : présenté à part, hors indice.
+  L'historique (depuis juin 2021) est de toute façon trop court pour l'indice.
+- **Limite** : le mois en cours n'est archivé qu'en extrait pré-filtré pour D4.2* ; un mois
+  n'entre ici qu'une fois terminé.

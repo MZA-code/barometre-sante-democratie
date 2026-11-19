@@ -78,6 +78,8 @@ COUNT_METRICS = (
     "nb_journalistes_convoques",
     "nb_questions_echues",
     "nb_mesures_echues",
+    "nb_recours_actes_tranches",
+    "nb_actes_annules",
     "nb_mesures_non_appliquees_delai",
     "nb_questions_sans_reponse_delai",
 )
@@ -264,6 +266,10 @@ class WindowState:
             self.counts["nb_questions_echues"] += delta
             if event.fact_type == "question_ecrite_sans_reponse_delai":
                 self.counts["nb_questions_sans_reponse_delai"] += delta
+        elif event.fact_type == "recours_acte_gouvernement":
+            # D3.5 : recours contre un acte du Gouvernement jugés au fond, dont annulations.
+            self.counts["nb_recours_actes_tranches"] += delta
+            self.counts["nb_actes_annules"] += delta * (event.issue == "annule")
         elif event.fact_type in ("mesure_appliquee_delai", "mesure_non_appliquee_delai"):
             # D2.6 : mesures d'application arrivées à l'échéance de six mois.
             self.counts["nb_mesures_echues"] += delta

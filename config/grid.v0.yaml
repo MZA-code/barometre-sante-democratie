@@ -268,6 +268,36 @@ indicators:
     thresholds: [null, null, null, null]
     weight: null
 
+  D3.actes_annules_conseil_etat:
+    label: Actes du Gouvernement annulés par le Conseil d'État
+    description: >-
+      Part des recours pour excès de pouvoir contre un décret, une ordonnance, un arrêté
+      ministériel, une circulaire ou une instruction, jugés au fond par le Conseil d'État, qui
+      aboutissent à une annulation totale ou partielle (solutions « Satisfaction totale » ou
+      « Satisfaction partielle »). Repérage dans le texte des décisions de l'open data de la
+      justice administrative (depuis juin 2021). Indicateur de contre-pouvoir, à double
+      lecture : une hausse peut traduire des actes plus souvent illégaux comme un contrôle
+      plus exigeant. Un mois n'entre qu'une fois terminé.
+    fact_types:
+      - recours_acte_gouvernement
+    history_start: 2021-06-01
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - nb_recours_actes_tranches   # recours jugés au fond dans la fenêtre
+      - nb_actes_annules            # dont annulation totale ou partielle
+      - ratio_actes_annules
+    ratios:
+      ratio_actes_annules:
+        numerateur: [nb_actes_annules]
+        denominateur: [nb_recours_actes_tranches]
+    scored_metric: ratio_actes_annules
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
   D3.regles_chomage_etat:
     label: Règles de l'assurance chômage fixées par l'État
     description: >-

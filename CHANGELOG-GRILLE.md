@@ -17,6 +17,11 @@ ci-dessous et un recalcul complet de l'historique (`make rebuild GRID=config/gri
     (`D3.condamnations_cedh`) : `nb_arrets_cedh_violation`, arrêts rendus contre la France
     constatant au moins une violation (base HUDOC, un arrêt par ECLI) ; contexte
     `nb_arrets_cedh`. Historique depuis le 2 octobre 1981.
+  - **D3.5 — Actes du Gouvernement annulés par le Conseil d'État**
+    (`D3.actes_annules_conseil_etat`) : `ratio_actes_annules = nb_actes_annules /
+    nb_recours_actes_tranches` ; recours pour excès de pouvoir contre un décret, une
+    ordonnance ou un acte d'un ministre, jugés au fond (rejet ou satisfaction) ; indicateur de
+    contre-pouvoir, présenté hors indice. Historique depuis juin 2021.
 - Ajout du 2026-11-17 (avant tout gel ; aucun seuil, aucune note) :
   - **D2.5 — Questions écrites sans réponse dans le délai** (`D2.questions_ecrites`) :
     `ratio_questions_sans_reponse_delai = nb_questions_sans_reponse_delai /
