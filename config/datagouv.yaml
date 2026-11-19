@@ -82,3 +82,16 @@ jeux:
     inclure: "france-entiere"
     formats: [csv]
     taille_max_mo: 1
+
+  - id: 5369a048a3a729239d206322
+    nom: prisons_mensuel
+    objet: >-
+      Statistique mensuelle des personnes écrouées (ministère de la Justice) : détenus,
+      capacité opérationnelle et densité carcérale au 1er de chaque mois (tableau 6),
+      contexte « prisons ». Seuls les fichiers depuis 2026 sont archivés : la série longue
+      vient d'Eurostat (crim_pris_cap), ce fichier donne le dernier mois connu.
+    # Fichiers depuis 2026, et ceux dont le titre n'a pas d'année (« Situation à juillet »,
+    # juillet 2026) : le mois est relu dans le fichier, un mois en double n'est compté qu'une fois.
+    inclure: "^Statistiques mensuelles de la population détenue et écrouée - Situation à \\w+( 20(2[6-9]|[3-9][0-9]))?$"
+    formats: [xlsx]
+    taille_max_mo: 3

@@ -1195,3 +1195,18 @@ sensibilité et avant application. Données au 11/11/2026.
   fois par mois (28 jours), archivé seulement s'il change.
 - **Limites** : une loi de finances ou de financement de la sécurité sociale prévoit beaucoup
   de mesures et pèse plus qu'une loi courte ; chaque mesure compte pour une.
+
+## 2026-11-19 — Contexte : prisons
+
+- **Choix** : contexte non noté, et non indicateur de la grille. La surpopulation carcérale
+  touche aux droits fondamentaux (la Cour européenne des droits de l'homme a condamné la
+  France en 2020, arrêt J.M.B.), mais elle ne mesure pas qui décide ni selon quelle
+  procédure ; ses condamnations par la Cour entrent déjà dans D3.4.
+- **Sources** : Eurostat `crim_pris_cap` (détenus et capacité officielle, une valeur par an
+  depuis 2008, pays de l'UE : seul moyen de comparer) ; statistique mensuelle du ministère
+  de la Justice (tableau 6 : détenus et capacité opérationnelle au 1er du mois) pour les mois
+  récents, archivée depuis janvier 2026 seulement (les fichiers changent de format en 2019
+  et manquent de 2019 à 2022).
+- Les deux capacités ne sont pas définies de la même façon (129 % en 2024 selon Eurostat,
+  142 % au 1er septembre 2026 selon le ministère) : la page le dit.
+- `extract/elections.xlsx_rows` lit désormais une feuille nommée (`feuille="Tab6"`).

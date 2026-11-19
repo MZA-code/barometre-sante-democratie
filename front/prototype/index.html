@@ -1017,6 +1017,23 @@
       </p>
     </section>
 
+    <!-- Contexte : prisons (Eurostat, ministère de la Justice) -->
+    <section id="prisons" class="py-10 border-b border-rule" aria-labelledby="t-prisons">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Contexte · non noté</p>
+      <h2 id="t-prisons" class="mt-2 font-serif text-2xl font-semibold">Les prisons&nbsp;: combien de détenus pour combien de places</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Nombre de personnes détenues rapporté au nombre de places de prison. Au-delà de 100&nbsp;%,
+        des détenus dorment à plusieurs dans des cellules prévues pour moins, ou sur des matelas
+        au sol. La Cour européenne des droits de l'homme a condamné la France en 2020 pour ses
+        conditions de détention (arrêt J.M.B. et autres)&nbsp;; voir l'<a class="underline" href="#d3-4">indicateur D3.4</a>.
+      </p>
+      <p id="prisons-resume" class="mt-3 max-w-3xl text-sm text-ink2"></p>
+      <div id="prisons-chart" class="viz relative mt-6"></div>
+      <h3 class="mt-8 font-semibold" id="prisons-titre-ue">Les pays de l'Union européenne</h3>
+      <ol id="prisons-ue" class="mt-3 space-y-1.5 text-sm"></ol>
+      <p class="mt-3 max-w-3xl text-xs text-ink2">Sources&nbsp;: Eurostat, jeu <a class="underline" href="https://ec.europa.eu/eurostat/databrowser/view/crim_pris_cap/default/table" target="_blank" rel="noopener">crim_pris_cap</a> (détenus et capacité officielle, une valeur par an, comparable entre pays)&nbsp;; pour les mois récents, statistique mensuelle du ministère de la Justice (<a class="underline" href="https://www.data.gouv.fr/fr/datasets/statistique-mensuelle-de-la-population-ecrouee-et-detenue-en-france/" target="_blank" rel="noopener">data.gouv.fr</a>, détenus rapportés à la capacité opérationnelle, France entière). Les deux définitions de la capacité diffèrent un peu.</p>
+    </section>
+
     <!-- 5 quater. Contexte : participation -->
     <section id="contexte" class="py-10 border-b border-rule" aria-labelledby="t-participation">
       <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Contexte · non noté</p>
@@ -2954,6 +2971,58 @@
       }
     }
 
+    // ---- Contexte : prisons ------------------------------------------------------
+    function drawPrisons() {
+      const P = D.prisons, box = document.getElementById('prisons-chart');
+      if (!P || !P.pays.length) { box.replaceChildren(); return; }
+      const taux = r => r.detenus / r.capacite;
+      const fr = P.pays.filter(r => r.pays === 'FR').sort((a, b) => a.annee - b.annee);
+      const M = P.mensuel || [], dm = M[M.length - 1];
+      const derFr = fr[fr.length - 1];
+      document.getElementById('prisons-resume').textContent = dm
+        ? `Au ${dateLong(dm.mois)}, ${num(dm.detenus)} personnes détenues pour ${num(dm.capacite)} places opérationnelles : ${pct(taux(dm), 1)} d'occupation (ministère de la Justice). Selon Eurostat, ${pct(taux(derFr), 1)} en ${derFr.annee}.`
+        : `En ${derFr.annee}, ${num(derFr.detenus)} personnes détenues pour ${num(derFr.capacite)} places : ${pct(taux(derFr), 1)} d'occupation (Eurostat).`;
+      // Courbe : France, Eurostat par an (fin d'année) et ministère par mois.
+      const pts = [...fr.map(r => ({ t: r.annee + 0.99, v: taux(r), lib: `${r.annee} (Eurostat)`, r })), ...M.map(r => ({ t: +r.mois.slice(0, 4) + (+r.mois.slice(5, 7) - 1) / 12, v: taux(r), lib: `${dateLong(r.mois)} (ministère)`, r, mois: true }))];
+      const W = Math.max(280, box.clientWidth), H = 220, m = { t: 14, r: 12, b: 26, l: 44 };
+      const t0 = Math.floor(pts[0].t), t1 = Math.ceil(Math.max(...pts.map(p => p.t)));
+      const lo = 0.8, hi = Math.ceil(Math.max(...pts.map(p => p.v)) * 10) / 10 + 0.05;
+      const svg = svgIn(box, W, H, `Taux d'occupation des prisons en France, de ${t0} à ${t1}`);
+      const x = t => m.l + (t - t0) / (t1 - t0) * (W - m.l - m.r), y = v => H - m.b - (v - lo) / (hi - lo) * (H - m.t - m.b);
+      for (let v = lo; v <= hi + 1e-9; v += 0.1) {
+        const ref = Math.abs(v - 1) < 1e-9;
+        el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: ref ? 'var(--axis)' : 'var(--rule)', 'stroke-width': 1, ...(ref ? { 'stroke-dasharray': '4 3' } : {}) }, svg);
+        text(svg, m.l - 6, y(v) + 4, pct(v), { 'text-anchor': 'end' });
+      }
+      text(svg, W - m.r, y(1) - 4, 'une place par détenu', { 'text-anchor': 'end' });
+      for (let a = Math.ceil(t0 / 4) * 4; a <= t1; a += 4) text(svg, x(a), H - 8, String(a), { 'text-anchor': 'middle' });
+      el('path', { d: pts.map((p, i) => `${i ? 'L' : 'M'}${x(p.t)},${y(p.v)}`).join(''), fill: 'none', stroke: 'var(--series-1)', 'stroke-width': 2 }, svg);
+      for (const p of pts) {
+        el('circle', { cx: x(p.t), cy: y(p.v), r: p.mois ? 3 : 4, fill: 'var(--series-1)', stroke: 'var(--surface)', 'stroke-width': 2 }, svg);
+        const hit = el('circle', { cx: x(p.t), cy: y(p.v), r: 10, fill: 'transparent', tabindex: 0, 'aria-label': `${p.lib} : ${pct(p.v, 1)}` }, svg);
+        hit.addEventListener('pointermove', e => showTip([{ label: p.lib, strong: true }, { value: pct(p.v, 1), label: "d'occupation" }, { value: num(p.r.detenus), label: 'détenus' }, { value: num(p.r.capacite), label: 'places' }], e.pageX, e.pageY));
+        hit.addEventListener('pointerleave', hideTip);
+      }
+      // Classement de l'UE, dernière année publiée.
+      const an = Math.max(...P.pays.map(r => r.annee));
+      const ue = P.pays.filter(r => r.annee === an).sort((a, b) => taux(b) - taux(a));
+      document.getElementById('prisons-titre-ue').textContent = `Taux d'occupation des prisons dans l'Union européenne en ${an}`;
+      const NOMS = { AT: 'Autriche', BE: 'Belgique', BG: 'Bulgarie', CY: 'Chypre', CZ: 'Tchéquie', DE: 'Allemagne', DK: 'Danemark', EE: 'Estonie', EL: 'Grèce', ES: 'Espagne', FI: 'Finlande', FR: 'France', HR: 'Croatie', HU: 'Hongrie', IE: 'Irlande', IT: 'Italie', LT: 'Lituanie', LU: 'Luxembourg', LV: 'Lettonie', MT: 'Malte', NL: 'Pays-Bas', PL: 'Pologne', PT: 'Portugal', RO: 'Roumanie', SE: 'Suède', SI: 'Slovénie', SK: 'Slovaquie' };
+      const host = document.getElementById('prisons-ue'); host.replaceChildren();
+      const vmax = Math.max(...ue.map(taux));
+      for (const r of ue) {
+        const li = document.createElement('li'); li.className = 'grid grid-cols-[8rem_4rem_1fr] items-center gap-3';
+        const lab = document.createElement('span'); lab.textContent = NOMS[r.pays] || r.pays; if (r.pays === 'FR') lab.className = 'font-semibold';
+        const val = document.createElement('span'); val.className = 'tabnum text-right' + (r.pays === 'FR' ? ' font-semibold' : ''); val.textContent = pct(taux(r));
+        const track = document.createElement('span'); track.className = 'relative block h-2.5 rounded-sm';
+        const bar = document.createElement('span'); bar.className = 'absolute left-0 top-0 h-full rounded-sm';
+        bar.style.width = `${100 * taux(r) / vmax}%`; bar.style.background = r.pays === 'FR' ? 'var(--series-1)' : 'var(--hist)';
+        const ref = document.createElement('span'); ref.className = 'absolute top-[-2px] h-[14px] w-px'; ref.style.left = `${100 / vmax}%`; ref.style.background = 'var(--axis)';
+        track.append(bar, ref); li.append(lab, val, track); li.title = `${num(r.detenus)} détenus pour ${num(r.capacite)} places`;
+        host.appendChild(li);
+      }
+    }
+
     // ---- Contexte : Défenseur des droits (maintien de l'ordre) ------------------
     const DDD = D.defenseur_droits || [];
     const DDD_PREMIERS = 8;
@@ -3115,7 +3184,7 @@
       ['D5 · Pluralisme et information', 'tower-broadcast', [['t-d5-1', 'D5.1 · Temps de parole', 'microphone-lines'], ['t-partis', 'Temps de parole par parti', 'microphone-lines'], ['t-d5-2', 'D5.2 · Journalistes inquiétés', 'pen-nib'], ['t-annuels', 'D5.3 · Classement RSF', 'ranking-star']]],
       ['D6 · Surveillance et données', 'eye', [['t-annuels', 'D6.1 · Personnes surveillées', 'user-secret'], ['t-d6-2', 'D6.2 · Fichiers et avis de la CNIL', 'database']]],
       ['D7 · Libertés en pratique', 'hand', [['t-d7', 'D7 · Atteintes sur le terrain', 'hand']]],
-      ['Contexte (non noté)', 'layer-group', [['t-mobil', 'Journées de mobilisation', 'bullhorn'], ['t-ddd', 'Défenseur des droits', 'user-shield'], ['t-force', 'Usage de la force', 'shield-halved'], ['t-participation', 'Participation aux législatives', 'person-booth']]],
+      ['Contexte (non noté)', 'layer-group', [['t-mobil', 'Journées de mobilisation', 'bullhorn'], ['t-ddd', 'Défenseur des droits', 'user-shield'], ['t-force', 'Usage de la force', 'shield-halved'], ['t-prisons', 'Prisons : détenus et places', 'door-closed'], ['t-participation', 'Participation aux législatives', 'person-booth']]],
       ['Méthode', 'book-open', [['t-methode', 'Méthode et limites', 'book-open'], ['t-verifier', 'Vérifier par soi-même', 'magnifying-glass'], ['t-references', "Sur quoi on s'appuie", 'book'], ['t-mentions', 'Mentions légales', 'circle-info']]],
     ];
     // Icône propre à un titre partagé par deux entrées du sommaire.
@@ -3194,7 +3263,7 @@
     let spyRaf; addEventListener('scroll', () => { cancelAnimationFrame(spyRaf); spyRaf = requestAnimationFrame(spy); }, { passive: true });
 
     // ---- Rendu -------------------------------------------------------------
-    const render = () => { drawReperes(); drawOpinion(); drawTelechargements(); drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawPetitions(); drawAnnulations(); drawQuestions(); drawApplication(); drawChomage(); drawCedh(); drawBudget(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
+    const render = () => { drawReperes(); drawOpinion(); drawTelechargements(); drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawPetitions(); drawAnnulations(); drawQuestions(); drawApplication(); drawChomage(); drawCedh(); drawBudget(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawPrisons(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
     render(); spy();
     let raf; addEventListener('resize', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { render(); current = null; spy(); }); });
   })();

@@ -59,8 +59,8 @@ sources:
     licence: Documents publiés par le Défenseur des droits (informations publiques, réutilisation libre selon le code des relations entre le public et l'administration ; à confirmer)
 
   - id: eurostat_cofog
-    name: Eurostat — dépenses des administrations publiques par fonction (COFOG, gov_10a_exp)
-    url: https://ec.europa.eu/eurostat/databrowser/view/gov_10a_exp/default/table
+    name: Eurostat — dépenses des administrations publiques par fonction (COFOG, gov_10a_exp) et prisons (crim_pris_cap)
+    url: https://ec.europa.eu/eurostat/data/database
     licence: Politique de réutilisation de la Commission européenne (décision 2011/833/UE), réutilisation libre avec mention de la source
 
   - id: hudoc_cedh

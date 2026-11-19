@@ -54,6 +54,7 @@ from extract import (
     mobilisations,
     onu,
     petitions,
+    prisons,
     questions_ecrites,
     regles_chomage,
     rsf,
@@ -221,6 +222,7 @@ def extract_all(conn: sqlite3.Connection, raw_dir: Path) -> list[FactDraft]:
         + depenses_publiques.extract(conn, raw_dir)
         + cedh.extract(conn, raw_dir)
         + application_lois.extract(conn, raw_dir)
+        + prisons.extract(conn, raw_dir)
     )
 
 

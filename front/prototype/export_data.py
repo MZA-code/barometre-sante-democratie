@@ -529,6 +529,22 @@ def main(argv=None) -> int:
         ],
         "cedh": condamnations_cedh(conn),
         "application_lois": application_lois(conn),
+        "prisons": {
+            "pays": [
+                json.loads(a)
+                for (a,) in conn.execute(
+                    "SELECT attributes FROM facts WHERE fact_type = 'prisons_pays_annee'"
+                    " ORDER BY occurred_on, id"
+                )
+            ],
+            "mensuel": [
+                json.loads(a)
+                for (a,) in conn.execute(
+                    "SELECT attributes FROM facts WHERE fact_type = 'densite_carcerale_mois'"
+                    " ORDER BY occurred_on"
+                )
+            ],
+        },
         "depenses_publiques": {
             "libelles": LIBELLES_COFOG,
             "annees": [

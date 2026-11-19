@@ -34,8 +34,8 @@ def conn(tmp_path):
 def web_de(contenu: str):
     @contextmanager
     def web(url):
-        assert url == eurostat.URL
-        yield io.BytesIO(contenu.encode())
+        assert url in (eurostat.URL, eurostat.URL_PRISONS)
+        yield io.BytesIO((contenu if url == eurostat.URL else "x").encode())
 
     return web
 
@@ -51,9 +51,12 @@ def test_parse_groupe_par_pays_et_annee():
 def test_collecte_archive_seulement_si_le_contenu_change(conn, tmp_path):
     raw = tmp_path / "raw"
     contenu = ENTETE + "\n".join(LIGNES)
-    assert eurostat.collect(conn, raw, opener=web_de(contenu)) is True
-    assert eurostat.collect(conn, raw, opener=web_de(contenu)) is False
-    assert eurostat.collect(conn, raw, opener=web_de(contenu + "\n")) is True
+    assert eurostat.collect(conn, raw, opener=web_de(contenu)) == [
+        "gov_10a_exp.csv",
+        "crim_pris_cap.csv",
+    ]
+    assert eurostat.collect(conn, raw, opener=web_de(contenu)) == []
+    assert eurostat.collect(conn, raw, opener=web_de(contenu + "\n")) == ["gov_10a_exp.csv"]
     drafts = depenses_publiques.extract(conn, raw)
     assert [(d.attributes["pays"], d.attributes["annee"]) for d in drafts] == [
         ("FR", 2023),

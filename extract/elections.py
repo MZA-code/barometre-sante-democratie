@@ -59,14 +59,36 @@ def to_int(value: str) -> int:
     return int(float(digits))
 
 
-def xlsx_rows(data: bytes) -> list[list[str]]:
-    """Lignes de la première feuille d'un classeur xlsx (bibliothèque standard)."""
+_NS_REL = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"
+_NS_PKG = "{http://schemas.openxmlformats.org/package/2006/relationships}"
+
+
+def _chemin_feuille(z: zipfile.ZipFile, feuille: str) -> str:
+    """Chemin de la feuille nommée `feuille` dans le classeur (workbook.xml + relations)."""
+    classeur = ET.fromstring(z.read("xl/workbook.xml"))
+    rid = next(
+        (s.get(f"{_NS_REL}id") for s in classeur.iter(f"{_NS}sheet") if s.get("name") == feuille),
+        None,
+    )
+    if rid is None:
+        raise KeyError(f"feuille absente : {feuille}")
+    for rel in ET.fromstring(z.read("xl/_rels/workbook.xml.rels")).iter(f"{_NS_PKG}Relationship"):
+        if rel.get("Id") == rid:
+            cible = rel.get("Target").lstrip("/")
+            return cible if cible.startswith("xl/") else f"xl/{cible}"
+    raise KeyError(f"relation absente : {rid}")
+
+
+def xlsx_rows(data: bytes, feuille: str | None = None) -> list[list[str]]:
+    """Lignes d'une feuille d'un classeur xlsx (bibliothèque standard) : la première, ou
+    celle qui porte le nom `feuille`."""
     with zipfile.ZipFile(io.BytesIO(data)) as z:
         shared = []
         if "xl/sharedStrings.xml" in z.namelist():
             for si in ET.fromstring(z.read("xl/sharedStrings.xml")).findall(f"{_NS}si"):
                 shared.append("".join(t.text or "" for t in si.iter(f"{_NS}t")))
-        root = ET.fromstring(z.read("xl/worksheets/sheet1.xml"))
+        chemin = _chemin_feuille(z, feuille) if feuille else "xl/worksheets/sheet1.xml"
+        root = ET.fromstring(z.read(chemin))
     rows = []
     for row in root.iter(f"{_NS}row"):
         values = []
