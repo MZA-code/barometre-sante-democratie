@@ -2817,10 +2817,8 @@
     if (g.version) {
       const v = document.createElement('p'); v.className = 'mt-1';
       const quand = new Date(g.version.date).toLocaleString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Paris' });
-      const a = document.createElement('a'); a.className = 'underline tabular-nums';
-      a.href = `https://github.com/MZA-code/barometre-sante-democratie/commit/${g.version.commit_complet}`; a.target = '_blank'; a.rel = 'noopener';
-      a.textContent = g.version.commit;
-      v.append('Version du code : ', a, ` du ${quand}.`);
+      const c = document.createElement('span'); c.className = 'tabular-nums'; c.textContent = g.version.commit;
+      v.append('Version ', c, ` du ${quand}.`);
       pied.appendChild(v);
     }
 

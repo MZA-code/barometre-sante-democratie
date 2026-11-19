@@ -96,7 +96,7 @@ def version_code(racine: Path = ROOT) -> dict | None:
     """Commit du code qui a produit la page (identifiant court et date), ou None hors git."""
     try:
         sortie = subprocess.run(
-            ["git", "-C", str(racine), "log", "-1", "--format=%h %H %cI"],
+            ["git", "-C", str(racine), "log", "-1", "--format=%h %cI"],
             capture_output=True,
             text=True,
             check=True,
@@ -104,9 +104,9 @@ def version_code(racine: Path = ROOT) -> dict | None:
         ).stdout.split()
     except (OSError, subprocess.SubprocessError):
         return None
-    if len(sortie) != 3:
+    if len(sortie) != 2:
         return None
-    return {"commit": sortie[0], "commit_complet": sortie[1], "date": sortie[2]}
+    return {"commit": sortie[0], "date": sortie[1]}
 
 
 def date_longue(iso: str) -> str:

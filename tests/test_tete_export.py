@@ -106,4 +106,4 @@ def test_version_code_hors_git(tmp_path):
 
     assert export_data.version_code(tmp_path) is None
     v = export_data.version_code()
-    assert v is None or (len(v["commit"]) >= 7 and v["commit_complet"].startswith(v["commit"]))
+    assert v is None or (len(v["commit"]) >= 7 and set(v) == {"commit", "date"})
