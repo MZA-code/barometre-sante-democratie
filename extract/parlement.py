@@ -35,6 +35,7 @@ from pathlib import Path
 from extract import (
     arcom,
     budget,
+    cedh,
     cnctr,
     cnil,
     constit,
@@ -217,6 +218,7 @@ def extract_all(conn: sqlite3.Connection, raw_dir: Path) -> list[FactDraft]:
         + questions_ecrites.extract(conn, raw_dir)
         + regles_chomage.extract(conn, raw_dir)
         + depenses_publiques.extract(conn, raw_dir)
+        + cedh.extract(conn, raw_dir)
     )
 
 

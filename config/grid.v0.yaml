@@ -261,6 +261,32 @@ indicators:
     thresholds: [null, null, null, null]
     weight: null
 
+  D3.condamnations_cedh:
+    label: Condamnations par la Cour européenne des droits de l'homme
+    description: >-
+      Arrêts de la Cour européenne des droits de l'homme constatant au moins une violation de
+      la Convention par la France (base HUDOC, versions française et anglaise réunies par
+      identifiant ECLI). Un arrêt compte le jour où il est rendu, quelle que soit sa formation
+      (comité, chambre, grande chambre). Lecture prudente : le nombre dépend aussi du volume
+      des requêtes et du rythme de la Cour (plusieurs années entre les faits et l'arrêt).
+      Historique depuis le 2 octobre 1981 (droit de recours individuel ouvert aux personnes
+      relevant de la France).
+    fact_types:
+      - arret_cedh_violation
+      - arret_cedh_sans_violation
+    history_start: 1981-10-02
+    windows:
+      - type: rolling
+        days: 365
+      - type: legislature
+    metrics:
+      - nb_arrets_cedh              # arrêts rendus contre la France dans la fenêtre
+      - nb_arrets_cedh_violation    # dont au moins une violation constatée
+    scored_metric: nb_arrets_cedh_violation
+    direction: increasing
+    thresholds: [null, null, null, null]
+    weight: null
+
   D4.interdictions_manifester_juge:
     label: Interdictions de manifester contestées devant le juge
     description: >-

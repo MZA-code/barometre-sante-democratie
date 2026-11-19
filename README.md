@@ -56,6 +56,7 @@ journaliste, aucun contenu payant archivé.
 | D3.1 | Régimes d'exception | 1958 |
 | D3.2 | Lois censurées par le Conseil constitutionnel | 1958 |
 | D3.3 | Règles de l'assurance chômage fixées par décret de l'État, faute d'accord des partenaires sociaux | 1990 |
+| D3.4 | Arrêts de la Cour européenne des droits de l'homme constatant une violation par la France | 1981 |
 | D4.1 | Dissolutions administratives | 1990 |
 | D4.2* | Interdictions de manifester contestées devant le juge (approximation) | 2022 |
 | D5.1 | Temps de parole de l'exécutif | 2025 |

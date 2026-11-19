@@ -1159,3 +1159,22 @@ sensibilité et avant application. Données au 11/11/2026.
 - **Collecte** : un fichier (≈ 500 ko) chaque jour, archivé seulement s'il change.
 - **Page** : la section est placée avec D3.3 sous « Argent public et démocratie sociale »,
   D3.3 n'étant plus seul entre les contre-pouvoirs et les libertés publiques.
+
+## 2026-11-19 — D3.4 : condamnations par la Cour européenne des droits de l'homme
+
+- **Mesure** : arrêts rendus contre la France qui constatent au moins une violation de la
+  Convention, sur 365 jours glissants. Source : HUDOC, arrêts en français et en anglais
+  (langues officielles), réunis par ECLI : 1 180 arrêts depuis 1986, 822 avec violation (au
+  19 novembre 2026).
+- **Violation** : champ `violation` de HUDOC, ou à défaut un point de la conclusion qui
+  commence par « Violation » (27 arrêts anciens n'ont pas le champ rempli). « Non-violation »
+  ne compte pas.
+- **Limites** : le nombre dépend du volume des requêtes et du rythme de la Cour, et l'arrêt
+  juge des faits souvent anciens de plusieurs années ; les décisions d'irrecevabilité ne sont
+  pas des arrêts et ne sont pas comptées. Le pic des années 2000 tient surtout à la durée des
+  procédures (article 6).
+- **Collecte** : trois pages de 1 000 documents par jour, réunies dans un fichier archivé
+  seulement si l'ensemble des résultats change (le rang de pertinence, recalculé à chaque
+  requête, n'est pas comparé). Comme pour l'extrait D4.2*, l'enveloppe est la nôtre, chaque
+  résultat est recopié tel que reçu.
+- **Indice** : plus de cinq ans d'historique, l'indicateur entre dans l'écart à l'habituel.

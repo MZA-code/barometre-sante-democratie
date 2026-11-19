@@ -63,6 +63,11 @@ sources:
     url: https://ec.europa.eu/eurostat/databrowser/view/gov_10a_exp/default/table
     licence: Politique de réutilisation de la Commission européenne (décision 2011/833/UE), réutilisation libre avec mention de la source
 
+  - id: hudoc_cedh
+    name: HUDOC — arrêts de la Cour européenne des droits de l'homme (France, défenderesse)
+    url: https://hudoc.echr.coe.int/
+    licence: Contenu de HUDOC librement réutilisable à des fins non commerciales, avec mention de la source (conditions du site de la Cour)
+
   - id: rapports_annuels
     name: Rapports annuels officiels cités par les relevés manuels (IGPN, Défenseur des droits ; vie-publique.fr)
     url: https://www.vie-publique.fr/rapports

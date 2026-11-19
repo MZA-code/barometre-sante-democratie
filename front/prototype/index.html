@@ -543,6 +543,42 @@
       </details>
     </section>
 
+    <!-- D3.4 · Condamnations par la Cour européenne des droits de l'homme -->
+    <section id="d3-4" class="py-10 border-b border-rule" aria-labelledby="t-d3-4">
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D3.4 · Contre-pouvoirs et État de droit</p>
+      <h2 id="t-d3-4" class="mt-2 font-serif text-2xl font-semibold">Les condamnations de la France par la Cour européenne des droits de l'homme</h2>
+      <p class="mt-2 max-w-3xl text-ink2">
+        Toute personne qui estime que la France a violé un droit garanti par la Convention
+        européenne des droits de l'homme peut, une fois les recours nationaux épuisés, saisir la
+        Cour de Strasbourg. On compte les arrêts rendus contre la France, et parmi eux ceux qui
+        constatent au moins une violation. Plusieurs années séparent souvent les faits de
+        l'arrêt&nbsp;: un arrêt de cette année juge en général des faits anciens.
+      </p>
+      <p id="cedh-resume" class="mt-3 max-w-3xl text-sm text-ink2"></p>
+      <div id="cedh-chart" class="viz relative mt-6"></div>
+      <div class="mt-3 flex flex-wrap gap-5 text-xs text-ink2">
+        <span class="flex items-center gap-2"><span class="inline-block h-2.5 w-3.5 rounded-sm" style="background:var(--series-1)"></span>Arrêts constatant au moins une violation</span>
+        <span class="flex items-center gap-2"><span class="inline-block h-2.5 w-3.5 rounded-sm" style="background:var(--hist)"></span>Arrêts sans violation constatée</span>
+      </div>
+      <div class="mt-8 grid gap-8 lg:grid-cols-2">
+        <div>
+          <h3 class="font-semibold">Droits violés, sur les dix dernières années</h3>
+          <p class="mt-1 text-sm text-ink2">Un arrêt peut constater la violation de plusieurs articles.</p>
+          <div class="mt-3 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+            <table class="w-full text-left text-sm" id="cedh-articles"></table>
+          </div>
+        </div>
+        <div>
+          <h3 class="font-semibold">Arrêts constatant une violation</h3>
+          <p class="mt-1 text-sm text-ink2">Du plus récent au plus ancien, sur dix ans&nbsp;; chaque arrêt renvoie à son texte.</p>
+          <div class="mt-3 max-h-96 overflow-y-auto rounded-lg border border-rule bg-surface">
+            <table class="w-full text-left text-sm" id="cedh-arrets"></table>
+          </div>
+        </div>
+      </div>
+      <p class="mt-3 max-w-3xl text-xs text-ink2">Source&nbsp;: base <a class="underline" href="https://hudoc.echr.coe.int/" target="_blank" rel="noopener">HUDOC</a> de la Cour, interrogée chaque jour (arrêts en français et en anglais, réunis par identifiant ECLI). Un arrêt compte comme violation si la Cour en constate au moins une, même partielle&nbsp;; les arrêts de radiation et de satisfaction équitable comptent dans le total.</p>
+    </section>
+
     <!-- Contexte : dépenses publiques par fonction (Eurostat, COFOG) -->
     <section id="budget" class="py-10 border-b border-rule" aria-labelledby="t-budget">
       <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Contexte · non noté</p>
@@ -576,7 +612,7 @@
 
     <!-- D3.3 · Démocratie sociale : qui fixe les règles de l'assurance chômage -->
     <section id="d3-3" class="py-10 border-b border-rule" aria-labelledby="t-d3-3">
-      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D3.3 · Contre-pouvoirs et démocratie sociale</p>
+      <p class="text-xs font-semibold uppercase tracking-[.14em] text-ink2">Indicateur D3.3 · Démocratie sociale</p>
       <h2 id="t-d3-3" class="mt-2 font-serif text-2xl font-semibold">Qui fixe les règles de l'assurance chômage</h2>
       <p class="mt-2 max-w-3xl text-ink2">
         L'assurance chômage est gérée par les organisations syndicales et patronales&nbsp;: elles en
@@ -1715,6 +1751,7 @@
       personnes_surveillees: v => `${num(Math.round(v))} personnes`,
       jours_exception: v => `${num(v)} jour${v > 1 ? 's' : ''}`,
       nb_dissolutions: v => `${num(v)} dissolution${v > 1 ? 's' : ''}`,
+      nb_arrets_cedh_violation: v => `${num(v)} arrêt${v > 1 ? 's' : ''}`,
     };
     const FEMININ = new Set(['nb_textes_electoraux_avant_scrutin', 'nb_dissolutions']);
     const WHAT = {
@@ -1736,9 +1773,10 @@
       montant_annule_cp_md: "de crédits votés par le Parlement puis annulés par décret, sans nouveau vote",
       personnes_surveillees: "personnes surveillées par des techniques de renseignement dans l'année (CNCTR)",
       nb_dissolutions: "d'associations ou de groupements par décret",
+      nb_arrets_cedh_violation: "de la Cour européenne des droits de l'homme constatant au moins une violation par la France",
     };
-    const ANCHOR = { 'D2.contournement_parlement': '#t-evolution', 'D2.procedure_acceleree': '#d2-2', 'D3.regimes_exception': '#d3', 'D3.lois_censurees': '#d3-2', 'D4.interdictions_manifester_juge': '#d4-2', 'D6.traitements_malgre_reserves': '#d6-2', 'D5.temps_parole_executif': '#d5-1', 'D1.regles_electorales_avant_scrutin': '#d1', 'D1.scrutins_reportes': '#d1-table', 'D5.classement_rsf': '#d5-3', 'D5.journalistes_inquietes': '#d5-2', 'D6.techniques_renseignement': '#d6-1', 'D4.dissolutions_administratives': '#d4', 'D7.libertes_en_pratique': '#d7', 'D2.petitions_classees': '#d2-3', 'D2.annulations_credits': '#d2-4', 'D2.questions_ecrites': '#d2-5', 'D3.regles_chomage_etat': '#d3-3' };
-    const CODE = { 'D2.contournement_parlement': 'D2.1', 'D2.procedure_acceleree': 'D2.2', 'D3.regimes_exception': 'D3.1', 'D3.lois_censurees': 'D3.2', 'D4.interdictions_manifester_juge': 'D4.2', 'D6.traitements_malgre_reserves': 'D6.2', 'D5.temps_parole_executif': 'D5.1', 'D1.regles_electorales_avant_scrutin': 'D1.1', 'D1.scrutins_reportes': 'D1.2', 'D5.classement_rsf': 'D5.3', 'D5.journalistes_inquietes': 'D5.2', 'D6.techniques_renseignement': 'D6.1', 'D4.dissolutions_administratives': 'D4.1', 'D7.libertes_en_pratique': 'D7', 'D2.petitions_classees': 'D2.3', 'D2.annulations_credits': 'D2.4', 'D2.questions_ecrites': 'D2.5', 'D3.regles_chomage_etat': 'D3.3' };
+    const ANCHOR = { 'D2.contournement_parlement': '#t-evolution', 'D2.procedure_acceleree': '#d2-2', 'D3.regimes_exception': '#d3', 'D3.lois_censurees': '#d3-2', 'D4.interdictions_manifester_juge': '#d4-2', 'D6.traitements_malgre_reserves': '#d6-2', 'D5.temps_parole_executif': '#d5-1', 'D1.regles_electorales_avant_scrutin': '#d1', 'D1.scrutins_reportes': '#d1-table', 'D5.classement_rsf': '#d5-3', 'D5.journalistes_inquietes': '#d5-2', 'D6.techniques_renseignement': '#d6-1', 'D4.dissolutions_administratives': '#d4', 'D7.libertes_en_pratique': '#d7', 'D2.petitions_classees': '#d2-3', 'D2.annulations_credits': '#d2-4', 'D2.questions_ecrites': '#d2-5', 'D3.regles_chomage_etat': '#d3-3', 'D3.condamnations_cedh': '#d3-4' };
+    const CODE = { 'D2.contournement_parlement': 'D2.1', 'D2.procedure_acceleree': 'D2.2', 'D3.regimes_exception': 'D3.1', 'D3.lois_censurees': 'D3.2', 'D4.interdictions_manifester_juge': 'D4.2', 'D6.traitements_malgre_reserves': 'D6.2', 'D5.temps_parole_executif': 'D5.1', 'D1.regles_electorales_avant_scrutin': 'D1.1', 'D1.scrutins_reportes': 'D1.2', 'D5.classement_rsf': 'D5.3', 'D5.journalistes_inquietes': 'D5.2', 'D6.techniques_renseignement': 'D6.1', 'D4.dissolutions_administratives': 'D4.1', 'D7.libertes_en_pratique': 'D7', 'D2.petitions_classees': 'D2.3', 'D2.annulations_credits': 'D2.4', 'D2.questions_ecrites': 'D2.5', 'D3.regles_chomage_etat': 'D3.3', 'D3.condamnations_cedh': 'D3.4' };
     function drawDims() {
       document.getElementById('t-dims').textContent = `${D.dimensions.length} indicateurs suivis`;
       const host = document.getElementById('dims');
@@ -2131,6 +2169,47 @@
         const td = c(); td.className += ' tabnum whitespace-nowrap'; td.textContent = `${num(jours)} jours`;
         const o = c(); o.appendChild(lien(r.url, r.texte)); if (r.note) { const n = document.createElement('p'); n.className = 'text-xs text-ink2 mt-1'; n.textContent = r.note; o.appendChild(n); }
         const f = c(); if (r.url_fin) f.appendChild(lien(r.url_fin, r.texte_fin)); else f.textContent = '—';
+      }
+    }
+
+    // ---- D3.4 : condamnations par la Cour européenne des droits de l'homme ----------
+    function drawCedh() {
+      const C = D.cedh, box = document.getElementById('cedh-chart');
+      if (!C || !C.par_annee.length) { box.replaceChildren(); return; }
+      const A = C.par_annee, a0 = A[0].annee, a1 = A[A.length - 1].annee;
+      const tot = A.reduce((s, e) => s + e.arrets, 0), vio = A.reduce((s, e) => s + e.violations, 0);
+      const der = A[A.length - 1];
+      document.getElementById('cedh-resume').textContent = `${num(tot)} arrêts rendus contre la France depuis ${a0}, dont ${num(vio)} constatent au moins une violation. En ${a1} (dernier arrêt le ${dateLong(C.dernier_arret)}) : ${num(der.arrets)} arrêt${der.arrets > 1 ? 's' : ''}, dont ${num(der.violations)} avec violation.`;
+      const W = Math.max(280, box.clientWidth), H = 220, m = { t: 12, r: 8, b: 26, l: 34 };
+      const svg = svgIn(box, W, H, `Arrêts de la Cour européenne des droits de l'homme contre la France, par année, de ${a0} à ${a1}`);
+      const max = Math.max(...A.map(e => e.arrets)), haut = Math.ceil(max / 20) * 20;
+      const n = a1 - a0 + 1, bw = (W - m.l - m.r) / n;
+      const x = a => m.l + (a - a0) * bw, y = v => H - m.b - v / haut * (H - m.t - m.b);
+      for (let v = 0; v <= haut; v += 20) {
+        el('line', { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: v ? 'var(--rule)' : 'var(--axis)', 'stroke-width': 1 }, svg);
+        text(svg, m.l - 6, y(v) + 4, num(v), { 'text-anchor': 'end' });
+      }
+      const pas = n > 30 ? 5 : 2;
+      for (let a = Math.ceil(a0 / pas) * pas; a <= a1; a += pas) text(svg, x(a) + bw / 2, H - 8, String(a), { 'text-anchor': 'middle' });
+      const largeur = Math.max(1, bw - 2);
+      for (const e of A) {
+        const sans = e.arrets - e.violations;
+        if (sans) el('rect', { x: x(e.annee) + 1, y: y(e.arrets), width: largeur, height: y(e.violations) - y(e.arrets) - (e.violations ? 1 : 0), fill: 'var(--hist)' }, svg);
+        if (e.violations) el('rect', { x: x(e.annee) + 1, y: y(e.violations), width: largeur, height: y(0) - y(e.violations), fill: 'var(--series-1)' }, svg);
+        const hit = el('rect', { x: x(e.annee), y: m.t, width: bw, height: H - m.t - m.b, fill: 'transparent', tabindex: 0, 'aria-label': `${e.annee} : ${e.arrets} arrêts, dont ${e.violations} avec violation` }, svg);
+        hit.addEventListener('pointermove', ev => showTip([{ label: String(e.annee), strong: true }, { value: num(e.violations), label: 'arrêts avec violation' }, { value: num(sans), label: 'sans violation' }], ev.pageX, ev.pageY));
+        hit.addEventListener('pointerleave', hideTip);
+      }
+      const tete = (tbl, cols) => { tbl.replaceChildren(); const h = tbl.createTHead().insertRow(); for (const c of cols) { const th = document.createElement('th'); th.className = 'sticky top-0 bg-surface py-2 px-3 font-medium text-ink2 border-b border-rule'; th.textContent = c; h.appendChild(th); } return tbl.createTBody(); };
+      const cell = (tr, txt, cls = '') => { const td = tr.insertCell(); td.className = 'py-1.5 px-3 border-b border-rule align-top ' + cls; if (txt instanceof Node) td.appendChild(txt); else td.textContent = txt; return td; };
+      const nomArt = a => `${a.startsWith('P') ? `Protocole ${a.slice(1).replace('-', ', art. ')}` : `Art. ${a}`}${C.libelles_articles[a] ? ' — ' + C.libelles_articles[a] : ''}`;
+      let b = tete(document.getElementById('cedh-articles'), ['Article', 'Arrêts']);
+      for (const [a, k] of C.articles_10_ans) { const tr = b.insertRow(); cell(tr, nomArt(a)); cell(tr, num(k), 'tabnum'); }
+      b = tete(document.getElementById('cedh-arrets'), ['Date', 'Affaire', 'Articles']);
+      for (const r of C.violations_10_ans) {
+        const tr = b.insertRow(); cell(tr, dateLong(r.date), 'whitespace-nowrap');
+        const l = document.createElement('a'); l.href = r.url; l.target = '_blank'; l.rel = 'noopener'; l.className = 'hover:underline'; l.textContent = r.titre; cell(tr, l);
+        cell(tr, r.articles.join(', ') || '—', 'tabnum');
       }
     }
 
@@ -2981,7 +3060,7 @@
       ["Vue d'ensemble", 'gauge-high', [['t-question', 'Encore une démocratie ?', 'circle-question'], ['t-definition', "Ce qu'est une démocratie", 'book-open-reader'], ['t-indice', "Par rapport à d'habitude", 'gauge-high'], ['t-contre-pouvoirs', 'Contre-pouvoirs', 'scale-balanced'], ['t-dims', 'Indicateurs suivis', 'list-check']]],
       ['D1 · Élections et alternance', 'check-to-slot', [['t-d1', 'D1.1–D1.2 · Règles électorales et reports', 'check-to-slot']]],
       ['D2 · Place du Parlement', 'landmark', [['titre', "D2.1 · L'essentiel", 'landmark'], ['t-evolution', 'Depuis 1959', 'chart-line'], ['t-composantes', 'De quoi est fait le chiffre', 'puzzle-piece'], ['t-leg', 'Législature par législature', 'table-columns'], ['t-493', 'Les recours au 49.3', 'forward'], ['t-d2-2', 'D2.2 · Procédure accélérée', 'bolt'], ['t-d2-3', 'D2.3 · Pétitions citoyennes', 'file-signature'], ['t-d2-4', 'D2.4 · Crédits annulés par décret', 'scissors'], ['t-d2-5', 'D2.5 · Questions écrites sans réponse', 'envelope-open-text']]],
-      ["D3 · Contre-pouvoirs et État de droit", 'gavel', [['t-d3', "D3.1 · Régimes d'exception", 'triangle-exclamation'], ['t-d3-2', 'D3.2 · Lois censurées', 'gavel']]],
+      ["D3 · Contre-pouvoirs et État de droit", 'gavel', [['t-d3', "D3.1 · Régimes d'exception", 'triangle-exclamation'], ['t-d3-2', 'D3.2 · Lois censurées', 'gavel'], ['t-d3-4', 'D3.4 · Condamnations par la CEDH', 'building-columns']]],
       ['Argent public et démocratie sociale', 'coins', [['t-budget', "Où va l'argent public (contexte)", 'coins'], ['t-d3-3', 'D3.3 · Règles du chômage fixées par l\'État', 'handshake-slash']]],
       ['D4 · Libertés publiques', 'people-group', [['t-d4-2', 'D4.2 · Interdictions de manifester', 'ban'], ['t-d4', 'D4.1 · Dissolutions', 'users-slash']]],
       ['Regards extérieurs (non noté)', 'binoculars', [['t-onu', "Déclarations de l'ONU", 'globe'], ['t-presse', 'Presse étrangère', 'newspaper']]],
@@ -3067,7 +3146,7 @@
     let spyRaf; addEventListener('scroll', () => { cancelAnimationFrame(spyRaf); spyRaf = requestAnimationFrame(spy); }, { passive: true });
 
     // ---- Rendu -------------------------------------------------------------
-    const render = () => { drawReperes(); drawOpinion(); drawTelechargements(); drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawPetitions(); drawAnnulations(); drawQuestions(); drawChomage(); drawBudget(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
+    const render = () => { drawReperes(); drawOpinion(); drawTelechargements(); drawDial(); drawDims(); drawElections(); drawProcedure(); drawPeriods(); drawCensures(); drawManifestations(); drawDissolutions(); drawTempsParole(); drawPartis(); drawPresse(); drawJournalistes(); drawAnnuels(); drawCnil(); drawD7(); drawPetitions(); drawAnnulations(); drawQuestions(); drawChomage(); drawCedh(); drawBudget(); drawMobilisations(); drawInterpellations(); drawDdd(); drawForce(); drawParticipation(); drawGauge(); drawTimeline(); drawComponents(); drawLegislatures(); drawDots(); };
     render(); spy();
     let raf; addEventListener('resize', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { render(); current = null; spy(); }); });
   })();

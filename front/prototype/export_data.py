@@ -20,6 +20,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
+from extract.cedh import ARTICLES as LIBELLES_ARTICLES_CEDH  # noqa: E402
 from extract.depenses_publiques import LIBELLES as LIBELLES_COFOG  # noqa: E402
 from scoring.grid import load_grid  # noqa: E402
 from scoring.indice import composer, indice  # noqa: E402
@@ -44,6 +45,7 @@ DIMENSIONS = (
     "D2.questions_ecrites",
     "D3.regimes_exception",
     "D3.lois_censurees",
+    "D3.condamnations_cedh",
     "D3.regles_chomage_etat",
     "D4.interdictions_manifester_juge",
     "D4.dissolutions_administratives",
@@ -524,6 +526,7 @@ def main(argv=None) -> int:
                 " ORDER BY occurred_on, id"
             )
         ],
+        "cedh": condamnations_cedh(conn),
         "depenses_publiques": {
             "libelles": LIBELLES_COFOG,
             "annees": [
@@ -851,6 +854,45 @@ def traitements_cnil(conn) -> dict:
         "decrets_reserves": reserves,
         "nb_avis": avis[0] or 0,
         "nb_avis_reserves": avis[1] or 0,
+    }
+
+
+def condamnations_cedh(conn) -> dict:
+    """D3.4 : arrêts par année, articles violés depuis dix ans, arrêts de violation récents."""
+    par_annee: dict[int, dict] = {}
+    articles: dict[str, int] = {}
+    recents = []
+    lignes = conn.execute(
+        "SELECT occurred_on, title, official_ref, attributes FROM facts"
+        " WHERE indicator_id = 'D3.condamnations_cedh' ORDER BY occurred_on DESC, id DESC"
+    ).fetchall()
+    fin = lignes[0][0] if lignes else None
+    for day, titre, ecli, attrs in lignes:
+        a = json.loads(attrs)
+        annee = int(day[:4])
+        entree = par_annee.setdefault(annee, {"annee": annee, "arrets": 0, "violations": 0})
+        entree["arrets"] += 1
+        if not a["violation"]:
+            continue
+        entree["violations"] += 1
+        if annee > int(fin[:4]) - 10:
+            for art in a["articles_violes"]:
+                articles[art] = articles.get(art, 0) + 1
+            recents.append(
+                {
+                    "date": day,
+                    "titre": titre,
+                    "ecli": ecli,
+                    "articles": a["articles_violes"],
+                    "url": a["url"],
+                }
+            )
+    return {
+        "par_annee": sorted(par_annee.values(), key=lambda e: e["annee"]),
+        "articles_10_ans": sorted(articles.items(), key=lambda kv: (-kv[1], kv[0])),
+        "libelles_articles": LIBELLES_ARTICLES_CEDH,
+        "violations_10_ans": recents,
+        "dernier_arret": fin,
     }
 
 

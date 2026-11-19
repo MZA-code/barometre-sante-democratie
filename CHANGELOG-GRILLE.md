@@ -6,6 +6,11 @@ ci-dessous et un recalcul complet de l'historique (`make rebuild GRID=config/gri
 
 ## v0 — 2026-10-26 (brouillon, non figée)
 
+- Ajout du 2026-11-19 (avant tout gel ; aucun seuil, aucune note) :
+  - **D3.4 — Condamnations par la Cour européenne des droits de l'homme**
+    (`D3.condamnations_cedh`) : `nb_arrets_cedh_violation`, arrêts rendus contre la France
+    constatant au moins une violation (base HUDOC, un arrêt par ECLI) ; contexte
+    `nb_arrets_cedh`. Historique depuis le 2 octobre 1981.
 - Ajout du 2026-11-17 (avant tout gel ; aucun seuil, aucune note) :
   - **D2.5 — Questions écrites sans réponse dans le délai** (`D2.questions_ecrites`) :
     `ratio_questions_sans_reponse_delai = nb_questions_sans_reponse_delai /

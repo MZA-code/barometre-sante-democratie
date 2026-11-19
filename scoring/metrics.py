@@ -133,6 +133,9 @@ DAILY_METRICS = {
         "coverage",
         lambda e: e.fact_type == "periode_regles_chomage_etat",
     ),
+    # D3.4 : arrêts de la Cour européenne des droits de l'homme contre la France.
+    "nb_arrets_cedh": ("count", lambda e: e.fact_type.startswith("arret_cedh_")),
+    "nb_arrets_cedh_violation": ("count", lambda e: e.fact_type == "arret_cedh_violation"),
     # D2.4 : décrets d'annulation de crédits, nombre et montant (crédits de paiement, Md€).
     "nb_decrets_annulation": ("count", lambda e: e.fact_type == "decret_annulation_credits"),
     "montant_annule_cp_md": ("sum", lambda e: e.fact_type == "decret_annulation_credits"),

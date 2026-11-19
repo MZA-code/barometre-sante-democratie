@@ -80,6 +80,7 @@ COLLECTES = (
     ("collect-ddd", ()),
     ("collect-rapports", ()),  # PDF cités par les relevés manuels, archivés une fois
     ("collect-eurostat", ()),  # dépenses publiques par fonction (≈ 500 ko, si changé)
+    ("collect-cedh", ()),  # arrêts contre la France (3 pages HUDOC, archivé si changé)
 )
 # Sources interrogées pour savoir si le réseau répond (une seule suffit).
 HOTES_TEST = ("echanges.dila.gouv.fr", "www.data.gouv.fr")
